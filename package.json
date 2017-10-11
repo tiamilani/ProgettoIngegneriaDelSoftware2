@@ -1,0 +1,33 @@
+{
+  "name": "unitnhelp_bot",
+  "version": "1.0.0",
+  "description": "UniTN Help Center Bot",
+  "main": "TelegramBot/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node TelegramBot/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tiamilani/ProgettoIngegneriaDelSoftware2.git"
+  },
+  "author": "Fadi Andrea",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tiamilani/ProgettoIngegneriaDelSoftware2/issues"
+  },
+  "homepage": "https://github.com/tiamilani/ProgettoIngegneriaDelSoftware2#readme",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "express": "^4.16.2",
+    "file-type": "^7.2.0",
+    "fs": "0.0.1-security",
+    "http": "0.0.0",
+    "node-telegram-bot-api": "^0.28.0",
+    "path": "^0.12.7",
+    "read-chunk": "^2.1.0",
+    "rimraf": "^2.6.2",
+    "util": "^0.10.3",
+    "website-scraper": "^3.3.1"
+  }
+}
