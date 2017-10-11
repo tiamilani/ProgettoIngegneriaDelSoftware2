@@ -1,0 +1,43 @@
+{
+  "name": "unitnhelpbot",
+  "version": "1.0.0",
+  "description": "UniTN Help Center Bot",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tiamilani/ProgettoIngegneriaDelSoftware2.git"
+  },
+  "author": "Fadi Andrea",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tiamilani/ProgettoIngegneriaDelSoftware2/issues"
+  },
+  "homepage": "https://github.com/tiamilani/ProgettoIngegneriaDelSoftware2#readme",
+  "dependencies": {
+    "adm-zip": "^0.4.7",
+    "body-parser": "^1.18.2",
+    "download-file": "^0.1.5",
+    "express": "^4.16.2",
+    "extract-zip": "^1.6.5",
+    "fast-csv": "^2.4.1",
+    "file-type": "^7.2.0",
+    "fs": "^0.0.1-security",
+    "http": "^0.0.0",
+    "mongo-join": "^1.0.0",
+    "mongoose": "^4.12.3",
+    "mysql": "^2.15.0",
+    "node-schedule": "^1.2.5",
+    "node-telegram-bot-api": "^0.28.0",
+    "path": "^0.12.7",
+    "read-chunk": "^2.1.0",
+    "rimraf": "^2.6.2",
+    "sleep": "^5.1.1",
+    "string-similarity": "^1.2.0",
+    "util": "^0.10.3",
+    "website-scraper": "^3.3.1"
+  }
+}
