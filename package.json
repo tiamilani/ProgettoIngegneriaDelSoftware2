@@ -2,10 +2,10 @@
   "name": "unitnhelp_bot",
   "version": "1.0.0",
   "description": "UniTN Help Center Bot",
-  "main": "TelegramBot/index.js",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node TelegramBot/index.js"
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
@@ -28,6 +28,6 @@
     "read-chunk": "^2.1.0",
     "rimraf": "^2.6.2",
     "util": "^0.10.3",
-    "website-scraper": "^3.3.1"
+    "website-scraper": "^3.3.2"
   }
 }
