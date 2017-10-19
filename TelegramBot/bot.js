@@ -5,13 +5,13 @@ const TelegramBot = require('node-telegram-bot-api');
 
 // ---------- BOT CONFIG ----------
 
-const TOKEN = process.env.TELEGRAM_TOKEN || '466491462:AAF8RxkhGR00Mylr0LGZfFWUMvPVWSHqUPE';
+const TOKEN = process.env.TELEGRAM_TOKEN || '417759810:AAFHuTH4figL2WqKsEGem0ZIggf6zbonV80';
 const options = {
     webHook: {
         port: process.env.PORT || 443
     }
 };
-const url = process.env.APP_URL || 'https://unitnhelpbot.herokuapp.com:443';
+const url = process.env.APP_URL || 'https://botingse2.herokuapp.com:443';
 const bot = new TelegramBot(TOKEN, options);
 bot.setWebHook(`${url}/bot${TOKEN}`);
 console.log('BOT STARTED');
