@@ -13,6 +13,8 @@ routes(app); //register the route
 
 app.listen(port);
 
+const bot = require('./TelegramBot/bot');
+
 console.log('todo list RESTful API server started on: ' + port);
 
 

@@ -8,7 +8,4 @@ module.exports = function(app) {
 	app.route('/example')
 		.get(controller.function)
 		.post(controller.function);
-
-	//app.route('/telegram')
-		//.post(controller.start)
 };

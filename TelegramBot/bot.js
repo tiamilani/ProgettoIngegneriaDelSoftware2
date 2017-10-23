@@ -1,20 +1,3 @@
-/*console.log('LOG: ' + __filename);
-const express = require('express');
-//const client = require('./../client');
-const router = express.Router();
-
-router.post('/', (req, res, next) => {
-    client
-        .sendMessage(req.body.message.chat.id, 'I\'m a bot, so what?')
-        .promise()
-        // replying succeeded, so we can send a 200 response to Telegram
-        .then(() => res.json({ok: true}))
-        // something failed, we will use express' default error handling
-        .catch(next);
-});
-
-module.exports = router;*/
-/*
 // ---------- REQUIRE ----------
 const http = require ('http');
 const TelegramBot = require('node-telegram-bot-api');
@@ -287,7 +270,7 @@ bot.onText(/\/Imposta_Promemoria_Bandi/, (msg) => {
 bot.onText(/\/Povo1_PastoLesto/, (msg) => {
     bot.sendPhoto(msg.chat.id, "./WebcamMense/Povo01.jpg", {caption : "Mensa Pasto Completo di Povo1"} );
 
-    // da qui var options = { method: "HEAD", host: "ftp.tn.ymir.eu", port: 80, path: "/Povo01.jpg" };
+ 	/*var options = { method: "HEAD", host: "ftp.tn.ymir.eu", port: 80, path: "/Povo01.jpg" };
 	var request = http.request ( options, function ( response ) {
     	if(response.statusCode === 200)
 			bot.sendPhoto(msg.chat.id, "http://ftp.tn.ymir.eu/Povo01.jpg", {caption : "Mensa Pasto Lesto di Povo1"} );
@@ -295,7 +278,7 @@ bot.onText(/\/Povo1_PastoLesto/, (msg) => {
 			bot.sendMessage(msg.chat.id, "Sembra che la videocamera abbia qualcosa che non va...");
 	});
 
-	request.end(); a qui//
+	request.end(); */
 });
 
 bot.onText(/\/Povo1_PastoCompleto/, (msg) => {
@@ -320,9 +303,9 @@ bot.onText(/\/Imposta_Promemoria_Mensa/, (msg) => {
 	}, 600 * 1000);
 });
 
-// da qui bot.onText(/\/Bus/, (msg) => {
+/*bot.onText(/\/Bus/, (msg) => {
     bot.sendMessage(msg.chat.id, "TO DO...");
-});a qui//
+});*/
 
 bot.onText(/\/Imposta_Promemoria_Mezzi/, (msg) => {
 	setTimeout(function () {
@@ -379,11 +362,8 @@ bot.onText(/\/Nearest/, (msg) => {
 });
 
 bot.onText(/\/Mezzi/, (msg) => {
-<<<<<<< HEAD
-    var text = "In questa sezione puoi ottenere informazioni riguardanti i mezzi di trasporto";
-=======
     // da qui var text = "In questa sezione puoi ottenere informazioni riguardanti i mezzi di trasporto";
->>>>>>> 5f0758f... .
+    /*var text = "In questa sezione puoi ottenere informazioni riguardanti i mezzi di trasporto";
 	var keyboard = {
         reply_markup: JSON.stringify({
             keyboard: [
@@ -396,13 +376,10 @@ bot.onText(/\/Mezzi/, (msg) => {
         })
     };
 
-<<<<<<< HEAD
-    bot.sendMessage(msg.chat.id, text, keyboard);
-=======
     bot.sendMessage(msg.chat.id, text, keyboard);a qui//
+    bot.sendMessage(msg.chat.id, text, keyboard);*/
 
     bot.sendMessage(msg.chat.id, "TO DO...");
->>>>>>> 5f0758f... .
 });
 
 bot.onText(/\/Mensa/, (msg) => {
@@ -661,4 +638,4 @@ bot.onText(/\/start/, (msg) => {
     };
 
     bot.sendMessage(msg.chat.id, text, keyboard);
-});*/
+});
