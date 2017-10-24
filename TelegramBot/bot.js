@@ -270,7 +270,7 @@ bot.onText(/\/Imposta_Promemoria_Bandi/, (msg) => {
 bot.onText(/\/Povo1_PastoLesto/, (msg) => {
     bot.sendPhoto(msg.chat.id, "./WebcamMense/Povo01.jpg", {caption : "Mensa Pasto Completo di Povo1"} );
 
- 	/*var options = { method: "HEAD", host: "ftp.tn.ymir.eu", port: 80, path: "/Povo01.jpg" };
+    /*var options = { method: "HEAD", host: "ftp.tn.ymir.eu", port: 80, path: "/Povo01.jpg" };
 	var request = http.request ( options, function ( response ) {
     	if(response.statusCode === 200)
 			bot.sendPhoto(msg.chat.id, "http://ftp.tn.ymir.eu/Povo01.jpg", {caption : "Mensa Pasto Lesto di Povo1"} );
@@ -278,7 +278,7 @@ bot.onText(/\/Povo1_PastoLesto/, (msg) => {
 			bot.sendMessage(msg.chat.id, "Sembra che la videocamera abbia qualcosa che non va...");
 	});
 
-	request.end(); */
+	request.end();*/
 });
 
 bot.onText(/\/Povo1_PastoCompleto/, (msg) => {
@@ -303,9 +303,205 @@ bot.onText(/\/Imposta_Promemoria_Mensa/, (msg) => {
 	}, 600 * 1000);
 });
 
-/*bot.onText(/\/Bus/, (msg) => {
-    bot.sendMessage(msg.chat.id, "TO DO...");
-});*/
+bot.onText(/\/Bus/, (msg) => {
+    var mysql = require('mysql');
+
+    var con = mysql.createConnection({
+        host: "db4free.net",
+        user: "andreafadi",
+        password: "fabioCasati",
+        database: "ttesercizio"
+    });
+
+    con.connect(function(err) {
+        if (err) throw err;
+
+        con.query("SELECT DISTINCT route_short_name FROM routes ORDER BY route_short_name ASC", function (err, result) {
+            if (err) throw err;
+
+            var text = "Prima di tutto dimmi che linea ti interessa";
+            var elements = [];
+            let i;
+            for(i = 0; i < result.length; i++)
+                elements.push([result[i].route_short_name]);
+
+            var keyboard = {
+                reply_markup: JSON.stringify({
+                    keyboard: elements,
+                    one_time_keyboard: true,
+                    resize_keyboard: true
+                })
+            };
+
+            bot.sendMessage(msg.chat.id, text, keyboard).then(() => {
+                bot.once('text', (msg) => {
+
+                    var linea = parseInt(msg.text);
+                    if (!isNaN(linea))
+                    {
+                        con.query("CREATE TABLE IF NOT EXISTS linea_" + linea + " AS SELECT DISTINCT trip_headsign FROM time_table WHERE route_short_name='" + linea + "';", function (err, result) {
+                            if (err) throw err;
+
+                            con.query("SELECT * FROM linea_" + linea, function (err, result, fields) {
+                                if (err) throw err;
+
+                                var text = "Seleziona la direzione";
+
+                                elements = [];
+                                for(i = 0; i < result.length; i++)
+                                    elements.push([result[i].trip_headsign]);
+
+                                var keyboard = {
+                                    reply_markup: JSON.stringify({
+                                        keyboard: elements,
+                                        one_time_keyboard: true,
+                                        resize_keyboard: true
+                                    })
+                                };
+
+                                bot.sendMessage(msg.chat.id, text, keyboard).then(() => {
+                                    bot.once('text', (msg) => {
+                                        var fermata = msg.text;
+                                        var tmpF = fermata.replace(/[\W_]/g, '');
+
+                                        console.log(fermata);
+                                        console.log(tmpF);
+
+                                        var date = new Date();
+                                        date.setMinutes(date.getMinutes() - 5);
+                                        var hour1 = date.getHours();
+                                        var minute1 = date.getMinutes();
+                                        date.setMinutes(date.getMinutes() + 50);
+                                        var hour2 = date.getHours();
+                                        var minute2 = date.getMinutes();
+                                        var second = date.getSeconds();
+                                        var clockPre = hour1 + ':' + minute1 + ':' + second;
+                                        var clockPost = hour2 + ':' + minute2 + ':' + second;
+                                        console.log("NOW: " + date);
+                                        console.log("pre: " + clockPre + "\npost: " + clockPost);
+
+                                        var query = "SELECT * FROM time_table WHERE route_short_name='" + linea + "' AND trip_headsign='" + fermata + "';";
+
+                                        con.query("CREATE TABLE IF NOT EXISTS linea_" + linea + "_direzione_" + tmpF + " AS " + query, function (err, result) {
+                                            if (err) throw err;
+
+                                            con.query("SELECT * FROM linea_" + linea + "_direzione_" + tmpF + " WHERE arrival_time BETWEEN '" + clockPre + "' AND '" + clockPost + "' ORDER BY arrival_time ASC;", function (err, result, fields) {
+                                                if (err) throw err;
+
+                                                elements = [];
+                                                elements.push([{ text: 'Invia Posizione', request_location: true }]);
+
+                                                for(i = 0; i < result.length; i++)
+                                                    elements.push([result[i].stop_name]);
+
+                                                var text = "Mandami la tua posizione o seleziona una fermata specifica e ti saprò dire dove prendere l'autobus!";
+                                                var keyboard = {
+                                                    reply_markup: JSON.stringify({
+                                                        keyboard: elements,
+                                                        one_time_keyboard: true,
+                                                        resize_keyboard: true
+                                                    })
+                                                };
+
+                                                bot.sendMessage(msg.chat.id, text, keyboard).then(() => {
+                                                    bot.once('text', (msg) => {
+                                                        con.query("SELECT * FROM linea_" + linea + "_direzione_" + tmpF + " WHERE stop_name='" + msg.text + "' AND arrival_time > '" + clockPre + "' ORDER BY arrival_time ASC;", function (err, result, fields) {
+                                                            if (err) throw err;
+
+                                                            text = "";
+                                                            for(i = 0; i < result.length; i++)
+                                                                text += "Linea: " + result[i].route_short_name + "\nOrario: <b>" + result[i].arrival_time + "</b>\n\n";
+
+                                                            text += "\n\nDisabilità";
+                                                            switch(parseInt(result[0].wheelchair_boarding)) {
+                                                                case 0:
+                                                                    text += "\n\tFermata attrezzata: Info non presente";
+                                                                    break;
+                                                                case 1:
+                                                                    text += "\n\tFermata attrezzata: Si, ma non per tutti i mezzi";
+                                                                    break;
+                                                                case 2:
+                                                                    text += "\n\tFermata attrezzata: No";
+                                                                    break;
+                                                            }
+
+                                                            switch(parseInt(result[0].wheelchair_accessible)) {
+                                                                case 0:
+                                                                    text += "\n\tVeicolo attrezzato: Info non presente";
+                                                                    break;
+                                                                case 1:
+                                                                    text += "\n\tVeicolo attrezzato: Si, al massimo 1 passeggero";
+                                                                    break;
+                                                                case 2:
+                                                                    text += "\n\tVeicolo attrezzato: No";
+                                                                    break;
+                                                            }
+
+                                                            bot.sendMessage(msg.chat.id, text, {parse_mode : "HTML"});
+                                                            bot.sendLocation(msg.chat.id, result[0].stop_lat, result[0].stop_lon);
+                                                        });
+                                                    })
+
+                                                    bot.once('location', (msg) => {
+                                                        var myPos = [msg.location.latitude, msg.location.longitude];
+
+                                                        let i, val;
+                                                        let min = 9999999;
+                                                        let tmp1, tmp2;
+                                                        for (i = 0; i < result.length; i++)
+                                                        {
+                                                            tmp2 = [result[i].stop_lat, result[i].stop_lon];
+                                                            tmp1 = fun.distanceBetween(myPos, tmp2);
+                                                            console.log("Analizzo Fermata: " + result[i].stop_name);
+                                                            if(tmp1 < min)
+                                                            {
+                                                                console.log("\tFermata più vicina: " + result[i].stop_name);
+                                                                min = tmp1;
+                                                                val = i;
+                                                            }
+                                                        }
+
+                                                        var text = "Linea: " + result[val].route_long_name + "\nFermata: <b>" + result[val].stop_name + "</b>\nOrario: <b>" + result[val].arrival_time + "</b>\n\nDisabilità";
+                                                        switch(parseInt(result[val].wheelchair_boarding)) {
+                                                            case 0:
+                                                                text += "\n\tFermata attrezzata: Info non presente";
+                                                                break;
+                                                            case 1:
+                                                                text += "\n\tFermata attrezzata: Si, ma non per tutti i mezzi";
+                                                                break;
+                                                            case 2:
+                                                                text += "\n\tFermata attrezzata: No";
+                                                                break;
+                                                        }
+
+                                                        switch(parseInt(result[val].wheelchair_accessible)) {
+                                                            case 0:
+                                                                text += "\n\tVeicolo attrezzato: Info non presente";
+                                                                break;
+                                                            case 1:
+                                                                text += "\n\tVeicolo attrezzato: Si, al massimo 1 passeggero";
+                                                                break;
+                                                            case 2:
+                                                                text += "\n\tVeicolo attrezzato: No";
+                                                                break;
+                                                        }
+
+                                                        bot.sendMessage(msg.chat.id, text, {parse_mode : "HTML"});
+                                                        bot.sendLocation(msg.chat.id, result[val].stop_lat, result[val].stop_lon);
+                                                    })
+                                                })
+                                            });
+                                        });
+                                    })
+                                })
+                            });
+                        });
+                    }
+                })
+            })
+        })
+    });
+});
 
 bot.onText(/\/Imposta_Promemoria_Mezzi/, (msg) => {
 	setTimeout(function () {
@@ -362,8 +558,7 @@ bot.onText(/\/Nearest/, (msg) => {
 });
 
 bot.onText(/\/Mezzi/, (msg) => {
-    // da qui var text = "In questa sezione puoi ottenere informazioni riguardanti i mezzi di trasporto";
-    /*var text = "In questa sezione puoi ottenere informazioni riguardanti i mezzi di trasporto";
+    var text = "In questa sezione puoi ottenere informazioni riguardanti i mezzi di trasporto";
 	var keyboard = {
         reply_markup: JSON.stringify({
             keyboard: [
@@ -376,10 +571,7 @@ bot.onText(/\/Mezzi/, (msg) => {
         })
     };
 
-    bot.sendMessage(msg.chat.id, text, keyboard);a qui//
-    bot.sendMessage(msg.chat.id, text, keyboard);*/
-
-    bot.sendMessage(msg.chat.id, "TO DO...");
+    bot.sendMessage(msg.chat.id, text, keyboard);
 });
 
 bot.onText(/\/Mensa/, (msg) => {

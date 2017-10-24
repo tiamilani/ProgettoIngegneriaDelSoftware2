@@ -39,7 +39,7 @@ var placesNearby = function (bot, chatId, map, city, range, type, nome) {
 		{
 			location: city,
 			radius: range,
-			language: "it",
+			language: "it",var
 			type: type,
 			name: nome
 		},
