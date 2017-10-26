@@ -1,6 +1,7 @@
 'use strict';
 module.exports = function(app) {
-  var todoList = require('../controllers/Controller');
+	var controller = require('../controllers/Controller');
+	var place = require ('../controllers/places');
 
 	// todoList Routes
 	app.route('/example')
@@ -8,6 +9,6 @@ module.exports = function(app) {
 		.post(controller.function);
 
 	app.route("/localizza")
-		.get(controller.luoghiUtili)
-		.post(controller.luoghiUtili);
+		.get(place.luoghiUtili)
+		.post(place.luoghiUtili);
 };

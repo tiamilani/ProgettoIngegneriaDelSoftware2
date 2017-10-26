@@ -609,7 +609,7 @@ bot.on('text', (msg) => {
 	var keyboardHome = {
 		reply_markup: JSON.stringify({
 			keyboard: [
-				['Home']
+				['']
 			],
 			one_time_keyboard: true,
 			resize_keyboard: true
@@ -640,7 +640,9 @@ bot.on('text', (msg) => {
 
 					bot.sendMessage(msg.chat.id, text, keyboardHome);
 
+					console.log("pre funzione");
 					place.placesNearby(bot,msg.chat.id,map,citta,750,"library","Biblioteca");
+					console.log("post funzione");
 				}
 				else if(msg.text == "Mense"){
 					var text = "Ecco a te le mense a Trento :), la pappa hehe";
@@ -774,7 +776,6 @@ bot.on('text', (msg) => {
 				};
 
 				bot.sendMessage(msg.chat.id, text2, keyboard).then(() => {
-					console.log("Testo inviato");
 
 					bot.once('text', (msg) => {
 						var nome = msg.text;
@@ -783,7 +784,7 @@ bot.on('text', (msg) => {
 						bot.sendMessage(msg.chat.id, text3, keyboardHome);
 						console.log("Presentazione dei rislutati inviata");
 
-						place.placesNearby(bot,msg.chat.id,map,citta,750,"","nome");
+						place.placesNearby(bot,msg.chat.id,map,citta,750,"",nome);
 					});
 				});
 			});
@@ -809,27 +810,10 @@ bot.on('text', (msg) => {
 
 		bot.sendMessage(msg.chat.id, text, keyboard);
 	}
-	if(msg.text == "Home"){
-		var text = "Home page!";
-
-		var keyboard = {
-	        reply_markup: JSON.stringify({
-	            keyboard: [
-					['/Mezzi'],
-					['/Mensa'],
-					['Luoghi utili'],
-					['/OperaUniTN']
-	            ],
-	            one_time_keyboard: true,
-	            resize_keyboard: true
-	        })
-	    };
-
-		bot.sendMessage(msg.chat.id, text, keyboard);
-	}
 });
 
 bot.onText(/\/start/, (msg) => {
+	bot.removeListener('callback_query');
     var text = "Benvenuto " + msg.from.first_name + "!\nUniTN Help Center è un bot sviluppato per aiutare attuali e/o futuri studenti dell'Università degli Studi di Trento in vari ambiti della propria vita quotidiana!";
 
     var keyboard = {
