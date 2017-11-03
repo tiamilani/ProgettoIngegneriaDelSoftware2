@@ -160,10 +160,6 @@ var downloadPhoto = function (link, dir, filesNotRemove) {
 	}).catch((err) => { console.log("Errore nel download dei file richiesti"); });
 }
 
-// AIzaSyA_rBZuYeP8ONgMXRnIOpO0t0XWtod08lU  API KEY for google maps
-
-
-
 // ---------- EXPORTS ----------
 exports.richiestaFile = downloadFiles;
 exports.richiestaFotoMensa = downloadPhoto;
