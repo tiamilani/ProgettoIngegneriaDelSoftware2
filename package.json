@@ -27,6 +27,7 @@
     "path": "^0.12.7",
     "read-chunk": "^2.1.0",
     "rimraf": "^2.6.2",
+    "string-similarity": "^1.2.0",
     "util": "^0.10.3",
     "website-scraper": "^3.3.1"
   }
