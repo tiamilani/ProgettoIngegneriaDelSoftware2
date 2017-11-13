@@ -1,30 +1,44 @@
-const bot = require('./bot');
-/*const express = require('express');
-const bodyParser = require('body-parser');
-const util = require('util');
-const app = express();
+var express = require('express'),
+  app = express(),
+  port = process.env.PORT || 3000,
+  bodyParser = require('body-parser');
+
+app.use(function(req, res, next) {
+	console.log('Something is happening.');
+	res.header('Access-Control-Allow-Origin', '*');
+	res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+	if (req.method === 'Options') {
+        res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE');
+        return res.status(200).json({});
+    }
+	next();
+});
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-app.get('/sum', function (req, res) {
-    res.statusCode = 200;
-    res.setHeader('Content-Type', 'text/plain');
 
-    //process
-    var x = parseFloat(req.query.x);
-    var y = parseFloat(req.query.y);
-    var sum = x + y;
+var routes = require('./api/routes/Routes'); //importing route
 
-    //write response
-    res.write('?x: ' + x + '\n');
-    res.write('?y: ' + y + '\n');
-    res.write('sum: ' + sum + '\n');
-	alert(sum);
-    //send response
-    res.end();
-});
+routes(app); //register the route
 
-app.listen((process.env.PORT || 8081));
+/*
+app.use(function (req, res, next) {
+    // do logging
+    console.log('Something is happening.');
+    //Enabling CORS
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    if (req.method === 'Options') {
+        res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE');
+        return res.status(200).json({});
+    }
+    // make sure we go to the next routes
+    next();
+});*/
 
-console.log('Server running at http://localhost:80/');*/
+app.listen(port);
+
+const bot = require('./TelegramBot/bot');
+
+console.log('todo list RESTful API server started on: ' + port);

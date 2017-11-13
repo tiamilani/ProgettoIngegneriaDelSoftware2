@@ -18,13 +18,13 @@ const keywords = ['home', 'howto', 'ammissioni', 'immatricolazioni', 'borse di s
 
 // ---------- BOT CONFIG ----------
 
-const TOKEN = process.env.TELEGRAM_TOKEN || '470816077:AAF37muA3xMhbkW2eKYTjc1-67sspt3cYD0';
+const TOKEN = process.env.TELEGRAM_TOKEN || '417759810:AAFHuTH4figL2WqKsEGem0ZIggf6zbonV80';
 const options = {
     webHook: {
         port: process.env.PORT || 443
     }
 };
-const url = process.env.APP_URL || 'https://unitnhelpcenter.herokuapp.com:443';
+const url = process.env.APP_URL || 'https://botingse2.herokuapp.com:443';
 const bot = new TelegramBot(TOKEN, options);
 bot.setWebHook(`${url}/bot${TOKEN}`);
 console.log('BOT STARTED');
@@ -268,7 +268,7 @@ bot.on('text', (msg) => {
       bot.sendMessage(msg.chat.id, text, keyboard);
     }else{
       var matches = similar.findBestMatch(msg.text.toLowerCase(), keywords);
-      bot.sendMessage(msg.chat.id, "Non ho trovato il comando desiderato. Forse intendevi " + matches.bestMatch.target + "? " + matches.bestMatch.rating);
+      bot.sendMessage(msg.chat.id, "Non ho trovato il comando desiderato. Forse intendevi " + matches.bestMatch.target + "?");
     }
 
 });
