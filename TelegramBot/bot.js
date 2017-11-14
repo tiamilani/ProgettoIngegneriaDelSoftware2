@@ -15,10 +15,10 @@ const TOKEN = process.env.TELEGRAM_TOKEN || '466491462:AAF8RxkhGR00Mylr0LGZfFWUM
         port: process.env.PORT || 443
     }
 };
-const url = process.env.APP_URL || 'https://unitnhelpbot.herokuapp.com:443';
 const bot = new TelegramBot(TOKEN, options);
 bot.setWebHook(`${url}/bot${TOKEN}`);*/
-const bot = new TelegramBot(token, {polling: true});
+const url = process.env.APP_URL || 'https://unitnhelpbot.herokuapp.com:443';
+const bot = new TelegramBot(TOKEN, {polling: true});
 console.log('BOT STARTED');
 
 var databaseConnection = undefined;
