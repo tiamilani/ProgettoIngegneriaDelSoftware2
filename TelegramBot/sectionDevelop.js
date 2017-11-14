@@ -259,7 +259,7 @@ function resetTableUsers (bot, id, connection) {
 	console.log("resetTableUsers");
 	connectToDatabaseInit(connection)
 		.then((con) => {
-			var query = "UPDATE users SET last_command='/start',prevChoice='1',nameT=null, keyboard=null, lastResult=null";
+			var query = "UPDATE users SET last_command='/start',prevChoice='1',nameT=null, keyboard=null, lastResult=null, location=null";
 
 			con.query(query, function (err, result) {
 				if (err) throw err;

@@ -1,3 +1,9 @@
+// ---------- REQUIRE ----------
+const fun = require ('./functions.js');
+const dw = require('website-scraper');
+const fs = require('fs');
+const htmlparser = require('htmlparser2');
+
 // ---------- FUNCTIONS ----------
 function parseHTMLFile(fileToParse, stringaDaConfrontare) {
 	return new Promise (
@@ -115,7 +121,7 @@ function downloadAvvisi(dipartimento, bot, msg) {
       		} else {
         		try {
           			//Elimino le cartelle
-          			Promise.all([deleteFolderRecursive("./Avvisi")]).then(values => {
+          			Promise.all([fun.deleteFolderRecursive("./Avvisi")]).then(values => {
             			//Scarico i file nella relativa cartella
             			dw(options)
               				.then((result) => { jsonResult = readHTMLFile("./Avvisi/" + dipartimento + "/index.html", bot, msg); resolve(jsonResult);})

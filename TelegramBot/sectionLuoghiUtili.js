@@ -63,24 +63,15 @@ function createHome () {
     };
 }
 
-function createChoice (array, npr, argument, checkName, requestPosition) {
-    let elements = [];
-
-    if(checkName != undefined) {
-        var similar = [];
-        for(let i = 0; i < array.length; i++)
-            if(((array[i])[argument]).toLowerCase().includes(checkName.toLowerCase()))
-                similar.push(array[i]);
-
-        array = similar.slice();
-    }
+function createChoice (array, npr, requestPosition) {
+	let elements = [];
 
     if(array != undefined) {
         let rest = array.length % npr;
         for(let i = 0; i < (array.length - rest); i += npr) {
             var item = [];
             for(let j = 0; j < npr; j++)
-                item.push((array[i+j])[argument]);
+                item.push(array[i+j]);
 
             elements.push(item);
         }
@@ -91,7 +82,6 @@ function createChoice (array, npr, argument, checkName, requestPosition) {
 
         elements.push(item);
     }
-
     if(requestPosition)
         elements.unshift(['Home'],[{ text: 'Invia Posizione', request_location: true }]);
 	else
@@ -112,7 +102,7 @@ function Luoghi_F1 (bot, msg, connection) {
 		.then((con) => {
 			var text = "In questa sezione puoi ottenere le posizioni di alcuni luoghi di interesse!\nInizia con dirmi in che città cercare";
 			var choices = ['Trento','Mesiano','Povo'];
-		    var keyboard = createChoice(choices, 1, undefined, undefined, true);
+		    var keyboard = createChoice(choices, 1, true);
 
 			var keyboardString = JSON.parse(keyboard.reply_markup).keyboard;
 			var stringKeyboard = [].concat.apply([], keyboardString);
@@ -164,7 +154,7 @@ function Luoghi_F2 (bot, msg, connection) {
 
 				var text = "Hei sei nella sezione luoghi utili :), Cosa vorresti cercare?";
 				var choices = ['Biblioteche','Mense','Facoltà','Copisterie'];
-				var keyboard = createChoice(choices, 1, undefined, undefined, false);
+				var keyboard = createChoice(choices, 1, false);
 
 				var keyboardString = JSON.parse(keyboard.reply_markup).keyboard;
 				var stringKeyboard = [].concat.apply([], keyboardString);
@@ -181,7 +171,7 @@ function Luoghi_F2 (bot, msg, connection) {
 							console.error(err);
 						});
 				});
-			}
+			});
 		})
 		.catch(err => {
 			bot.sendMessage(msg.chat.id, err);
@@ -230,7 +220,7 @@ function Luoghi_F3 (bot, msg, connection) {
 					.catch(err => {
 						console.error(err);
 					});
-			}
+			});
 		})
 		.catch(err => {
 			bot.sendMessage(msg.chat.id, err);

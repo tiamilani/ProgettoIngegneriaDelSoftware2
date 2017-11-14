@@ -1,5 +1,6 @@
 // ---------- REQUIRE ----------
 const db = require('./sectionDevelop');
+const fun = require ('./functions.js');
 
 // ---------- FUNCTIONS ----------
 function checkID (id, lastCommand, connection) {
@@ -37,8 +38,7 @@ function checkID (id, lastCommand, connection) {
 
 function createHome () {
 	return {
-		parse_mode: "Markdown",
-        reply_markup: JSON.stringify({
+		reply_markup: JSON.stringify({
 			keyboard: [
 				['Mezzi'],
 				['Mensa'],
@@ -96,7 +96,7 @@ function Mensa_F2 (bot, msg, connection) {
             let tmp;
             for (i = 0; i < mense.length; i++)
             {
-                tmp = getDistance(myPos, mense[i]);
+                tmp = fun.distanceBetween(myPos, mense[i]);
                 if(tmp < min)
                 {
                     min = tmp;
@@ -116,10 +116,10 @@ function Mensa_F2 (bot, msg, connection) {
             checkID(msg.chat.id, '/start', con)
                 .then((result) => {
                     bot.sendLocation(msg.chat.id, (mense[nM])[0], (mense[nM])[1]);
-
+					console.log(createHome());
                     bot.sendMessage(msg.chat.id, text, createHome());
                 })
-                .catch(err => {
+                .catch((err) => {
                     console.error(err);
                 });
         })

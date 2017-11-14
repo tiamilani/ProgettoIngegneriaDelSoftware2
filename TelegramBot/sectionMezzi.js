@@ -108,10 +108,11 @@ function createChoice (array, npr, argument, checkName, requestPosition) {
 }
 
 function printText (result) {
+	console.log("1");
     var text = "";
     if(result.route_short_name != undefined)
         text += "Linea " + result.route_short_name + " (" + result.route_long_name + ")";
-
+		console.log("2");
 	if(result.trip_headsign != undefined)
         text += "\nDirezione: *" + result.trip_headsign + "*";
 
@@ -1142,23 +1143,25 @@ function All_FF (bot, msg, connection) {
 				res = JSON.parse(res.lastResult);
 
                 if(msg.data == 'loc') {
+					console.log("Send");
 					checkID(msg.message.chat.id, '/start', con)
 						.then((result) => {
+							console.log("edit");
 							bot.editMessageText(printText(res[prevChoice-1]), {chat_id: msg.message.chat.id,message_id: msg.message.message_id,parse_mode: "Markdown"});
-
-							bot.sendMessage(msg.message.chat.id, "Ecco la possizione selezionata!", createHome());
+							console.log("send2");
+							bot.sendMessage(msg.message.chat.id, "Ecco la posizione selezionata!", createHome());
 				            bot.sendLocation(msg.message.chat.id, res[prevChoice-1].stop_lat, res[prevChoice-1].stop_lon);
 						})
 						.catch(err => {
 							console.error(err);
 						});
                 } else {
-                    if(prevChoice != parseInt(msg.data)) {
-                        prevChoice = parseInt(msg.data);
+					if(prevChoice != parseInt(msg.data)) {
+						prevChoice = parseInt(msg.data);
 
-                        var options = getPaginationFull(prevChoice, res.length);
-                        options['chat_id'] = msg.message.chat.id;
-                        options['message_id'] = msg.message.message_id;
+						var options = getPaginationFull(prevChoice, res.length);
+						options['chat_id'] = msg.message.chat.id;
+						options['message_id'] = msg.message.message_id;
 
 						var query = "UPDATE users SET prevChoice='" + prevChoice + "' WHERE ChatID='" + msg.message.chat.id + "'";
 			            con.query(query, function (err, result) {
@@ -1166,7 +1169,7 @@ function All_FF (bot, msg, connection) {
 
 		                	bot.editMessageText(printText(res[prevChoice-1]), options);
 						});
-                    }
+					}
                 }
             });
 		})

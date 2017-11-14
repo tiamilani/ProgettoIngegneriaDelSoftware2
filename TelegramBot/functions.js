@@ -42,6 +42,7 @@ var deleteFolderRecursive = function (path) {
 }
 
 var downloadFiles = function (link, dir, bot, msg) {
+    console.log("in");
     let options = {
         urls: [link],
         directory: dir,
@@ -51,7 +52,7 @@ var downloadFiles = function (link, dir, bot, msg) {
 
     if (!fs.existsSync(dir)) {
         dw(options).then((result) => {
-
+            
 			deleteFolderRecursive(dir);
 			Promise.all([deleteFolderRecursive]).then(values => {
 				var tmpFiles = fs.readdirSync(dir);
@@ -178,6 +179,7 @@ function toDate(dStr, format) {
 
 // ---------- EXPORTS ----------
 exports.rimuoviDir = deleteAll;
+exports.deleteFolderRecursive = deleteFolderRecursive;
 exports.richiestaFile = downloadFiles;
 exports.richiestaFotoMensa = downloadPhoto;
 exports.distanceBetween = getDistance;

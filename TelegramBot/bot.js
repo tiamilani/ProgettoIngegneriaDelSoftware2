@@ -51,14 +51,17 @@ var databaseConnection = undefined;
 }, 120 * 1000);*/
 
 // ---------- FUNCTIONS ----------
-function routeCommands (msg) {
+function routeCommands (msg, id, connection) {
+    console.log("in reoutes");
 	db.initiateConnection(connection)
 		.then((con) => {
             databaseConnection = con;
+            console.log("init routes");
 	        var query = "SELECT * FROM users WHERE ChatID='" + id + "'";
 	        con.query(query, function (err, result) {
 	            if (err) throw err;
 
+                console.log(result[0].last_command);
 				result = result[0];
 
 				if ((result.last_command).includes("Fermata")) {
@@ -139,6 +142,7 @@ function routeCommands (msg) {
                             place.Luoghi_F3 (bot, msg, con);
                             break;
 					}
+                }
 				else if ((result.last_command).includes("Mensa")) {
                     switch (result.last_command) {
                         case 'Mensa_F1':
@@ -161,7 +165,8 @@ function routeCommands (msg) {
                 }
 			});
 		})
-		.catch(err => {
+		.catch((err) => {
+            console.log("error");
 			bot.sendMessage(id, err);
 		});
 }
@@ -363,6 +368,7 @@ function Mensa (msg) {
                 });
             break;
         case 'Menu_Mensa':
+        console.log("inoltro");
             fun.richiestaFile('http://www.operauni.tn.it/servizi/ristorazione/menu', './Menu_Mensa', bot, msg);
             break;
         case 'Nearest':
@@ -704,7 +710,7 @@ function Avvisi (msg) {
 
 function Luoghi (msg) {
     switch (msg.text) {
-        case 'Luoghi Utili':
+        case 'Luoghi':
             place.Luoghi_F1(bot, msg, databaseConnection);
             break;
     }
@@ -719,12 +725,12 @@ function BackHome (msg) {
     	db.initConnectionLess(databaseConnection)
     		.then((con) => {
                 databaseConnection = con;
-    	        var query = "SELECT ChatID FROM users WHERE ChatID='" + id + "'";
+    	        var query = "SELECT ChatID FROM users WHERE ChatID='" + msg.chat.id + "'";
     	        con.query(query, function (err, result) {
     	            if (err) return reject(err);
 
     				if(result.length == 0) {
-    					var query = "INSERT INTO users (ChatID) VALUES ('" + id + "')";
+    					var query = "INSERT INTO users (ChatID) VALUES ('" + msg.chat.id + "')";
     			        con.query(query, function (err, result) {
     			            if (err) return reject(err);
 
@@ -780,7 +786,16 @@ bot.on('text', function(msg) {
             db.initConnectionLess(databaseConnection)
                 .then((con) => {
                     databaseConnection = con;
-                    if(['Mezzi','Linea','Fermata','PrimiOrari','Avvisi_Linee','Tariffe'].includes(msg.text))
+                    if(['Home'].includes(msg.text)) {
+                        BackHome(msg)
+                            .then((result) => {
+                                bot.sendMessage(msg.chat.id, "Torno alla Home...", createHome());
+                            })
+                            .catch(err => {
+                                console.error(err);
+                            });
+                    }
+                    else if(['Mezzi','Linea','Fermata','PrimiOrari','Avvisi_Linee','Tariffe'].includes(msg.text))
                         bot.emit('funzioniMezzi', msg);
                     else if(['Scadenze','Inserisci_Scadenza','Modifica_Scadenza','Elimina_Scadenza'].includes(msg.text))
                         bot.emit('funzioniScadenze', msg);
@@ -796,17 +811,8 @@ bot.on('text', function(msg) {
                         bot.emit('funzioniLuoghi', msg);
                     else if(['Giulia','Ilaria','Virginia'].includes(msg.text))
                         EasterEgg(msg);
-                    else if(['Home'].includes(msg.text)) {
-                        BackHome(msg)
-                            .then((result) => {
-                                bot.sendMessage(msg.chat.id, "Torno alla Home...", createHome());
-                            })
-                            .catch(err => {
-                                console.error(err);
-                            });
-                    }
                     else
-                        routeCommands(msg);
+                        routeCommands(msg, msg.chat.id, con);
                 })
                 .catch(err => {
                     bot.sendMessage(msg.chat.id, err);
@@ -820,7 +826,7 @@ bot.on('text', function(msg) {
             db.initConnectionLess(databaseConnection)
                 .then((con) => {
                     databaseConnection = con;
-                    urban.updateStatus(msg.chat.id, '/start', con)
+                    BackHome(msg)
                         .then((result) => {
                             var query = "UPDATE users SET nome='" + msg.from.first_name + "',is_bot=" + msg.from.is_bot;
 
@@ -849,10 +855,12 @@ bot.on('text', function(msg) {
 });
 
 bot.on('location', function(msg) {
+    console.log("Location");
     db.initiateConnection(databaseConnection)
         .then((con) => {
             databaseConnection = con;
-            routeCommands(msg);
+            console.log("routes");
+            routeCommands(msg, msg.chat.id, con);
         })
         .catch(err => {
             bot.sendMessage(msg.chat.id, err);
@@ -860,14 +868,17 @@ bot.on('location', function(msg) {
 });
 
 bot.on('callback_query', function(msg) {
+    console.log("bot?");
     if(msg.from.is_bot == false) {
+        console.log("callback");
         db.initiateConnection(databaseConnection)
             .then((con) => {
                 databaseConnection = con;
-                routeCommands(msg);
+                console.log("routes");
+                routeCommands(msg, msg.message.chat.id, con);
             })
             .catch(err => {
-                bot.sendMessage(msg.chat.id, err);
+                bot.sendMessage(msg.message.chat.id, err);
             });
     }
 });

@@ -1,5 +1,5 @@
 'use strict';
-const fun = require('../../TelegramBot/functions.js');
+const alert = require('../../TelegramBot/sectionAvvisi.js');
 
 
 exports.function = function(req, response) {
@@ -30,7 +30,7 @@ exports.dwAvvisi = function(request, response)
 
 	try
 	{
-		Promise.all([fun.richiestaAvvisi(dipartimentoRichiesto, null, null)]).then(values =>
+		Promise.all([alert.richiestaAvvisi(dipartimentoRichiesto, null, null)]).then(values =>
 		{
 			var json = JSON.stringify
 			({
