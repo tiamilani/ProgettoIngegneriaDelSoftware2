@@ -58,7 +58,7 @@ bot.on('text', (msg) => {
 
 bot.on('text', (msg) => {
   // -- SEZIONE HOW TO --
-  else if(msg.text.toLowerCase() == "howto"){
+  if(msg.text.toLowerCase() == "howto"){
       var text = "In questa sezione puoi ottenere le informazioni sul corretto svolgimento delle diverse pratiche legate all'Università";
       var keyboard = {
           reply_markup: JSON.stringify({
