@@ -28,12 +28,12 @@ var deleteFolderRecursive = function (path) {
 		fs.readdirSync(path).forEach(function(file, index){
 			var curPath = path + "/" + file;
 			if (!fs.lstatSync(curPath).isDirectory()) {
-				if(ext.extname(curPath) != '' || fs.statSync(curPath).size < 50000) //extname -> estensione dei file
+				if(ext.extname(curPath) != '' || fs.statSync(curPath).size < 50000)
 					fs.unlinkSync(curPath);
 			}
 			else {
 				deleteFolderRecursive(curPath);
-				try { fs.rmdirSync(curPath); } catch(e) { } //Elimina la cartella
+				try { fs.rmdirSync(curPath); } catch(e) { }
 			}
 		});
 	}
@@ -71,7 +71,7 @@ var downloadFiles = function (link, dir, bot, msg) {
 					buffer = rc.sync(dir + '/' + tmpFiles[i], 0, 4100);
 					type = ft(buffer).ext;
 					if(type == 'msi')
-						fs.renameSync(dir + '/' + tmpFiles[i], dir + '/File' + (i+1) + '.xls'); //Rinomina i file
+						fs.renameSync(dir + '/' + tmpFiles[i], dir + '/File' + (i+1) + '.xls');
 					else
 						fs.renameSync(dir + '/' + tmpFiles[i], dir + '/File' + (i+1) + '.' + type);
 				}
@@ -148,7 +148,6 @@ var downloadPhoto = function (link, dir, filesNotRemove) {
     dw(options).then((result) => {
 		deleteFilesWebcam(dir, filesNotRemove);
 
-    //Attende che la funzione precedente finisca (solo se supporta Promise.all)
 		Promise.all([deleteFilesWebcam]).then(values => {
             var tmpFiles = fs.readdirSync(dir + '/images');
 
@@ -162,13 +161,6 @@ var downloadPhoto = function (link, dir, filesNotRemove) {
 		});
 	}).catch((err) => { console.log("Errore nel download dei file richiesti"); });
 }
-
-// AIzaSyA_rBZuYeP8ONgMXRnIOpO0t0XWtod08lU  API KEY for google maps
-
-
-
-
-/*--- 2017-10-31 ---*/
 
 function parseHTMLFile(fileToParse, stringaDaConfrontare)
 {
@@ -326,7 +318,6 @@ function downloadAvvisi(dipartimento, bot, msg)
 
 
 // ---------- EXPORTS ----------
-//Nei vari file puoi richiamare solo le funzioni esportate tramite il nome dopo 'exports.'
 exports.richiestaFile = downloadFiles;
 exports.richiestaFotoMensa = downloadPhoto;
 exports.distanceBetween = getDistance;
