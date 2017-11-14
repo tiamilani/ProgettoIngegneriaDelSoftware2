@@ -14,7 +14,7 @@ const Join = require('mongo-join');
 console.log('REQUIRE FATTI');
 // ---------- BOT CONFIG ----------
 // replace the value below with the Telegram token you receive from @BotFather
-const token = '417759810:AAFHuTH4figL2WqKsEGem0ZIggf6zbonV80';
+const token = process.env.TELEGRAM_TOKEN || '477082505:AAGtG4_xRltfUzhNluQnX_U4-y4oghxYQPk';
 
 // Create a bot that uses 'polling' to fetch new updates
 const bot = new TelegramBot(token, {polling: true});
