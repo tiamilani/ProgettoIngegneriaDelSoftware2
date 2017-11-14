@@ -1,22 +1,14 @@
 // ---------- REQUIRE ----------
 const http = require ('http');
-const TelegramBot = require('node-telegram-bot-api'); //API di Telegram
-
+const TelegramBot = require('node-telegram-bot-api');
+const fun = require('./functions.js');
+console.log('REQUIRE FATTI');
 // ---------- BOT CONFIG ----------
 // replace the value below with the Telegram token you receive from @BotFather
-const token = '417759810:AAFHuTH4figL2WqKsEGem0ZIggf6zbonV80';
-
-const TOKEN = process.env.TELEGRAM_TOKEN || '477082505:AAGtG4_xRltfUzhNluQnX_U4-y4oghxYQPk';
-const options = {
-    webHook: { //Ogni volta che rileva modifiche, webHook invia gli aggiornamenti al bot
-        port: process.env.PORT || 443
-    }
-};
-const url = process.env.APP_URL || 'https://bot-avvisi.herokuapp.com/';
-const bot = new TelegramBot(TOKEN, options); //Inizializza il bot Telegram
-bot.setWebHook(`${url}/bot${TOKEN}`);
-console.log('BOT STARTED'); //Stampa su heroku log
-
+const token = '477082505:AAGtG4_xRltfUzhNluQnX_U4-y4oghxYQPk';
+// Create a bot that uses 'polling' to fetch new updates
+const bot = new TelegramBot(token, {polling: true});
+console.log('BOT STARTED');
 // ---------- FEATURES ----------
 
 //Questi sono tutti eventi
@@ -126,7 +118,7 @@ bot.onText(/\/Imposta_Promemoria_Bandi/, (msg) => {
 bot.onText(/\/Povo1_PastoLesto/, (msg) => {
     bot.sendPhoto(msg.chat.id, "./WebcamMense/Povo02.jpg", {caption : "Mensa Pasto Completo di Povo1"} );
 
- 	/*var options = { method: "HEAD", host: "ftp.tn.ymir.eu", port: 80, path: "/Povo01.jpg" };
+    /*var options = { method: "HEAD", host: "ftp.tn.ymir.eu", port: 80, path: "/Povo01.jpg" };
 	var request = http.request ( options, function ( response ) {
     	if(response.statusCode === 200)
 			bot.sendPhoto(msg.chat.id, "http://ftp.tn.ymir.eu/Povo01.jpg", {caption : "Mensa Pasto Lesto di Povo1"} );
@@ -134,7 +126,7 @@ bot.onText(/\/Povo1_PastoLesto/, (msg) => {
 			bot.sendMessage(msg.chat.id, "Sembra che la videocamera abbia qualcosa che non va...");
 	});
 
-	request.end(); */
+	request.end();*/
 });
 
 bot.onText(/\/Povo1_PastoCompleto/, (msg) => {
