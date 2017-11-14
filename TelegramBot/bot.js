@@ -1,6 +1,3 @@
-// TO DO:
-//  1) Se time_table non esiste, message (aggiornamento in corso)
-
 // ---------- REQUIRE ----------
 const fun = require ('./functions.js');
 const fs = require('fs');
@@ -12,16 +9,16 @@ const cron = require('node-schedule');
 const TelegramBot = require('node-telegram-bot-api');
 
 // ---------- CONFIG ----------
-
 const TOKEN = process.env.TELEGRAM_TOKEN || '466491462:AAF8RxkhGR00Mylr0LGZfFWUMvPVWSHqUPE';
-const options = {
+/*const options = {
     webHook: {
         port: process.env.PORT || 443
     }
 };
 const url = process.env.APP_URL || 'https://unitnhelpbot.herokuapp.com:443';
 const bot = new TelegramBot(TOKEN, options);
-bot.setWebHook(`${url}/bot${TOKEN}`);
+bot.setWebHook(`${url}/bot${TOKEN}`);*/
+const bot = new TelegramBot(token, {polling: true});
 console.log('BOT STARTED');
 
 var databaseConnection = undefined;
@@ -693,3 +690,280 @@ bot.on('callback_query', function(msg) {
             });
     }
 });
+/*
+
+//bot.onText(/\/IngegneriaAmbientaleCivileMeccanica/, (msg) =>
+bot.onText(/DICAM/, (msg) =>
+{
+  fun.richiestaAvvisi("DICAM", bot, msg);
+});
+
+//bot.onText(/\/IngegneriaCivile/, (msg) =>
+bot.onText(/DII/, (msg) =>
+{
+  fun.richiestaAvvisi("DII", bot, msg);
+});
+
+//bot.onText(/\/Fisica_Matematica_IngegneriaScienzeInformazione/, (msg) =>
+bot.onText(/CISCA/, (msg) =>
+{
+  fun.richiestaAvvisi("CISCA", bot, msg);
+});
+
+
+bot.onText(/Avvisi/, (msg) =>
+{
+  var text = "In questa sezione puoi ottenere gli avvisi del giorno dei vari dipartimenti";
+  var keyboard =
+  {
+    reply_markup: JSON.stringify(
+      {
+        keyboard: [
+          //['/IngegneriaAmbientaleCivileMeccanica'],
+          //['/IngegneriaCivile'],
+          //['/Fisica_Matematica_IngegneriaScienzeInformazione']
+          ['DICAM'],
+          ['DII'],
+          ['CISCA']
+        ],
+        one_time_keyboard: true, resize_keyboard: true
+      })
+  };
+
+  bot.sendMessage(msg.chat.id, text, keyboard);
+});
+
+//Funzione per i luoghi utili partendo dal posto di ricerca
+bot.on('text', (msg) => {
+	var citta;
+
+	var map = require('@google/maps').createClient({
+		key: 'AIzaSyA_rBZuYeP8ONgMXRnIOpO0t0XWtod08lU'
+	});
+
+
+	var keyboardHome = {
+		reply_markup: JSON.stringify({
+			keyboard: [
+				['']
+			],
+			one_time_keyboard: true,
+			resize_keyboard: true
+		})
+	};
+
+	var keyboardPlaces = {
+		reply_markup: JSON.stringify({
+			keyboard: [
+				['Biblioteche', 'Mense'],
+				['Facoltà', 'Copisterie']
+			],
+			one_time_keyboard: true,
+			resize_keyboard: true
+		})
+	};
+
+	if(msg.text == "Trento"){
+		citta = {lat: 46.0702531, lng: 11.1216386};
+
+		var text = "Hei sei nella sezione luoghi utili di Trento :), Dove vorresti andare?";
+
+		bot.sendMessage(msg.chat.id, text, keyboardPlaces).then(() => {
+
+			bot.once('text', (msg) => {
+				if(msg.text == "Biblioteche"){
+					var text = "Ecco a te le biblioteche a Trento :), i luoghi più silenziosi";
+
+					bot.sendMessage(msg.chat.id, text, keyboardHome);
+
+					console.log("pre funzione");
+					place.placesNearby(bot,msg.chat.id,map,citta,750,"library","Biblioteca");
+					console.log("post funzione");
+				}
+				else if(msg.text == "Mense"){
+					var text = "Ecco a te le mense a Trento :), la pappa hehe";
+
+					bot.sendMessage(msg.chat.id, text, keyboardHome);
+
+					place.placesNearby(bot,msg.chat.id,map,citta,750,"restaurant","mensa opera universitaria");
+				}
+				else if(msg.text == "Facoltà"){
+					var text = "Ecco a te le facoltà a Trento :), corri a lezione :P";
+
+					bot.sendMessage(msg.chat.id, text, keyboardHome);
+
+					place.placesNearby(bot,msg.chat.id,map,citta,750,"university","Univeristà");
+				}
+				else if(msg.text == "Copisterie"){
+					var text = "Ecco a te le Copisterie a Trento :), fotocopie a te";
+
+					bot.sendMessage(msg.chat.id, text, keyboardHome);
+
+					place.placesNearby(bot,msg.chat.id,map,citta,750,"store","Copisteria");
+				}
+			});
+		});
+	}
+	else if(msg.text == "Mesiano"){
+		citta = {lat: 46.0659393, lng: 11.1395838};
+
+		var text = "Hei sei nella sezione luoghi utili di Mesiano :), Dove vorresti andare?";
+
+		bot.sendMessage(msg.chat.id, text, keyboardPlaces).then(() => {
+
+			bot.once('text', (msg) => {
+				if(msg.text == "Biblioteche"){
+					var text = "Ecco a te le biblioteche a Mesiano :), i posti più silenziosi";
+
+					bot.sendMessage(msg.chat.id, text, keyboardHome);
+
+					place.placesNearby(bot,msg.chat.id,map,citta,300,"library","Biblioteca");
+				}
+				else if(msg.text == "Mense"){
+					var text = "Ecco a te le mense a Mesiano :), la pappa hehe";
+
+					bot.sendMessage(msg.chat.id, text, keyboardHome);
+
+					place.placesNearby(bot,msg.chat.id,map,citta,300,"","mensa opera universitaria");
+				}
+				else if(msg.text == "Facoltà"){
+					var text = "Ecco a te le facoltà a Mesiano :), corri a lezione :P";
+
+					bot.sendMessage(msg.chat.id, text, keyboardHome);
+
+					place.placesNearby(bot,msg.chat.id,map,citta,300,"","dipartimento");
+				}
+				else if(msg.text == "Copisterie"){
+					var text = "Ecco a te le Copisterie a Mesiano :), fotocopie a te";
+
+					bot.sendMessage(msg.chat.id, text, keyboardHome);
+
+					place.placesNearby(bot,msg.chat.id,map,citta,750,"store","Copisteria");
+				}
+			});
+		});
+	}
+	else if(msg.text == "Povo"){
+		citta = {lat: 46.066294, lng: 11.153842};
+
+		var text = "Hei sei nella sezione luoghi utili di Povo :), Dove vorresti andare?";
+
+		bot.sendMessage(msg.chat.id, text, keyboardPlaces).then(() => {
+
+			bot.once('text', (msg) => {
+				if(msg.text == "Biblioteche"){
+					var text = "Ecco a te le biblioteche a Povo :), i posti più silenziosi";
+
+					bot.sendMessage(msg.chat.id, text, keyboardHome);
+
+					place.placesNearby(bot,msg.chat.id,map,citta,300,"library","Biblioteca");
+				}
+				else if(msg.text == "Mense"){
+					var text = "Ecco a te le mense a Povo :), la pappa hehe";
+
+					bot.sendMessage(msg.chat.id, text, keyboardHome);
+
+					place.placesNearby(bot,msg.chat.id,map,citta,300,"","mensa opera universitaria");
+				}
+				else if(msg.text == "Facoltà"){
+					var text = "Ecco a te le facoltà a Povo :), corri a lezione :P";
+
+					bot.sendMessage(msg.chat.id, text, keyboardHome);
+
+					place.placesNearby(bot,msg.chat.id,map,citta,300,"","dipartimento");
+				}
+				else if(msg.text == "Copisterie"){
+					var text = "Ecco a te le Copisterie a Povo :), fotocopie a te";
+
+					bot.sendMessage(msg.chat.id, text, keyboardHome);
+
+					place.placesNearby(bot,msg.chat.id,map,citta,750,"store","Copisteria");
+				}
+			});
+		});
+	}
+	else if(msg.text == "Ricerca avanzata"){
+		var text = "Mandami la tua posizione, in modo che io possa sapere dove vuoi cercare";
+
+		var element = [];
+		element.push([{ text: 'Invia Posizione', request_location: true }]);
+
+		var keyboard = {
+			reply_markup: JSON.stringify({
+				keyboard: element,
+				one_time_keyboard: true,
+				resize_keyboard: true
+			})
+		};
+
+		bot.sendMessage(msg.chat.id, text, keyboard).then(() => {
+			bot.once('location', (msg) => {
+				console.log("Ho ricevuto la posizione");
+				var citta = {lat: msg.location.latitude, lng: msg.location.longitude};
+
+				var text2 = "Scrivimi ciò ceh vuoi cercare qui \nBar/librerie/musei/... tutto ciò che potresti trovare utile :)";
+
+				var keyboard = {
+					reply_markup: JSON.stringify({
+						keyboard: [],
+						one_time_keyboard: true,
+						resize_keyboard: true
+					})
+				};
+
+				bot.sendMessage(msg.chat.id, text2, keyboard).then(() => {
+
+					bot.once('text', (msg) => {
+						var nome = msg.text;
+						var text3 = "Ecco a te i risultati della tua ricerca: ";
+
+						bot.sendMessage(msg.chat.id, text3, keyboardHome);
+						console.log("Presentazione dei rislutati inviata");
+
+						place.placesNearby(bot,msg.chat.id,map,citta,750,"",nome);
+					});
+				});
+			});
+		});
+	}
+});
+
+//Funzione per il riconoscimento dei luoghi utili
+bot.on('text', (msg) => {
+	if(msg.text == "Luoghi utili"){
+		var text = "Hei sei nella sezione luoghi utili :), Dove ti interessa cercare?";
+
+		var keyboard = {
+	        reply_markup: JSON.stringify({
+	            keyboard: [
+					['Trento','Mesiano'],
+					['Povo', 'Ricerca avanzata']
+	            ],
+	            one_time_keyboard: true,
+	            resize_keyboard: true
+	        })
+	    };
+
+		bot.sendMessage(msg.chat.id, text, keyboard);
+	}
+});
+
+bot.onText(/\/start/, (msg) => {
+	bot.removeListener('callback_query');
+    var text = "Benvenuto " + msg.from.first_name + "!\nUniTN Help Center è un bot sviluppato per aiutare attuali e/o futuri studenti dell'Università degli Studi di Trento in vari ambiti della propria vita quotidiana!";
+
+    var keyboard = {
+        reply_markup: JSON.stringify({
+            keyboard: [
+				['/Mezzi'],
+				['/Mensa'],
+				['Luoghi utili'],
+                ['Avvisi'],
+				['/OperaUniTN']
+            ],
+            one_time_keyboard: true,
+            resize_keyboard: true
+        })
+    };
+
+    bot.sendMessage(msg.chat.id, text, keyboard);*/

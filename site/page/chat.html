@@ -1,0 +1,207 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1">
+		<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+		<link rel="stylesheet" type="text/css" href="../css/jquery.convform.css">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+		<link rel="stylesheet" type="text/css" href="../css/demo.css">
+	</head>
+	<body>
+		<section id="demo">
+	        <div class="container">
+	            <div class="row">
+	                <div class="col-sm-12">
+	                    <div class="card no-border" id="chatCard">
+	                        <div id="chat" class="conv-form-wrapper">
+								<input type="text" conv-question="Benvenuto! UniTN Help Center è un bot sviluppato per aiutare attuali e/o futuri studenti dell'Università degli Studi di Trento in vari ambiti della propria vita quotidiana!" no-answer="true">
+								<select name="helpSelection" conv-question="Come posso aiutarti? :)">
+									<option value="mezzi">Mezzi</option>
+									<option value="howto">How To</option>
+									<option value="luoghiutili">Luoghi utili</option>
+									<option value="avvisi">Avvisi</option>
+								</select>
+								<div conv-fork="helpSelection">
+									<div conv-case="mezzi">
+										<input type="text" conv-question="Hai selezionato la sezione mezzi" no-answer="true">
+									</div>
+									<div conv-case="howto">
+										<input type="text" conv-question="Hai selezionato la sezione How to" no-answer="true">
+									</div>
+									<div conv-case="luoghiutili">
+										<select name="luogoDiInteresse" conv-question="Dove ti interessa cercare?">
+		                                    <option value="trento">Trento</option>
+		                                    <option value="mesiano">Mesiano</option>
+											<option value="povo">Povo</option>
+		                                    <option value="ricercaspecifica">Ricerca specifica</option>
+		                                </select>
+										<div conv-fork="luogoDiInteresse">
+		                                    <div conv-case="trento">
+		                                        <input type="text" conv-question="Ok, cerchiamo a Trento|Inizio a cercare a trento ;)|Ok, iniziamo con Trento|Hei mi piace questa tua scelta :)" no-answer="true">
+												<select name="cosaCercareATrento" conv-question="Cosa cerchiamo?">
+				                                    <option value="biblioteca" callback="luoghiUtiliBibliotecaTrento">Biblioteca</option>
+				                                    <option value="mensa" callback="luoghiUtiliMensaTrento">Mensa</option>
+													<option value="facolta" callback="luoghiUtiliFacoltaTrento">Facoltà</option>
+				                                    <option value="copisteria" callback="luoghiUtiliCopisteriaTrento">Copisteria</option>
+				                                </select>
+												<div conv-fork="cosaCercareATrento">
+													<div conv-case="biblioteca">
+				                                        <input type="text" conv-question="Quste sono le biblioteche che ho trovato, puoi vedere i risultati qui sulla destra :)" no-answer="true">
+													</div>
+													<div conv-case="mensa">
+														<input type="text" conv-question="Quste sono le mense che ho trovato, puoi vedere i risultati qui sulla destra :)" no-answer="true">
+													    </div>
+													<div conv-case="facolta">
+														<input type="text" conv-question="Quste sono le facoltà che ho trovato, puoi vedere i risultati qui sulla destra :)" no-answer="true">
+				                                    </div>
+													<div conv-case="copisteria">
+														<input type="text" conv-question="Quste sono le copisterie che ho trovato, puoi vedere i risultati qui sulla destra :)" no-answer="true">
+				                                    </div>
+												</div>
+											</div>
+											<div conv-case="mesiano">
+		                                        <input type="text" conv-question="Ok, cerchiamo a Mesiano|Inizio a cercare a Mesiano ;)|Ok, iniziamo con Mesiano|Hei mi piace questa tua scelta :)" no-answer="true">
+												<select name="cosaCercareAMesiano" conv-question="Cosa cerchiamo?">
+				                                    <option value="biblioteca" callback="luoghiUtiliBibliotecaMesiano">Biblioteca</option>
+				                                    <option value="mensa" callback="luoghiUtiliMensaMesiano">Mensa</option>
+													<option value="facolta" callback="luoghiUtiliFacoltaMesiano">Facoltà</option>
+				                                    <option value="copisteria" callback="luoghiUtiliCopisteriaMesiano">Copisteria</option>
+				                                </select>
+												<div conv-fork="cosaCercareAMesiano">
+													<div conv-case="biblioteca">
+				                                        <input type="text" conv-question="Quste sono le biblioteche che ho trovato, puoi vedere i risultati qui sulla destra :)" no-answer="true">
+													</div>
+													<div conv-case="mensa">
+														<input type="text" conv-question="Quste sono le mense che ho trovato, puoi vedere i risultati qui sulla destra :)" no-answer="true">
+													    </div>
+													<div conv-case="facolta">
+														<input type="text" conv-question="Quste sono le facoltà che ho trovato, puoi vedere i risultati qui sulla destra :)" no-answer="true">
+				                                    </div>
+													<div conv-case="copisteria">
+														<input type="text" conv-question="Quste sono le copisterie che ho trovato, puoi vedere i risultati qui sulla destra :)" no-answer="true">
+				                                    </div>
+												</div>
+											</div>
+											<div conv-case="povo">
+		                                        <input type="text" conv-question="Ok, cerchiamo a Povo|Inizio a cercare a Povo ;)|Ok, iniziamo con Povo|Hei mi piace questa tua scelta :)" no-answer="true">
+												<select name="cosaCercareAPovo" conv-question="Cosa cerchiamo?">
+				                                    <option value="biblioteca" callback="luoghiUtiliBibliotecaPovo">Biblioteca</option>
+				                                    <option value="mensa" callback="luoghiUtiliMensaPovo">Mensa</option>
+													<option value="facolta" callback="luoghiUtiliFacoltaPovo">Facoltà</option>
+				                                    <option value="copisteria" callback="luoghiUtiliCopisteriaPovo">Copisteria</option>
+				                                </select>
+												<div conv-fork="cosaCercareAPovo">
+													<div conv-case="biblioteca">
+				                                        <input type="text" conv-question="Quste sono le biblioteche che ho trovato, puoi vedere i risultati qui sulla destra :)" no-answer="true">
+													</div>
+													<div conv-case="mensa">
+														<input type="text" conv-question="Quste sono le mense che ho trovato, puoi vedere i risultati qui sulla destra :)" no-answer="true">
+													    </div>
+													<div conv-case="facolta">
+														<input type="text" conv-question="Quste sono le facoltà che ho trovato, puoi vedere i risultati qui sulla destra :)" no-answer="true">
+				                                    </div>
+													<div conv-case="copisteria">
+														<input type="text" conv-question="Quste sono le copisterie che ho trovato, puoi vedere i risultati qui sulla destra :)" no-answer="true">
+				                                    </div>
+												</div>
+											</div>
+											<div conv-case="ricercaspecifica">
+		                                        <input type="text" conv-question="Ok, cerchiamo a ...|Inizio a cercare a ...|Ok, iniziamo con ..." no-answer="true">
+												<input conv-question="Non so dove cercare, dimmi la città in cui cercare" pattern="^[a-zA-Z]+(?:[\s-][a-zA-Z]+)*$" type="text" name="citta" id="citta">
+												<input type="text" conv-question="Ok,cosa devo cercare a {citta}:0? :)" pattern="^[a-zA-Z]+(?:[\s-][a-zA-Z]+)*$" name="cosaCercare" id="cosaCercare">
+												<select conv-question="Sicuro di voler cercare {cosaCercare} a {citta}?">
+				                                    <option value="ok" callback="specificResearch">Ok</option>
+				                                </select>
+											</div>
+										</div>
+									</div>
+									<div conv-case="avvisi">
+										<input type="text" conv-question="Gli avvisi che riusciamo ad ottenre sono solo quelli dei seguenti dipartimenti:" no-answer="true">
+										<input type="text" conv-question="Gli avvisi che riusciamo ad ottenre sono solo quelli dei seguenti dipartimenti:" no-answer="true">
+										<input type="text" conv-question="Gli avvisi che riusciamo ad ottenre sono solo quelli dei seguenti dipartimenti:" no-answer="true">
+										<input type="text" conv-question="Gli avvisi che riusciamo ad ottenre sono solo quelli dei seguenti dipartimenti:" no-answer="true">
+										<select name="luogoDiInteresse" conv-question="Dove ti interessa cercare?">
+		                                    <option value="trento">Trento</option>
+		                                    <option value="mesiano">Mesiano</option>
+											<option value="povo">Povo</option>
+		                                </select>
+									</div>
+								</div>
+								<select conv-question="Mi spiace ma in questa sezione non ho altro da mostrarti, torniamo al menu principale, ok? :)">
+                                    <option value="ok" callback="ricarica">Ok</option>
+                                </select>
+							</div>
+	                    </div>
+	                </div>
+	            </div>
+	        </div>
+		</section>
+		<script type="text/javascript" src="../js/jquery-1.12.3.min.js"></script>
+		<script type="text/javascript" src="../js/autosize.min.js"></script>
+		<script type="text/javascript" src="../js/jquery.convform.js"></script>
+
+		<script type="text/javascript" src="../js/chat/chatFunction.js"></script>
+		<script type="text/javascript" src="../js/chat/luoghiUtili/places.js"></script>
+
+		<script>
+			function ricarica() {
+				reload();
+			}
+
+			function luoghiUtiliBibliotecaTrento(){
+				places("biblioteca","trento");
+			}
+
+			function luoghiUtiliMensaTrento(){
+				places("mensa","trento");
+			}
+
+			function luoghiUtiliFacoltaTrento(){
+				places("facolta","trento");
+			}
+
+			function luoghiUtiliCopisteriaTrento(){
+				places("copisteria","trento");
+			}
+
+			function luoghiUtiliBibliotecaMesiano(){
+				places("biblioteca","mesiano");
+			}
+
+			function luoghiUtiliMensaMesiano(){
+				places("mensa","mesiano");
+			}
+
+			function luoghiUtiliFacoltaMesiano(){
+				places("facolta","mesiano");
+			}
+
+			function luoghiUtiliCopisteriaMesiano(){
+				places("copisteria","mesiano");
+			}
+
+			function luoghiUtiliBibliotecaPovo(){
+				places("biblioteca","povo");
+			}
+
+			function luoghiUtiliMensaPovo(){
+				places("mensa","povo");
+			}
+
+			function luoghiUtiliFacoltaPovo(){
+				places("facolta","povo");
+			}
+
+			function luoghiUtiliCopisteriaPovo(){
+				places("copisteria","povo");
+			}
+
+			function specificResearch(){
+				places(document.getElementById("cosaCercare").getAttribute('value'),document.getElementById("citta").getAttribute('value'));
+			}
+		</script>
+
+	</body>
+</html>
