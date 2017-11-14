@@ -1,8 +1,52 @@
 // ---------- REQUIRE ----------
 const db = require('./sectionDevelop');
-const urban = require('./sectionMezzi');
 
 // ---------- FUNCTIONS ----------
+function checkID (id, lastCommand, connection) {
+	return new Promise((resolve, reject) => {
+		db.initConnectionLess(connection)
+			.then((con) => {
+		        var query = "SELECT ChatID FROM users WHERE ChatID='" + id + "'";
+		        con.query(query, function (err, result) {
+		            if (err) return reject(err);
+
+					if(result.length == 0) {
+						var query = "INSERT INTO users (ChatID) VALUES ('" + id + "')";
+				        con.query(query, function (err, result) {
+				            if (err) return reject(err);
+
+							return resolve("Success");
+						});
+					}
+					else {
+						var query = "UPDATE users SET last_command='" + lastCommand + "' WHERE ChatID='" + id + "'";
+				        con.query(query, function (err, result) {
+				            if (err) return reject(err);
+
+							return resolve("Success");
+						});
+					}
+				});
+			})
+			.catch(err => {
+				bot.sendMessage(id, err);
+			});
+	});
+}
+
+function createScadenze () {
+	return {
+        reply_markup: JSON.stringify({
+			keyboard: [
+				['Home'],
+				['Inserisci_Scadenza','Modifica_Scadenza'],
+				['Elimina_Scadenza']
+			],
+            resize_keyboard: true
+        })
+    };
+}
+
 function mostraScadenze (bot, id, connection) {
     console.log("mostraScadenze");
 	db.initiateConnection(connection)
@@ -57,7 +101,7 @@ function mostraScadenzeStatus (bot, id, connection, stato) {
                     text = "Non ci sono scadenze attualmente, inserisci la prima!";
                 }
 
-                urban.updateStatus(id, stato, con)
+                checkID(id, stato, con)
                     .then((result) => {
                         bot.sendMessage(id, text, {parse_mode: "Markdown"});
                     })
@@ -93,19 +137,9 @@ function inserisciScadenza (bot, msg, connection) {
             con.query(query, function (err, result) {
                 if (err) throw err;
 
-                urban.updateStatus(msg.chat.id, '/start', con)
+                checkID(msg.chat.id, '/start', con)
                     .then((result) => {
-                        var keyboard = {
-                            reply_markup: JSON.stringify({
-                                keyboard: [
-									['Home'],
-									['Inserisci_Scadenza','Modifica_Scadenza'],
-									['Elimina_Scadenza']
-                                ],
-                                resize_keyboard: true
-                            })
-                        };
-                        bot.sendMessage(msg.chat.id, "Scadenza Inserita", keyboard);
+                        bot.sendMessage(msg.chat.id, "Scadenza Inserita", createScadenze());
                     })
                     .catch(err => {
                         console.error(err);
@@ -136,20 +170,10 @@ function modificaScadenza (bot, msg, connection) {
             con.query(query, function (err, result) {
                 if (err) throw err;
 
-                urban.updateStatus(msg.chat.id, '/start', con)
+                checkID(msg.chat.id, '/start', con)
                     .then((result) => {
-                        var keyboard = {
-                            reply_markup: JSON.stringify({
-                                keyboard: [
-									['Home'],
-									['Inserisci_Scadenza','Modifica_Scadenza'],
-									['Elimina_Scadenza']
-                                ],
-                                resize_keyboard: true
-                            })
-                        };
 
-                        bot.sendMessage(msg.chat.id, "Scadenza Modificata", keyboard);
+                        bot.sendMessage(msg.chat.id, "Scadenza Modificata", createScadenze());
                     })
                     .catch(err => {
                         console.error(err);
@@ -169,20 +193,10 @@ function eliminaScadenza (bot, msg, connection) {
             con.query(query, function (err, result) {
                 if (err) throw err;
 
-                urban.updateStatus(msg.chat.id, '/start', con)
+                checkID(msg.chat.id, '/start', con)
                     .then((result) => {
-                        var keyboard = {
-                            reply_markup: JSON.stringify({
-                                keyboard: [
-									['Home'],
-									['Inserisci_Scadenza','Modifica_Scadenza'],
-									['Elimina_Scadenza']
-                                ],
-                                resize_keyboard: true
-                            })
-                        };
 
-                        bot.sendMessage(msg.chat.id, "Scadenza Eliminata", keyboard);
+                        bot.sendMessage(msg.chat.id, "Scadenza Eliminata", createScadenze());
                     })
                     .catch(err => {
                         console.error(err);
@@ -196,8 +210,8 @@ function eliminaScadenza (bot, msg, connection) {
 
 // ---------- EXPORTS ----------
 
-exports.showScadenze = mostraScadenze;
-exports.showScadenzeDev = mostraScadenzeStatus;
-exports.addScadenza = inserisciScadenza;
-exports.alterScadenza = modificaScadenza;
-exports.deleteScadenza = eliminaScadenza;
+exports.mostraScadenze = mostraScadenze;
+exports.mostraScadenzeStatus = mostraScadenzeStatus;
+exports.inserisciScadenza = inserisciScadenza;
+exports.modificaScadenza = modificaScadenza;
+exports.eliminaScadenza = eliminaScadenza;

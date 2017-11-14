@@ -1,11 +1,11 @@
 // ---------- REQUIRE ----------
-const fun = require ('./functions.js');
-const fs = require('fs');
-const rmrf = require('rimraf');
 const db = require ('./sectionDevelop.js');
 const urban = require ('./sectionMezzi.js');
 const dead = require ('./sectionScadenze.js');
-const cron = require('node-schedule');
+const alert = require ('./sectionAvvisi.js');
+const place = require ('./sectionLuoghiUtili.js');
+const eat = require ('./sectionMensa.js');
+//const cron = require('node-schedule');
 const TelegramBot = require('node-telegram-bot-api');
 
 // ---------- CONFIG ----------
@@ -24,7 +24,7 @@ console.log('BOT STARTED');
 var databaseConnection = undefined;
 
 // ---------- INTERVALS ----------
-setInterval(function() {
+/*setInterval(function() {
     var date = new Date();
     var middle = date.getTime();
 
@@ -41,8 +41,6 @@ setInterval(function() {
             fun.richiestaFotoMensa('http://www.operauni.tn.it/servizi/ristorazione/webcam', './WebcamMense', ['Povo01.jpg', 'Povo02.jpg', 'mesiano01.jpg', 'mesiano02.jpg', 'tgar.jpg'])
                 .then((res) => {
                     // Nothing
-                    /*if(res)
-                        console.log(fs.readdirSync('./WebcamMense'));*/
                 })
                 .catch(err => {
                     console.error(err);
@@ -50,9 +48,124 @@ setInterval(function() {
         });
     }
 
-}, 120 * 1000);
+}, 120 * 1000);*/
 
 // ---------- FUNCTIONS ----------
+function routeCommands (msg) {
+	db.initiateConnection(connection)
+		.then((con) => {
+            databaseConnection = con;
+	        var query = "SELECT * FROM users WHERE ChatID='" + id + "'";
+	        con.query(query, function (err, result) {
+	            if (err) throw err;
+
+				result = result[0];
+
+				if ((result.last_command).includes("Fermata")) {
+					switch (result.last_command) {
+						case 'Fermata_F1':
+							if(msg.text != undefined)
+								urban.Fermata_F2_Name_F1(bot, msg, con);
+							else if(msg.location != undefined)
+								urban.Fermata_F2_Location_F1(bot, msg, con);
+							break;
+						case 'Fermata_F2_Location_F1':
+							urban.Fermata_F2_Location_F2(bot, msg, con);
+							break;
+						case 'Fermata_F2_Location_F2':
+							urban.Fermata_F2_Location_F3(bot, msg, result.nameT, con);
+							break;
+						case 'Fermata_F2_Location_F3':
+							urban.All_FF(bot, msg, con);
+							break;
+						case 'Fermata_F2_Name_F1':
+							urban.Fermata_F2_Name_F2(bot, msg, con);
+							break;
+						case 'Fermata_F2_Name_F2':
+							urban.Fermata_F2_Name_F3(bot, msg, result.nameT, con);
+							break;
+						case 'Fermata_F2_Name_F3':
+							urban.All_FF(bot, msg, con);
+					}
+				}
+				else if ((result.last_command).includes("Linea")) {
+					switch (result.last_command) {
+						case 'Linea_F1':
+							urban.Linea_F2(bot, msg, con);
+							break;
+						case 'Linea_F2':
+							urban.Linea_F3(bot, msg, result.nameT, con);
+							break;
+						case 'Linea_F3':
+							if(msg.text != undefined)
+								urban.Linea_F4_Name_F1 (bot, msg, result.nameT, con);
+							else if(msg.location != undefined)
+								urban.Linea_F4_Location_F1 (bot, msg, result.nameT, con);
+							break;
+						case 'Linea_F4_Name_F1':
+							urban.All_FF (bot, msg, con);
+							break;
+						case 'Linea_F4_Location_F1':
+							urban.All_FF (bot, msg, con);
+					}
+				}
+				else if ((result.last_command).includes("Next")) {
+					switch (result.last_command) {
+						case 'Next_F1':
+							if(msg.text != undefined)
+								urban.Next_F2_Name_F1 (bot, msg, con);
+							else if(msg.location != undefined)
+								urban.Next_F2_Location_F1 (bot, msg, con);
+							break;
+						case 'Next_F2_Name_F1':
+							urban.Next_F2_Name_F2 (bot, msg, con);
+							break;
+						case 'Next_F2_Name_F2':
+							urban.All_FF (bot, msg, con);
+							break;
+						case 'Next_F2_Location_F1':
+							urban.Next_F2_Location_F2 (bot, msg, con);
+							break;
+						case 'Next_F2_Location_F2':
+							urban.All_FF (bot, msg, con);
+					}
+				}
+				else if ((result.last_command).includes("Luoghi")) {
+					switch (result.last_command) {
+						case 'Luoghi_F1':
+							place.Luoghi_F2 (bot, msg, con);
+                            break;
+                        case 'Luoghi_F2':
+                            place.Luoghi_F3 (bot, msg, con);
+                            break;
+					}
+				else if ((result.last_command).includes("Mensa")) {
+                    switch (result.last_command) {
+                        case 'Mensa_F1':
+                            eat.Mensa_F2 (bot, msg, con);
+                            break;
+                    }
+                }
+                else if ((result.last_command).includes("Scadenza")) {
+                    switch (result.last_command) {
+                        case 'Inserisci_Scadenza':
+                            dead.Inserisci_Scadenza(bot, msg, con);
+                            break;
+                        case 'Modifica_Scadenza':
+                            dead.Modifica_Scadenza(bot, msg, con);
+                            break;
+                        case 'Elimina_Scadenza':
+                            dead.Elimina_Scadenza(bot, msg, con);
+                                break;
+                    }
+                }
+			});
+		})
+		.catch(err => {
+			bot.sendMessage(id, err);
+		});
+}
+
 function OperaUniTN (msg) {
     switch (msg.text) {
         case 'OperaUniTN':
@@ -253,7 +366,7 @@ function Mensa (msg) {
             fun.richiestaFile('http://www.operauni.tn.it/servizi/ristorazione/menu', './Menu_Mensa', bot, msg);
             break;
         case 'Nearest':
-            fun.mensaVicina1(bot, msg, databaseConnection);
+            eat.Mensa_F1 (bot, msg, databaseConnection);
     }
 }
 
@@ -277,16 +390,16 @@ function Mezzi (msg) {
             bot.sendMessage(msg.chat.id, text, keyboard);
             break;
         case 'Linea':
-            urban.linea(bot, msg, databaseConnection);
+            urban.Linea_F1(bot, msg, databaseConnection);
             break;
         case 'Fermata':
-            urban.fermata(bot, msg, databaseConnection);
+            urban.Fermata_F1(bot, msg, databaseConnection);
             break;
         case 'PrimiOrari':
-            urban.nextLinea(bot, msg, databaseConnection);
+            urban.Next_F1(bot, msg, databaseConnection);
             break;
         case 'Avvisi_Linee':
-            urban.avvisi(bot, msg, databaseConnection);
+            urban.Avvisi_Linee(bot, msg, databaseConnection);
             break;
         case 'Tariffe':
             var text = "*TARIFFE URBANE DI TRENTO*\n\t*Cartaceo*\n\t\t`€1,20 ->` 70 minuti\n\t\t`€1,50 ->` 120 minuti\n\t\t`€3,00 ->` Giornaliero\n\t*OpenMove*\n\t\t`€1,10 ->` 70 minuti\n\t\t`€1,40 ->` 120 minuti\n\t\t`€2,80 ->` Giornaliero\n\t*A Bordo*\n\t\t`€2,00 ->` Corsa Singola";
@@ -472,7 +585,7 @@ function Scadenze (msg) {
                     db.isAdmin(bot, msg, databaseConnection)
                         .then((result) => {
                             if(result) {
-                                dead.showScadenze(bot, msg.chat.id, databaseConnection);
+                                dead.mostraScadenze(bot, msg.chat.id, databaseConnection);
                                 var text = "Sezione Scadenze";
                                 var keyboard = {
                                     reply_markup: JSON.stringify({
@@ -488,7 +601,7 @@ function Scadenze (msg) {
                                 bot.sendMessage(msg.chat.id, text, keyboard);
                             }
                             else
-                                dead.showScadenze(bot, msg.chat.id, databaseConnection);
+                                dead.mostraScadenze(bot, msg.chat.id, databaseConnection);
                         })
                         .catch(err => {
                             bot.sendMessage(msg.chat.id, err);
@@ -506,7 +619,7 @@ function Scadenze (msg) {
                         .then((result) => {
                             if(result) {
                                 bot.sendMessage(msg.chat.id, "Ricorda il formato:\ndescrizione,dataInizio,dataFine\n\ndata = gg/mm/aaaa");
-                                dead.showScadenzeDev(bot, msg.chat.id, databaseConnection, 'Inserisci_Scadenza');
+                                dead.mostraScadenzeStatus(bot, msg.chat.id, databaseConnection, 'Inserisci_Scadenza');
                             } else
                                 bot.sendMessage(msg.chat.id, "Non sei autorizzato ad accedere!\nSei stato segnalato agli amministratori!");
                         })
@@ -526,7 +639,7 @@ function Scadenze (msg) {
                         .then((result) => {
                             if(result) {
                                 bot.sendMessage(msg.chat.id, "Ricorda il formato:\nid,descrizione,dataInizio,dataFine\n\ndata = gg/mm/aaaa");
-                                dead.showScadenzeDev(bot, msg.chat.id, databaseConnection, 'Modifica_Scadenza');
+                                dead.mostraScadenzeStatus(bot, msg.chat.id, databaseConnection, 'Modifica_Scadenza');
                             } else
                                 bot.sendMessage(msg.chat.id, "Non sei autorizzato ad accedere!\nSei stato segnalato agli amministratori!");
                         })
@@ -546,7 +659,7 @@ function Scadenze (msg) {
                         .then((result) => {
                             if(result) {
                                 bot.sendMessage(msg.chat.id, "Ricorda il formato:\nid");
-                                dead.showScadenzeDev(bot, msg.chat.id, databaseConnection, 'Elimina_Scadenza');
+                                dead.mostraScadenzeStatus(bot, msg.chat.id, databaseConnection, 'Elimina_Scadenza');
                             } else
                                 bot.sendMessage(msg.chat.id, "Non sei autorizzato ad accedere!\nSei stato segnalato agli amministratori!");
                         })
@@ -561,11 +674,104 @@ function Scadenze (msg) {
     }
 }
 
+function Avvisi (msg) {
+    switch (msg.text) {
+        case 'Avvisi':
+            var text = "In questa sezione puoi ottenere gli avvisi del giorno dei vari dipartimenti";
+            var keyboard = {
+                reply_markup: JSON.stringify({
+                    keyboard: [
+                        ['Home'],
+                        ['DICAM','DII','CISCA']
+                    ],
+                    one_time_keyboard: true,
+                    resize_keyboard: true
+                })
+            };
+            bot.sendMessage(msg.chat.id, text, keyboard);
+            break;
+        case 'DICAM':
+            alert.richiestaAvvisi("DICAM", bot, msg);
+            break;
+        case 'DII':
+            alert.richiestaAvvisi("DII", bot, msg);
+            break;
+        case 'CISCA':
+            alert.richiestaAvvisi("CISCA", bot, msg);
+            break;
+    }
+}
+
+function Luoghi (msg) {
+    switch (msg.text) {
+        case 'Luoghi Utili':
+            place.Luoghi_F1(bot, msg, databaseConnection);
+            break;
+    }
+}
+
+function EasterEgg (msg) {
+    bot.sendMessage(msg.chat.id, "Ti Amo <3");
+}
+
+function BackHome (msg) {
+    return new Promise((resolve, reject) => {
+    	db.initConnectionLess(databaseConnection)
+    		.then((con) => {
+                databaseConnection = con;
+    	        var query = "SELECT ChatID FROM users WHERE ChatID='" + id + "'";
+    	        con.query(query, function (err, result) {
+    	            if (err) return reject(err);
+
+    				if(result.length == 0) {
+    					var query = "INSERT INTO users (ChatID) VALUES ('" + id + "')";
+    			        con.query(query, function (err, result) {
+    			            if (err) return reject(err);
+
+    						return resolve("Success");
+    					});
+    				}
+    				else {
+    					var query = "UPDATE users SET last_command='/start',prevChoice='1',nameT=null,keyboard=null,lastResult=null,location=null WHERE ChatID='" + msg.chat.id + "'";
+    			        con.query(query, function (err, result) {
+    			            if (err) return reject(err);
+
+    						return resolve("Success");
+    					});
+    				}
+    			});
+    		})
+    		.catch(err => {
+    			bot.sendMessage(id, err);
+    		});
+    });
+}
+
+function createHome () {
+	return {
+		parse_mode: "Markdown",
+        reply_markup: JSON.stringify({
+			keyboard: [
+				['Mezzi'],
+				['Mensa'],
+				['OperaUniTN'],
+				['Luoghi'],
+				['Avvisi'],
+				['Scadenze']
+			],
+            one_time_keyboard: true,
+            resize_keyboard: true
+        })
+    };
+}
+
 // ---------- EVENTS ----------
 bot.on('funzioniOpera', OperaUniTN);
 bot.on('funzioniMensa', Mensa);
 bot.on('funzioniMezzi', Mezzi);
 bot.on('funzioniDevelop', Develop);
+bot.on('funzioniAvvisi', Avvisi);
+bot.on('funzioniLuoghi', Luoghi);
 bot.on('funzioniScadenze', Scadenze);
 
 bot.on('text', function(msg) {
@@ -584,34 +790,23 @@ bot.on('text', function(msg) {
                         bot.emit('funzioniMensa', msg);
                     else if(['Develop','Elimina_Tabelle','Inserisci_Tabelle','Reset_Users','Crea_Indici','Crea_Join','Info_DB'].includes(msg.text))
                         bot.emit('funzioniDevelop', msg);
-                    else if(msg.text.toLowerCase().includes("giulia") || msg.text.toLowerCase().includes("virginia") || msg.text.toLowerCase().includes("ilaria"))
-                        bot.sendMessage(msg.chat.id, "Ti Amo <3");
-                    else if(msg.text.toLowerCase() == 'home') {
-                        urban.updateStatus(msg.chat.id, '/start', con)
+                    else if(['Avvisi','DICAM','DII','CISCA'].includes(msg.text))
+                        bot.emit('funzioniAvvisi', msg);
+                    else if(['Luoghi'].includes(msg.text))
+                        bot.emit('funzioniLuoghi', msg);
+                    else if(['Giulia','Ilaria','Virginia'].includes(msg.text))
+                        EasterEgg(msg);
+                    else if(['Home'].includes(msg.text)) {
+                        BackHome(msg)
                             .then((result) => {
-                                var keyboard = {
-                                    reply_markup: JSON.stringify({
-                                        keyboard: [
-                                            ['Mezzi'],
-                                            ['Mensa'],
-                                            ['OperaUniTN'],
-                                            ['Scadenze']
-                                        ],
-                                        one_time_keyboard: true,
-                                        resize_keyboard: true
-                                    })
-                                };
-
-                                bot.sendMessage(msg.chat.id, "Torno alla Home...", keyboard);
+                                bot.sendMessage(msg.chat.id, "Torno alla Home...", createHome());
                             })
                             .catch(err => {
                                 console.error(err);
                             });
                     }
-                    else {
-                        console.log("Ricevuto: " + msg.text + " da " + msg.from.first_name);
-                        urban.isWorking(msg.chat.id, bot, msg, con);
-                    }
+                    else
+                        routeCommands(msg);
                 })
                 .catch(err => {
                     bot.sendMessage(msg.chat.id, err);
@@ -621,18 +816,6 @@ bot.on('text', function(msg) {
         	bot.sendMessage(msg.chat.id, text);
 
             text = "Benvenuto " + msg.from.first_name + "!\nUniTN Help Center è un bot sviluppato per aiutare attuali e/o futuri studenti dell'Università degli Studi di Trento in vari ambiti della propria vita quotidiana!";
-            var keyboard = {
-                reply_markup: JSON.stringify({
-                    keyboard: [
-        				['Mezzi'],
-        				['Mensa'],
-        				['OperaUniTN'],
-                        ['Scadenze']
-                    ],
-                    one_time_keyboard: true,
-                    resize_keyboard: true
-                })
-            };
 
             db.initConnectionLess(databaseConnection)
                 .then((con) => {
@@ -651,7 +834,7 @@ bot.on('text', function(msg) {
 							con.query(query, function (err, result) {
 								if (err) return reject(err);
 
-								bot.sendMessage(msg.chat.id, text, keyboard);
+								bot.sendMessage(msg.chat.id, text, createHome());
 							});
                         })
                         .catch(err => {
@@ -669,8 +852,7 @@ bot.on('location', function(msg) {
     db.initiateConnection(databaseConnection)
         .then((con) => {
             databaseConnection = con;
-            console.log("Ricevuto: " + msg.text + " da " + msg.from.first_name);
-            urban.isWorking(msg.chat.id, bot, msg, con);
+            routeCommands(msg);
         })
         .catch(err => {
             bot.sendMessage(msg.chat.id, err);
@@ -682,288 +864,10 @@ bot.on('callback_query', function(msg) {
         db.initiateConnection(databaseConnection)
             .then((con) => {
                 databaseConnection = con;
-                console.log("Ricevuto: " + msg.data + " da " + msg.from.first_name);
-                urban.isWorking(msg.message.chat.id, bot, msg, con);
+                routeCommands(msg);
             })
             .catch(err => {
                 bot.sendMessage(msg.chat.id, err);
             });
     }
 });
-/*
-
-//bot.onText(/\/IngegneriaAmbientaleCivileMeccanica/, (msg) =>
-bot.onText(/DICAM/, (msg) =>
-{
-  fun.richiestaAvvisi("DICAM", bot, msg);
-});
-
-//bot.onText(/\/IngegneriaCivile/, (msg) =>
-bot.onText(/DII/, (msg) =>
-{
-  fun.richiestaAvvisi("DII", bot, msg);
-});
-
-//bot.onText(/\/Fisica_Matematica_IngegneriaScienzeInformazione/, (msg) =>
-bot.onText(/CISCA/, (msg) =>
-{
-  fun.richiestaAvvisi("CISCA", bot, msg);
-});
-
-
-bot.onText(/Avvisi/, (msg) =>
-{
-  var text = "In questa sezione puoi ottenere gli avvisi del giorno dei vari dipartimenti";
-  var keyboard =
-  {
-    reply_markup: JSON.stringify(
-      {
-        keyboard: [
-          //['/IngegneriaAmbientaleCivileMeccanica'],
-          //['/IngegneriaCivile'],
-          //['/Fisica_Matematica_IngegneriaScienzeInformazione']
-          ['DICAM'],
-          ['DII'],
-          ['CISCA']
-        ],
-        one_time_keyboard: true, resize_keyboard: true
-      })
-  };
-
-  bot.sendMessage(msg.chat.id, text, keyboard);
-});
-
-//Funzione per i luoghi utili partendo dal posto di ricerca
-bot.on('text', (msg) => {
-	var citta;
-
-	var map = require('@google/maps').createClient({
-		key: 'AIzaSyA_rBZuYeP8ONgMXRnIOpO0t0XWtod08lU'
-	});
-
-
-	var keyboardHome = {
-		reply_markup: JSON.stringify({
-			keyboard: [
-				['']
-			],
-			one_time_keyboard: true,
-			resize_keyboard: true
-		})
-	};
-
-	var keyboardPlaces = {
-		reply_markup: JSON.stringify({
-			keyboard: [
-				['Biblioteche', 'Mense'],
-				['Facoltà', 'Copisterie']
-			],
-			one_time_keyboard: true,
-			resize_keyboard: true
-		})
-	};
-
-	if(msg.text == "Trento"){
-		citta = {lat: 46.0702531, lng: 11.1216386};
-
-		var text = "Hei sei nella sezione luoghi utili di Trento :), Dove vorresti andare?";
-
-		bot.sendMessage(msg.chat.id, text, keyboardPlaces).then(() => {
-
-			bot.once('text', (msg) => {
-				if(msg.text == "Biblioteche"){
-					var text = "Ecco a te le biblioteche a Trento :), i luoghi più silenziosi";
-
-					bot.sendMessage(msg.chat.id, text, keyboardHome);
-
-					console.log("pre funzione");
-					place.placesNearby(bot,msg.chat.id,map,citta,750,"library","Biblioteca");
-					console.log("post funzione");
-				}
-				else if(msg.text == "Mense"){
-					var text = "Ecco a te le mense a Trento :), la pappa hehe";
-
-					bot.sendMessage(msg.chat.id, text, keyboardHome);
-
-					place.placesNearby(bot,msg.chat.id,map,citta,750,"restaurant","mensa opera universitaria");
-				}
-				else if(msg.text == "Facoltà"){
-					var text = "Ecco a te le facoltà a Trento :), corri a lezione :P";
-
-					bot.sendMessage(msg.chat.id, text, keyboardHome);
-
-					place.placesNearby(bot,msg.chat.id,map,citta,750,"university","Univeristà");
-				}
-				else if(msg.text == "Copisterie"){
-					var text = "Ecco a te le Copisterie a Trento :), fotocopie a te";
-
-					bot.sendMessage(msg.chat.id, text, keyboardHome);
-
-					place.placesNearby(bot,msg.chat.id,map,citta,750,"store","Copisteria");
-				}
-			});
-		});
-	}
-	else if(msg.text == "Mesiano"){
-		citta = {lat: 46.0659393, lng: 11.1395838};
-
-		var text = "Hei sei nella sezione luoghi utili di Mesiano :), Dove vorresti andare?";
-
-		bot.sendMessage(msg.chat.id, text, keyboardPlaces).then(() => {
-
-			bot.once('text', (msg) => {
-				if(msg.text == "Biblioteche"){
-					var text = "Ecco a te le biblioteche a Mesiano :), i posti più silenziosi";
-
-					bot.sendMessage(msg.chat.id, text, keyboardHome);
-
-					place.placesNearby(bot,msg.chat.id,map,citta,300,"library","Biblioteca");
-				}
-				else if(msg.text == "Mense"){
-					var text = "Ecco a te le mense a Mesiano :), la pappa hehe";
-
-					bot.sendMessage(msg.chat.id, text, keyboardHome);
-
-					place.placesNearby(bot,msg.chat.id,map,citta,300,"","mensa opera universitaria");
-				}
-				else if(msg.text == "Facoltà"){
-					var text = "Ecco a te le facoltà a Mesiano :), corri a lezione :P";
-
-					bot.sendMessage(msg.chat.id, text, keyboardHome);
-
-					place.placesNearby(bot,msg.chat.id,map,citta,300,"","dipartimento");
-				}
-				else if(msg.text == "Copisterie"){
-					var text = "Ecco a te le Copisterie a Mesiano :), fotocopie a te";
-
-					bot.sendMessage(msg.chat.id, text, keyboardHome);
-
-					place.placesNearby(bot,msg.chat.id,map,citta,750,"store","Copisteria");
-				}
-			});
-		});
-	}
-	else if(msg.text == "Povo"){
-		citta = {lat: 46.066294, lng: 11.153842};
-
-		var text = "Hei sei nella sezione luoghi utili di Povo :), Dove vorresti andare?";
-
-		bot.sendMessage(msg.chat.id, text, keyboardPlaces).then(() => {
-
-			bot.once('text', (msg) => {
-				if(msg.text == "Biblioteche"){
-					var text = "Ecco a te le biblioteche a Povo :), i posti più silenziosi";
-
-					bot.sendMessage(msg.chat.id, text, keyboardHome);
-
-					place.placesNearby(bot,msg.chat.id,map,citta,300,"library","Biblioteca");
-				}
-				else if(msg.text == "Mense"){
-					var text = "Ecco a te le mense a Povo :), la pappa hehe";
-
-					bot.sendMessage(msg.chat.id, text, keyboardHome);
-
-					place.placesNearby(bot,msg.chat.id,map,citta,300,"","mensa opera universitaria");
-				}
-				else if(msg.text == "Facoltà"){
-					var text = "Ecco a te le facoltà a Povo :), corri a lezione :P";
-
-					bot.sendMessage(msg.chat.id, text, keyboardHome);
-
-					place.placesNearby(bot,msg.chat.id,map,citta,300,"","dipartimento");
-				}
-				else if(msg.text == "Copisterie"){
-					var text = "Ecco a te le Copisterie a Povo :), fotocopie a te";
-
-					bot.sendMessage(msg.chat.id, text, keyboardHome);
-
-					place.placesNearby(bot,msg.chat.id,map,citta,750,"store","Copisteria");
-				}
-			});
-		});
-	}
-	else if(msg.text == "Ricerca avanzata"){
-		var text = "Mandami la tua posizione, in modo che io possa sapere dove vuoi cercare";
-
-		var element = [];
-		element.push([{ text: 'Invia Posizione', request_location: true }]);
-
-		var keyboard = {
-			reply_markup: JSON.stringify({
-				keyboard: element,
-				one_time_keyboard: true,
-				resize_keyboard: true
-			})
-		};
-
-		bot.sendMessage(msg.chat.id, text, keyboard).then(() => {
-			bot.once('location', (msg) => {
-				console.log("Ho ricevuto la posizione");
-				var citta = {lat: msg.location.latitude, lng: msg.location.longitude};
-
-				var text2 = "Scrivimi ciò ceh vuoi cercare qui \nBar/librerie/musei/... tutto ciò che potresti trovare utile :)";
-
-				var keyboard = {
-					reply_markup: JSON.stringify({
-						keyboard: [],
-						one_time_keyboard: true,
-						resize_keyboard: true
-					})
-				};
-
-				bot.sendMessage(msg.chat.id, text2, keyboard).then(() => {
-
-					bot.once('text', (msg) => {
-						var nome = msg.text;
-						var text3 = "Ecco a te i risultati della tua ricerca: ";
-
-						bot.sendMessage(msg.chat.id, text3, keyboardHome);
-						console.log("Presentazione dei rislutati inviata");
-
-						place.placesNearby(bot,msg.chat.id,map,citta,750,"",nome);
-					});
-				});
-			});
-		});
-	}
-});
-
-//Funzione per il riconoscimento dei luoghi utili
-bot.on('text', (msg) => {
-	if(msg.text == "Luoghi utili"){
-		var text = "Hei sei nella sezione luoghi utili :), Dove ti interessa cercare?";
-
-		var keyboard = {
-	        reply_markup: JSON.stringify({
-	            keyboard: [
-					['Trento','Mesiano'],
-					['Povo', 'Ricerca avanzata']
-	            ],
-	            one_time_keyboard: true,
-	            resize_keyboard: true
-	        })
-	    };
-
-		bot.sendMessage(msg.chat.id, text, keyboard);
-	}
-});
-
-bot.onText(/\/start/, (msg) => {
-	bot.removeListener('callback_query');
-    var text = "Benvenuto " + msg.from.first_name + "!\nUniTN Help Center è un bot sviluppato per aiutare attuali e/o futuri studenti dell'Università degli Studi di Trento in vari ambiti della propria vita quotidiana!";
-
-    var keyboard = {
-        reply_markup: JSON.stringify({
-            keyboard: [
-				['/Mezzi'],
-				['/Mensa'],
-				['Luoghi utili'],
-                ['Avvisi'],
-				['/OperaUniTN']
-            ],
-            one_time_keyboard: true,
-            resize_keyboard: true
-        })
-    };
-
-    bot.sendMessage(msg.chat.id, text, keyboard);*/

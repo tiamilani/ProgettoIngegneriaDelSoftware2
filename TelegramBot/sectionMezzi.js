@@ -1,14 +1,8 @@
 // ---------- REQUIRE ----------
 const fun = require ('./functions.js');
 const db = require('./sectionDevelop');
-const dead = require('./sectionScadenze.js');
-const mysql = require('mysql');
 
 // ---------- FUNCTIONS ----------
-/*
- *	@param	id:				Identificativo univoco della chat
- *	@param	lastCommand:	Identifica lo stato dell'utente
-*/
 function checkID (id, lastCommand, connection) {
 	//console.log("IN CHECK");
 	return new Promise((resolve, reject) => {
@@ -52,15 +46,24 @@ function checkID (id, lastCommand, connection) {
 	});
 }
 
-/*
- *  @param  array:              Vettore contenente le scelte
- *  @param  npr:                Numero di scelte per riga
- *  @param  argument:           Quale valore della variabile devo prendere
- *  @param  checkName:          Frase da matchare in array per ridurre le scelte
- *  @param  requestPosition:    Indica se ho bisogno di richiedere la posizione
- *
- *	@return	keyboard:			Oggetto che definisce il layout della tastiera telegram
-*/
+function createHome () {
+	return {
+		parse_mode: "Markdown",
+        reply_markup: JSON.stringify({
+			keyboard: [
+				['Mezzi'],
+				['Mensa'],
+				['OperaUniTN'],
+				['Luoghi'],
+				['Avvisi'],
+				['Scadenze']
+			],
+            one_time_keyboard: true,
+            resize_keyboard: true
+        })
+    };
+}
+
 function createChoice (array, npr, argument, checkName, requestPosition) {
     let elements = [];
 
@@ -104,11 +107,6 @@ function createChoice (array, npr, argument, checkName, requestPosition) {
     };
 }
 
-/*	Funzione che crea il testo da visualizzare a partire da un oggetto
- *	@param	result:	Oggetto da analizzare
- *
- *	@return	text:	Testo che descrive l'oggetto passato in input
-*/
 function printText (result) {
     var text = "";
     if(result.route_short_name != undefined)
@@ -167,12 +165,6 @@ function printText (result) {
     return text;
 }
 
-/*
- *	@param	current:	Pagina di defualt da cui partire
- *	@param	maxpage:	Numero massimo di pagine presenti
- *
- *	@return	keyboard:	Oggetto che definisce il layout della tastiera telegram
-*/
 function getPaginationFull( current, maxpage ) {
     var buttons = [];
 
@@ -198,12 +190,6 @@ function getPaginationFull( current, maxpage ) {
     };
 }
 
-/*
- *	@param	current:	Pagina di defualt da cui partire
- *	@param	maxpage:	Numero massimo di pagine presenti
- *
- *	@return	keyboard:	Oggetto che definisce il layout della tastiera telegram
-*/
 function getPagination( current, maxpage ) {
     var buttons = [];
 
@@ -227,9 +213,6 @@ function getPagination( current, maxpage ) {
     };
 }
 
-/*
- *	@param	bot:	Bot da utilizzare per lo scmabio di messaggi
-*/
 function Fermata_F1 (bot, msg, connection) {
 	console.log("Fermata_F1");
 	db.initiateConnection(connection)
@@ -296,21 +279,8 @@ function Location_Init (bot, msg, con, stato, result) {
 		checkID(msg.chat.id, '/start', con)
 			.then((result) => {
 				var text = "Sei troppo lontano, cerca di avvicinarti...";
-				var keyboard = {
-					parse_mode: "Markdown",
-					reply_markup: JSON.stringify({
-						keyboard: [
-							['Mezzi'],
-							['Mensa'],
-							['OperaUniTN'],
-							['Scadenze']
-						],
-						one_time_keyboard: true,
-						resize_keyboard: true
-					})
-				};
 
-				bot.sendMessage(msg.chat.id, text, keyboard);
+				bot.sendMessage(msg.chat.id, text, createHome());
 			})
 			.catch(err => {
 				console.error(err);
@@ -464,21 +434,8 @@ function Fermata_F2_Location_F3 (bot, msg, nameT1, connection) {
 								checkID(msg.chat.id, '/start', con)
 									.then((result) => {
 										var text = "Mi dispiace ma la linea selezionata ha terminato le corse per oggi...";
-										var keyboard = {
-											parse_mode: "Markdown",
-											reply_markup: JSON.stringify({
-												keyboard: [
-													['Mezzi'],
-													['Mensa'],
-													['OperaUniTN'],
-							                        ['Scadenze']
-												],
-												one_time_keyboard: true,
-												resize_keyboard: true
-											})
-										};
 
-										bot.sendMessage(msg.chat.id, text, keyboard);
+										bot.sendMessage(msg.chat.id, text, createHome());
 									})
 									.catch(err => {
 										console.error(err);
@@ -490,21 +447,8 @@ function Fermata_F2_Location_F3 (bot, msg, nameT1, connection) {
 					checkID(msg.chat.id, '/start', con)
 						.then((result) => {
 							var text = "La linea inserita non è stata riconosciuta!";
-							var keyboard = {
-								parse_mode: "Markdown",
-								reply_markup: JSON.stringify({
-									keyboard: [
-										['Mezzi'],
-										['Mensa'],
-										['OperaUniTN'],
-				                        ['Scadenze']
-									],
-									one_time_keyboard: true,
-									resize_keyboard: true
-								})
-							};
 
-							bot.sendMessage(msg.chat.id, text, keyboard);
+							bot.sendMessage(msg.chat.id, text, createHome());
 						})
 						.catch(err => {
 							console.error(err);
@@ -601,21 +545,8 @@ function Fermata_F2_Name_F2 (bot, msg, connection) {
 					checkID(msg.chat.id, '/start', con)
 						.then((result) => {
 							var text = "La linea fermata non è stata riconosciuta!";
-							var keyboard = {
-								parse_mode: "Markdown",
-								reply_markup: JSON.stringify({
-									keyboard: [
-										['Mezzi'],
-										['Mensa'],
-										['OperaUniTN'],
-				                        ['Scadenze']
-									],
-									one_time_keyboard: true,
-									resize_keyboard: true
-								})
-							};
 
-							bot.sendMessage(msg.chat.id, text, keyboard);
+							bot.sendMessage(msg.chat.id, text, createHome());
 						})
 						.catch(err => {
 							console.error(err);
@@ -682,21 +613,8 @@ function Fermata_F2_Name_F3 (bot, msg, nameT1, connection) {
 								checkID(msg.chat.id, '/start', con)
 									.then((result) => {
 										var text = "Mi dispiace ma la linea selezionata ha terminato le corse per oggi...";
-										var keyboard = {
-											parse_mode: "Markdown",
-											reply_markup: JSON.stringify({
-												keyboard: [
-													['Mezzi'],
-													['Mensa'],
-													['OperaUniTN'],
-							                        ['Scadenze']
-												],
-												one_time_keyboard: true,
-												resize_keyboard: true
-											})
-										};
 
-										bot.sendMessage(msg.chat.id, text, keyboard);
+										bot.sendMessage(msg.chat.id, text, createHome());
 									})
 									.catch(err => {
 										console.error(err);
@@ -708,21 +626,8 @@ function Fermata_F2_Name_F3 (bot, msg, nameT1, connection) {
 					checkID(msg.chat.id, '/start', con)
 						.then((result) => {
 							var text = "La linea inserita non è stata riconosciuta!";
-							var keyboard = {
-								parse_mode: "Markdown",
-								reply_markup: JSON.stringify({
-									keyboard: [
-										['Mezzi'],
-										['Mensa'],
-										['OperaUniTN'],
-				                        ['Scadenze']
-									],
-									one_time_keyboard: true,
-									resize_keyboard: true
-								})
-							};
 
-							bot.sendMessage(msg.chat.id, text, keyboard);
+							bot.sendMessage(msg.chat.id, text, createHome());
 						})
 						.catch(err => {
 							console.error(err);
@@ -735,9 +640,6 @@ function Fermata_F2_Name_F3 (bot, msg, nameT1, connection) {
 		});
 }
 
-/*
- *	@param	bot:	Bot da utilizzare per lo scmabio di messaggi
-*/
 function Linea_F1 (bot, msg, connection) {
 	console.log("Linea_F1");
 	db.initiateConnection(connection)
@@ -820,21 +722,8 @@ function Linea_F2 (bot, msg, connection) {
 					checkID(msg.chat.id, '/start', con)
 						.then((result) => {
 							var text = "La linea inserita non è stata riconosciuta!";
-							var keyboard = {
-								parse_mode: "Markdown",
-								reply_markup: JSON.stringify({
-									keyboard: [
-										['Mezzi'],
-										['Mensa'],
-										['OperaUniTN'],
-				                        ['Scadenze']
-									],
-									one_time_keyboard: true,
-									resize_keyboard: true
-								})
-							};
 
-							bot.sendMessage(msg.chat.id, text, keyboard);
+							bot.sendMessage(msg.chat.id, text, createHome());
 						})
 						.catch(err => {
 							console.error(err);
@@ -898,21 +787,8 @@ function Linea_F3 (bot, msg, nameT1, connection) {
 					checkID(msg.chat.id, '/start', con)
 						.then((result) => {
 							var text = "La direzione inserita non è stata riconosciuta!";
-							var keyboard = {
-								parse_mode: "Markdown",
-								reply_markup: JSON.stringify({
-									keyboard: [
-										['Mezzi'],
-										['Mensa'],
-										['OperaUniTN'],
-				                        ['Scadenze']
-									],
-									one_time_keyboard: true,
-									resize_keyboard: true
-								})
-							};
 
-							bot.sendMessage(msg.chat.id, text, keyboard);
+							bot.sendMessage(msg.chat.id, text, createHome());
 						})
 						.catch(err => {
 							console.error(err);
@@ -946,21 +822,8 @@ function Linea_F4_Location_F1 (bot, msg, nameT2, connection) {
 					checkID(msg.chat.id, '/start', con)
 						.then((result) => {
 							var text = "Mi dispiace ma la linea selezionata ha terminato le corse per oggi, oppure non lavora oggi...";
-							var keyboard = {
-								parse_mode: "Markdown",
-								reply_markup: JSON.stringify({
-									keyboard: [
-										['Mezzi'],
-										['Mensa'],
-										['OperaUniTN'],
-				                        ['Scadenze']
-									],
-									one_time_keyboard: true,
-									resize_keyboard: true
-								})
-							};
 
-							bot.sendMessage(msg.chat.id, text, keyboard);
+							bot.sendMessage(msg.chat.id, text, createHome());
 						})
 						.catch(err => {
 							console.error(err);
@@ -1012,21 +875,8 @@ function Linea_F4_Name_F1 (bot, msg, nameT2, connection) {
 							checkID(msg.chat.id, '/start', con)
 								.then((result) => {
 									var text = "Mi dispiace ma la linea selezionata ha terminato le corse per oggi...";
-									var keyboard = {
-										parse_mode: "Markdown",
-										reply_markup: JSON.stringify({
-											keyboard: [
-												['Mezzi'],
-												['Mensa'],
-												['OperaUniTN'],
-						                        ['Scadenze']
-											],
-											one_time_keyboard: true,
-											resize_keyboard: true
-										})
-									};
 
-									bot.sendMessage(msg.chat.id, text, keyboard);
+									bot.sendMessage(msg.chat.id, text, createHome());
 								})
 								.catch(err => {
 									console.error(err);
@@ -1037,21 +887,8 @@ function Linea_F4_Name_F1 (bot, msg, nameT2, connection) {
 					checkID(msg.chat.id, '/start', con)
 						.then((result) => {
 							var text = "La linea inserita non è stata riconosciuta!";
-							var keyboard = {
-								parse_mode: "Markdown",
-								reply_markup: JSON.stringify({
-									keyboard: [
-										['Mezzi'],
-										['Mensa'],
-										['OperaUniTN'],
-				                        ['Scadenze']
-									],
-									one_time_keyboard: true,
-									resize_keyboard: true
-								})
-							};
 
-							bot.sendMessage(msg.chat.id, text, keyboard);
+							bot.sendMessage(msg.chat.id, text, createHome());
 						})
 						.catch(err => {
 							console.error(err);
@@ -1064,9 +901,6 @@ function Linea_F4_Name_F1 (bot, msg, nameT2, connection) {
 		});
 }
 
-/*
- *	@param	bot:	Bot da utilizzare per lo scmabio di messaggi
-*/
 function Next_F1 (bot, msg, connection) {
 	console.log("Next_F1");
 	db.initiateConnection(connection)
@@ -1155,21 +989,8 @@ function Next_F2_Location_F2 (bot, msg, connection) {
 								checkID(msg.message.chat.id, '/start', con)
 									.then((result) => {
 										var text = "Mi dispiace ma per oggi sono terminate le corse in questa fermata, oppure non lavora oggi...";
-										var keyboard = {
-											parse_mode: "Markdown",
-											reply_markup: JSON.stringify({
-												keyboard: [
-													['Mezzi'],
-													['Mensa'],
-													['OperaUniTN'],
-							                        ['Scadenze']
-												],
-												one_time_keyboard: true,
-												resize_keyboard: true
-											})
-										};
 
-										bot.sendMessage(msg.message.chat.id, text, keyboard);
+										bot.sendMessage(msg.message.chat.id, text, createHome());
 									})
 									.catch(err => {
 										console.error(err);
@@ -1281,21 +1102,8 @@ function Next_F2_Name_F2 (bot, msg, connection) {
 								checkID(msg.chat.id, '/start', con)
 									.then((result) => {
 										var text = "Mi dispiace ma la linea selezionata ha terminato le corse per oggi...";
-										var keyboard = {
-											parse_mode: "Markdown",
-											reply_markup: JSON.stringify({
-												keyboard: [
-													['Mezzi'],
-													['Mensa'],
-													['OperaUniTN'],
-							                        ['Scadenze']
-												],
-												one_time_keyboard: true,
-												resize_keyboard: true
-											})
-										};
 
-										bot.sendMessage(msg.chat.id, text, keyboard);
+										bot.sendMessage(msg.chat.id, text, createHome());
 									})
 									.catch(err => {
 										console.error(err);
@@ -1307,21 +1115,8 @@ function Next_F2_Name_F2 (bot, msg, connection) {
 					checkID(msg.chat.id, '/start', con)
 						.then((result) => {
 							var text = "La fermata inserita non è stata riconosciuta!";
-							var keyboard = {
-								parse_mode: "Markdown",
-								reply_markup: JSON.stringify({
-									keyboard: [
-										['Mezzi'],
-										['Mensa'],
-										['OperaUniTN'],
-				                        ['Scadenze']
-									],
-									one_time_keyboard: true,
-									resize_keyboard: true
-								})
-							};
 
-							bot.sendMessage(msg.chat.id, text, keyboard);
+							bot.sendMessage(msg.chat.id, text, createHome());
 						})
 						.catch(err => {
 							console.error(err);
@@ -1351,20 +1146,7 @@ function All_FF (bot, msg, connection) {
 						.then((result) => {
 							bot.editMessageText(printText(res[prevChoice-1]), {chat_id: msg.message.chat.id,message_id: msg.message.message_id,parse_mode: "Markdown"});
 
-							var keyboard = {
-								parse_mode: "Markdown",
-								reply_markup: JSON.stringify({
-									keyboard: [
-										['Mezzi'],
-										['Mensa'],
-										['OperaUniTN'],
-				                        ['Scadenze']
-									],
-									one_time_keyboard: true,
-									resize_keyboard: true
-								})
-							};
-							bot.sendMessage(msg.message.chat.id, "Ecco la possizione selezionata!", keyboard);
+							bot.sendMessage(msg.message.chat.id, "Ecco la possizione selezionata!", createHome());
 				            bot.sendLocation(msg.message.chat.id, res[prevChoice-1].stop_lat, res[prevChoice-1].stop_lon);
 						})
 						.catch(err => {
@@ -1393,11 +1175,8 @@ function All_FF (bot, msg, connection) {
 		});
 }
 
-/*
- *	@param	bot:	Bot da utilizzare per lo scmabio di messaggi
-*/
-function avvisiLinee (bot, msg, connection) {
-	console.log("AVVISI");
+function Avvisi_Linee (bot, msg, connection) {
+	console.log("Avvisi_Linee");
 	db.initiateConnection(connection)
 		.then((con) => {
 	        var date = new Date();
@@ -1425,111 +1204,28 @@ function avvisiLinee (bot, msg, connection) {
 		});
 }
 
-/*
- *	@param	id:				Identificativo univoco della chat
- *	@param	bot:			Bot da utilizzare per lo scmabio di messaggi
- *	@param	msg:			Parametro passato per chat
-*/
-function nextCommand (id, bot, msg, connection) {
-	console.log("ROUTE");
-	db.initiateConnection(connection)
-		.then((con) => {
-	        var query = "SELECT * FROM users WHERE ChatID='" + id + "'";
-	        con.query(query, function (err, result) {
-	            if (err) throw err;
-
-				result = result[0];
-
-				console.log("Ultimo comando: " + result.last_command);
-
-				if ((result.last_command).includes("Fermata")) {
-					switch (result.last_command) {
-						case 'Fermata_F1':
-							if(msg.text != undefined)
-								Fermata_F2_Name_F1(bot, msg, con);
-							else if(msg.location != undefined)
-								Fermata_F2_Location_F1(bot, msg, con);
-							break;
-						case 'Fermata_F2_Location_F1':
-							Fermata_F2_Location_F2(bot, msg, con);
-							break;
-						case 'Fermata_F2_Location_F2':
-							Fermata_F2_Location_F3(bot, msg, result.nameT, con);
-							break;
-						case 'Fermata_F2_Location_F3':
-							All_FF(bot, msg, con);
-							break;
-						case 'Fermata_F2_Name_F1':
-							Fermata_F2_Name_F2(bot, msg, con);
-							break;
-						case 'Fermata_F2_Name_F2':
-							Fermata_F2_Name_F3(bot, msg, result.nameT, con);
-							break;
-						case 'Fermata_F2_Name_F3':
-							All_FF(bot, msg, con);
-					}
-				}
-				else if ((result.last_command).includes("Linea")) {
-					switch (result.last_command) {
-						case 'Linea_F1':
-							Linea_F2(bot, msg, con);
-							break;
-						case 'Linea_F2':
-							Linea_F3(bot, msg, result.nameT, con);
-							break;
-						case 'Linea_F3':
-							if(msg.text != undefined)
-								Linea_F4_Name_F1 (bot, msg, result.nameT, con);
-							else if(msg.location != undefined)
-								Linea_F4_Location_F1 (bot, msg, result.nameT, con);
-							break;
-						case 'Linea_F4_Name_F1':
-							All_FF (bot, msg, con);
-							break;
-						case 'Linea_F4_Location_F1':
-							All_FF (bot, msg, con);
-					}
-				}
-				else if ((result.last_command).includes("Next")) {
-					switch (result.last_command) {
-						case 'Next_F1':
-							if(msg.text != undefined)
-								Next_F2_Name_F1 (bot, msg, con);
-							else if(msg.location != undefined)
-								Next_F2_Location_F1 (bot, msg, con);
-							break;
-						case 'Next_F2_Name_F1':
-							Next_F2_Name_F2 (bot, msg, con);
-							break;
-						case 'Next_F2_Name_F2':
-							All_FF (bot, msg, con);
-							break;
-						case 'Next_F2_Location_F1':
-							Next_F2_Location_F2 (bot, msg, con);
-							break;
-						case 'Next_F2_Location_F2':
-							All_FF (bot, msg, con);
-					}
-				}
-				else if (result.last_command == 'Mensa_F1')
-					fun.mensaVicina2 (bot, msg, con);
-				else if(result.last_command == 'Inserisci_Scadenza')
-					dead.addScadenza(bot, msg, con);
-				else if(result.last_command == 'Modifica_Scadenza')
-					dead.alterScadenza(bot, msg, con);
-				else if(result.last_command == 'Elimina_Scadenza')
-					dead.deleteScadenza(bot, msg, con);
-			});
-		})
-		.catch(err => {
-			bot.sendMessage(id, err);
-		});
-}
-
 // ---------- EXPORTS ----------
-exports.updateStatus = checkID;
-exports.isWorking = nextCommand;
-exports.fermata = Fermata_F1;
-exports.linea = Linea_F1;
-exports.nextLinea = Next_F1;
-exports.avvisi = avvisiLinee;
+exports.Fermata_F1 = Fermata_F1;
+exports.Location_Init = Location_Init;
+exports.Fermata_F2_Location_F1 = Fermata_F2_Location_F1;
+exports.Fermata_F2_Location_F2 = Fermata_F2_Location_F2;
+exports.Fermata_F2_Location_F3 = Fermata_F2_Location_F3;
+exports.Fermata_F2_Name_F1 = Fermata_F2_Name_F1;
+exports.Fermata_F2_Name_F2 = Fermata_F2_Name_F2;
+exports.Fermata_F2_Name_F3 = Fermata_F2_Name_F3;
+
+exports.Linea_F1 = Linea_F1;
+exports.Linea_F2 = Linea_F2;
+exports.Linea_F3 = Linea_F3;
+exports.Linea_F4_Location_F1 = Linea_F4_Location_F1;
+exports.Linea_F4_Name_F1 = Linea_F4_Name_F1;
+
+
+exports.Next_F1 = Next_F1;
+exports.Next_F2_Location_F1 = Next_F2_Location_F1;
+exports.Next_F2_Location_F2 = Next_F2_Location_F2;
+exports.Next_F2_Name_F1 = Next_F2_Name_F1;
+exports.Next_F2_Name_F2 = Next_F2_Name_F2;
+exports.All_FF = All_FF;
+
+exports.Avvisi_Linee = Avvisi_Linee;
