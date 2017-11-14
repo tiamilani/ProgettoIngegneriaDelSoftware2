@@ -54,224 +54,227 @@ bot.on('text', (msg) => {
 
         bot.sendMessage(msg.chat.id, text, keyboard);
     }
-    // -- SEZIONE HOW TO --
-    else if(msg.text.toLowerCase() == "howto"){
-        var text = "In questa sezione puoi ottenere le informazioni sul corretto svolgimento delle diverse pratiche legate all'Università";
-        var keyboard = {
-            reply_markup: JSON.stringify({
-                keyboard: [
-                  ['Ammissioni', 'Immatricolazioni'],
-                  ['Tasse Universitarie', 'Borse di studio'],
-                  ['Trasferimenti', 'Supporto'],
-                  ['Libera Circolazione', 'Open Day'],
-                  ['Rinnovo Iscrizioni', 'Futuro Studente'],
-                ],
-                one_time_keyboard: true,
-                resize_keyboard: true
-            })
-        };
-        console.log("HOW TO");
-        bot.sendMessage(msg.chat.id, text, keyboard);
+});
 
-    }else if(msg.text.toLowerCase() == "tasse universitarie"){
-        var text = "Qui puoi trovare tutte le informazioni sulle tasse che ti possono interessare. Seleziona un argomento da sotto";
-        var keyboard = {
-            reply_markup: JSON.stringify({
-                keyboard: [
-                    ['Tasse A.A. 17-18', 'ISEE A.A. 17-18'],
-                    ['Pagamenti', 'Rimborsi'],
-                ],
-                one_time_keyboard: true,
-                resize_keyboard: true
-            })
-        };
-        console.log("TASSE UNIVERSITARIE");
-        how.homeTasse('https://infostudenti.unitn.it/it/tasse-universitarie', './Tasse_Home', bot, msg, 'init');
-        bot.sendMessage(msg.chat.id, text, keyboard);
-
-    }else if(msg.text.toLowerCase() == "rimborsi"){
-      how.homeTasse('https://infostudenti.unitn.it/it/tasse-universitarie', './Tasse_Home', bot, msg, 'rimborsi');
-    }else if(msg.text.toLowerCase() == "pagamenti"){
-      how.homeTasse('https://infostudenti.unitn.it/it/tasse-universitarie', './Tasse_Home', bot, msg, 'pagamenti');
-    }else if(msg.text.toLowerCase() == "tasse a.a. 17-18"){
-      how.homeTasse('https://infostudenti.unitn.it/it/tasse-universitarie', './Tasse_Home', bot, msg, 'tasse');
-    }else if(msg.text.toLowerCase() == "isee a.a. 17-18"){
-      how.homeTasse('https://infostudenti.unitn.it/it/tasse-universitarie', './Tasse_Home', bot, msg, 'isee');
-    }else if(msg.text.toLowerCase() == "ammissioni"){
-
-      var text = "Qui puoi trovare tutte e le informazioni sulle ammissioni ai corsi di laurea che ti possono interessare";
-      var keyboard = {
-        reply_markup: JSON.stringify({
-          keyboard: [
-              ['Ammissioni Lauree e Lauree Magistrali a ciclo unico'],
-              ['Ammissioni Lauree Magistrali']
-          ],
-          one_time_keyboard: true,
-          resize_keyboard: true
-        })
-      };
-      console.log("AMMISSIONI");
-      how.homeAmmissioni('https://infostudenti.unitn.it/it/ammissioni', './Ammissioni_Home', bot, msg, 'init');
-      bot.sendMessage(msg.chat.id, text, keyboard);
-    }else if(msg.text.toLowerCase() == 'ammissioni lauree e lauree magistrali a ciclo unico'){
-      how.homeAmmissioni('https://infostudenti.unitn.it/it/ammissioni', './Ammissioni_Home', bot, msg, 'ammissioni_triennali');
-    }else if(msg.text.toLowerCase() == 'ammissioni lauree magistrali'){
-      how.homeAmmissioni('https://infostudenti.unitn.it/it/ammissioni', './Ammissioni_Home', bot, msg, 'ammissioni_magistrali');
-    }else if(msg.text.toLowerCase() == "immatricolazioni"){
-
-      var text = "Qui puoi trovare tutte e le informazioni sulle immatricolazioni ai corsi di laurea che ti possono interessare";
-      var keyboard = {
-        reply_markup: JSON.stringify({
-          keyboard: [
-              ['Immatricolazioni Lauree e Lauree Magistrali a ciclo unico'],
-              ['Immatricolazioni Lauree Magistrali']
-          ],
-          one_time_keyboard: true,
-          resize_keyboard: true
-        })
-      };
-      console.log("IMMATRICOLAZIONI");
-      how.homeImmatricolazioni('https://infostudenti.unitn.it/it/immatricolazioni', './Immatricolazioni_Home', bot, msg, 'init');
-      bot.sendMessage(msg.chat.id, text, keyboard);
-    }else if(msg.text.toLowerCase() == 'immatricolazioni lauree e lauree magistrali a ciclo unico'){
-      how.homeImmatricolazioni('https://infostudenti.unitn.it/it/immatricolazioni', './Immatricolazioni_Home', bot, msg, 'immatricolazioni_triennali');
-    }else if(msg.text.toLowerCase() == 'immatricolazioni lauree magistrali'){
-      how.homeImmatricolazioni('https://infostudenti.unitn.it/it/immatricolazioni', './Immatricolazioni_Home', bot, msg, 'immatricolazioni_magistrali');
-    }else if(msg.text.toLowerCase() == "rinnovo iscrizioni"){
-
-      var text = "Qui puoi trovare tutte e le informazioni sui rinnovi delle iscrizioni ai corsi di laurea";
-      var keyboard = {
-        reply_markup: JSON.stringify({
-          keyboard: [
-              ['Rinnovo iscrizione con pagamento tasse'],
-              ['Rinnovo iscrizione con richiesta borsa di studio'],
-              ['Rinnovo iscrizione studenti con bisogni particolari']
-          ],
-          one_time_keyboard: true,
-          resize_keyboard: true
-        })
-      };
-      console.log("RINNOVI");
-      how.homeRinnovi('https://infostudenti.unitn.it/it/rinnovo-iscrizioni', './Rinnovi_Home', bot, msg, 'init');
-      bot.sendMessage(msg.chat.id, text, keyboard);
-    }else if(msg.text.toLowerCase() == 'rinnovo iscrizione con pagamento tasse'){
-      how.homeRinnovi('https://infostudenti.unitn.it/it/rinnovo-iscrizioni', './Rinnovi_Home', bot, msg, 'rinnovi_tasse');
-    }else if(msg.text.toLowerCase() == 'rinnovo iscrizione con richiesta borsa di studio'){
-      how.homeRinnovi('https://infostudenti.unitn.it/it/rinnovo-iscrizioni', './Rinnovi_Home', bot, msg, 'rinnovi_borsa');
-    }else if(msg.text.toLowerCase() == 'rinnovo iscrizione studenti con bisogni particolari'){
-      how.homeRinnovi('https://infostudenti.unitn.it/it/rinnovo-iscrizioni', './Rinnovi_Home', bot, msg, 'rinnovi_particolari');
-    }else if(msg.text.toLowerCase() == 'borse di studio'){
-
-      var text = "Qui puoi trovare tutte le informazioni sulle borse di studio e le agevolazioni fornite dall'Università";
-      var keyboard = {
-        reply_markup: JSON.stringify({
-          keyboard: [
-              ['Borse di studio e Posto alloggio'],
-              ['Dichiarazione di invalidità o disabilità'],
-              ['Attesa di Laurea', 'Libera circolazione']
-          ],
-          one_time_keyboard: true,
-          resize_keyboard: true
-        })
-      };
-      console.log("BORSE");
-      how.homeBorse('https://infostudenti.unitn.it/it/borse-di-studio-e-agevolazioni', './Borse_Home', bot, msg, 'init');
-      bot.sendMessage(msg.chat.id, text, keyboard);
-    }else if(msg.text.toLowerCase() == 'borse di studio e posto alloggio'){
-      how.homeBorse('https://infostudenti.unitn.it/it/borse-di-studio-e-agevolazioni', './Borse_Home', bot, msg, 'borse_alloggi');
-    }else if(msg.text.toLowerCase() == 'dichiarazione di invalidità o disabilità'){
-      how.homeBorse('https://infostudenti.unitn.it/it/borse-di-studio-e-agevolazioni', './Borse_Home', bot, msg, 'bisogni_particolari');
-    }else if(msg.text.toLowerCase() == 'attesa di laurea'){
-      how.homeBorse('https://infostudenti.unitn.it/it/borse-di-studio-e-agevolazioni', './Borse_Home', bot, msg, 'attesa_laurea');
-    }else if(msg.text.toLowerCase() == 'libera circolazione'){
-      how.homeBorse('https://infostudenti.unitn.it/it/borse-di-studio-e-agevolazioni', './Borse_Home', bot, msg, 'libera_circolazione');
-    }else if(msg.text.toLowerCase() == 'trasferimenti'){
-
-      var text = "Qui puoi trovare tutte le informazioni riguardanti le modalità e i requisiti per i trasferimenti da e verso UniTrento";
-      var keyboard = {
-        reply_markup: JSON.stringify({
-          keyboard: [
-              ['Trasferimento verso un altro ateneo'],
-              ['Trasferimento da un altro ateno'],
-              ['Trasferimento da un altro ateneo Laurea Magistrale']
-          ],
-          one_time_keyboard: true,
-          resize_keyboard: true
-        })
-      };
-      console.log("TRASFERIMENTI");
-      how.homeTrasferimenti('https://infostudenti.unitn.it/it/trasferirsi-e-cambiare-corso', './Trasferimenti_Home', bot, msg, 'init');
-      bot.sendMessage(msg.chat.id, text, keyboard);
-    }else if(msg.text.toLowerCase() == 'trasferimento verso un altro ateneo'){
-      how.homeTrasferimenti('https://infostudenti.unitn.it/it/trasferirsi-e-cambiare-corso', './Traferimenti_Home', bot, msg, 'trasferimenti_verso');
-    }else if(msg.text.toLowerCase() == 'trasferimento da un altro ateneo laurea magistrale'){
-      how.homeTrasferimenti('https://infostudenti.unitn.it/it/trasferirsi-e-cambiare-corso', './Trasferimenti_Home', bot, msg, 'trasferimenti_da_magistrale');
-    }else if(msg.text.toLowerCase() == 'trasferimento da un altro ateno'){
-      how.homeTrasferimenti('https://infostudenti.unitn.it/it/trasferirsi-e-cambiare-corso', './Trasferimenti_Home', bot, msg, 'trasferimenti_da_triennale');
-    }else if(msg.text.toLowerCase() == 'supporto'){
-      console.log("SUPPORTO");
-      how.homeSupporto('https://infostudenti.unitn.it/it/supporto-studenti', './Supporto_Home', bot, msg, 'init');
-    }else if(msg.text.toLowerCase() == 'open day'){
-      console.log("OPEN DAY");
-      how.homeOpenDay('http://events.unitn.it/porteaperte-2017', './OpenDay_Home', bot, msg, 'init');
-    }else if(msg.text.toLowerCase() == 'futuro studente'){
-
-      var text = "Sei un futuro studente UNITN o vorresti diventarlo? Non riesci ad orientarti nelle varie pagine del sito e non trovi quello che ti serve?" +
-                " Questa sezione è proprio quello che stai cercando! Seleziona uno degli argomenti qui sotto!";
-      var keyboard = {
-        reply_markup: JSON.stringify({
-          keyboard: [
-              ['Didattica', 'Iscrizioni'],
-              ['Orientamento', 'Agevolazioni'],
-              ['Servizi', 'Ateneo'],
-              ['Prospective International Student'],
-              ['Non solo studio']
-          ],
-          one_time_keyboard: true,
-          resize_keyboard: true
-        })
-      };
-
-      console.log("FUTURO STUDENTE");
-      how.homeFuturoStudente('http://www.unitn.it/futuro-studente', './Futuro_Studente', bot, msg, 'init');
-      bot.sendMessage(msg.chat.id, text, keyboard);
-    }else if(msg.text.toLowerCase() == 'didattica'){
-      how.homeFuturoStudente('http://www.unitn.it/futuro-studente', './Futuro_Studente', bot, msg, 'didattica');
-    }else if(msg.text.toLowerCase() == 'iscrizioni'){
-      how.homeFuturoStudente('http://www.unitn.it/futuro-studente', './Futuro_Studente', bot, msg, 'iscrizioni');
-    }else if(msg.text.toLowerCase() == 'orientamento'){
-      how.homeFuturoStudente('http://www.unitn.it/futuro-studente', './Futuro_Studente', bot, msg, 'orientamento');
-    }else if(msg.text.toLowerCase() == 'agevolazioni'){
-      how.homeFuturoStudente('http://www.unitn.it/futuro-studente', './Futuro_Studente', bot, msg, 'agevolazioni');
-    }else if(msg.text.toLowerCase() == 'servizi'){
-      how.homeFuturoStudente('http://www.unitn.it/futuro-studente', './Futuro_Studente', bot, msg, 'servizi');
-    }else if(msg.text.toLowerCase() == 'ateneo'){
-      how.homeFuturoStudente('http://www.unitn.it/futuro-studente', './Futuro_Studente', bot, msg, 'ateneo');
-    }else if(msg.text.toLowerCase() == 'prospective international student'){
-      how.homeFuturoStudente('http://www.unitn.it/futuro-studente', './Futuro_Studente', bot, msg, 'international');
-    }else if(msg.text.toLowerCase() == 'non solo studio'){
-      how.homeFuturoStudente('http://www.unitn.it/futuro-studente', './Futuro_Studente', bot, msg, 'studio');
-    }else if(msg.text.toLowerCase() == 'home'){
-      var text = "Eccoti di nuovo nel menù principale!";
+bot.on('text', (msg) => {
+  // -- SEZIONE HOW TO --
+  else if(msg.text.toLowerCase() == "howto"){
+      var text = "In questa sezione puoi ottenere le informazioni sul corretto svolgimento delle diverse pratiche legate all'Università";
       var keyboard = {
           reply_markup: JSON.stringify({
               keyboard: [
-  				['/Mezzi', 'HowTo'],
-  				['/Mensa'],
-  				['/OperaUniTN']
+                ['Ammissioni', 'Immatricolazioni'],
+                ['Tasse Universitarie', 'Borse di studio'],
+                ['Trasferimenti', 'Supporto'],
+                ['Libera Circolazione', 'Open Day'],
+                ['Rinnovo Iscrizioni', 'Futuro Studente'],
               ],
               one_time_keyboard: true,
               resize_keyboard: true
           })
       };
-
+      console.log("HOW TO");
       bot.sendMessage(msg.chat.id, text, keyboard);
-    }else{
-      var matches = similar.findBestMatch(msg.text.toLowerCase(), keywords);
-      bot.sendMessage(msg.chat.id, "Non ho trovato il comando desiderato. Forse intendevi " + matches.bestMatch.target + "?");
-    }
 
+  }else if(msg.text.toLowerCase() == "tasse universitarie"){
+      var text = "Qui puoi trovare tutte le informazioni sulle tasse che ti possono interessare. Seleziona un argomento da sotto";
+      var keyboard = {
+          reply_markup: JSON.stringify({
+              keyboard: [
+                  ['Tasse A.A. 17-18', 'ISEE A.A. 17-18'],
+                  ['Pagamenti', 'Rimborsi'],
+              ],
+              one_time_keyboard: true,
+              resize_keyboard: true
+          })
+      };
+      console.log("TASSE UNIVERSITARIE");
+      how.homeTasse('https://infostudenti.unitn.it/it/tasse-universitarie', './Tasse_Home', bot, msg, 'init');
+      bot.sendMessage(msg.chat.id, text, keyboard);
+
+  }else if(msg.text.toLowerCase() == "rimborsi"){
+    how.homeTasse('https://infostudenti.unitn.it/it/tasse-universitarie', './Tasse_Home', bot, msg, 'rimborsi');
+  }else if(msg.text.toLowerCase() == "pagamenti"){
+    how.homeTasse('https://infostudenti.unitn.it/it/tasse-universitarie', './Tasse_Home', bot, msg, 'pagamenti');
+  }else if(msg.text.toLowerCase() == "tasse a.a. 17-18"){
+    how.homeTasse('https://infostudenti.unitn.it/it/tasse-universitarie', './Tasse_Home', bot, msg, 'tasse');
+  }else if(msg.text.toLowerCase() == "isee a.a. 17-18"){
+    how.homeTasse('https://infostudenti.unitn.it/it/tasse-universitarie', './Tasse_Home', bot, msg, 'isee');
+  }else if(msg.text.toLowerCase() == "ammissioni"){
+
+    var text = "Qui puoi trovare tutte e le informazioni sulle ammissioni ai corsi di laurea che ti possono interessare";
+    var keyboard = {
+      reply_markup: JSON.stringify({
+        keyboard: [
+            ['Ammissioni Lauree e Lauree Magistrali a ciclo unico'],
+            ['Ammissioni Lauree Magistrali']
+        ],
+        one_time_keyboard: true,
+        resize_keyboard: true
+      })
+    };
+    console.log("AMMISSIONI");
+    how.homeAmmissioni('https://infostudenti.unitn.it/it/ammissioni', './Ammissioni_Home', bot, msg, 'init');
+    bot.sendMessage(msg.chat.id, text, keyboard);
+  }else if(msg.text.toLowerCase() == 'ammissioni lauree e lauree magistrali a ciclo unico'){
+    how.homeAmmissioni('https://infostudenti.unitn.it/it/ammissioni', './Ammissioni_Home', bot, msg, 'ammissioni_triennali');
+  }else if(msg.text.toLowerCase() == 'ammissioni lauree magistrali'){
+    how.homeAmmissioni('https://infostudenti.unitn.it/it/ammissioni', './Ammissioni_Home', bot, msg, 'ammissioni_magistrali');
+  }else if(msg.text.toLowerCase() == "immatricolazioni"){
+
+    var text = "Qui puoi trovare tutte e le informazioni sulle immatricolazioni ai corsi di laurea che ti possono interessare";
+    var keyboard = {
+      reply_markup: JSON.stringify({
+        keyboard: [
+            ['Immatricolazioni Lauree e Lauree Magistrali a ciclo unico'],
+            ['Immatricolazioni Lauree Magistrali']
+        ],
+        one_time_keyboard: true,
+        resize_keyboard: true
+      })
+    };
+    console.log("IMMATRICOLAZIONI");
+    how.homeImmatricolazioni('https://infostudenti.unitn.it/it/immatricolazioni', './Immatricolazioni_Home', bot, msg, 'init');
+    bot.sendMessage(msg.chat.id, text, keyboard);
+  }else if(msg.text.toLowerCase() == 'immatricolazioni lauree e lauree magistrali a ciclo unico'){
+    how.homeImmatricolazioni('https://infostudenti.unitn.it/it/immatricolazioni', './Immatricolazioni_Home', bot, msg, 'immatricolazioni_triennali');
+  }else if(msg.text.toLowerCase() == 'immatricolazioni lauree magistrali'){
+    how.homeImmatricolazioni('https://infostudenti.unitn.it/it/immatricolazioni', './Immatricolazioni_Home', bot, msg, 'immatricolazioni_magistrali');
+  }else if(msg.text.toLowerCase() == "rinnovo iscrizioni"){
+
+    var text = "Qui puoi trovare tutte e le informazioni sui rinnovi delle iscrizioni ai corsi di laurea";
+    var keyboard = {
+      reply_markup: JSON.stringify({
+        keyboard: [
+            ['Rinnovo iscrizione con pagamento tasse'],
+            ['Rinnovo iscrizione con richiesta borsa di studio'],
+            ['Rinnovo iscrizione studenti con bisogni particolari']
+        ],
+        one_time_keyboard: true,
+        resize_keyboard: true
+      })
+    };
+    console.log("RINNOVI");
+    how.homeRinnovi('https://infostudenti.unitn.it/it/rinnovo-iscrizioni', './Rinnovi_Home', bot, msg, 'init');
+    bot.sendMessage(msg.chat.id, text, keyboard);
+  }else if(msg.text.toLowerCase() == 'rinnovo iscrizione con pagamento tasse'){
+    how.homeRinnovi('https://infostudenti.unitn.it/it/rinnovo-iscrizioni', './Rinnovi_Home', bot, msg, 'rinnovi_tasse');
+  }else if(msg.text.toLowerCase() == 'rinnovo iscrizione con richiesta borsa di studio'){
+    how.homeRinnovi('https://infostudenti.unitn.it/it/rinnovo-iscrizioni', './Rinnovi_Home', bot, msg, 'rinnovi_borsa');
+  }else if(msg.text.toLowerCase() == 'rinnovo iscrizione studenti con bisogni particolari'){
+    how.homeRinnovi('https://infostudenti.unitn.it/it/rinnovo-iscrizioni', './Rinnovi_Home', bot, msg, 'rinnovi_particolari');
+  }else if(msg.text.toLowerCase() == 'borse di studio'){
+
+    var text = "Qui puoi trovare tutte le informazioni sulle borse di studio e le agevolazioni fornite dall'Università";
+    var keyboard = {
+      reply_markup: JSON.stringify({
+        keyboard: [
+            ['Borse di studio e Posto alloggio'],
+            ['Dichiarazione di invalidità o disabilità'],
+            ['Attesa di Laurea', 'Libera circolazione']
+        ],
+        one_time_keyboard: true,
+        resize_keyboard: true
+      })
+    };
+    console.log("BORSE");
+    how.homeBorse('https://infostudenti.unitn.it/it/borse-di-studio-e-agevolazioni', './Borse_Home', bot, msg, 'init');
+    bot.sendMessage(msg.chat.id, text, keyboard);
+  }else if(msg.text.toLowerCase() == 'borse di studio e posto alloggio'){
+    how.homeBorse('https://infostudenti.unitn.it/it/borse-di-studio-e-agevolazioni', './Borse_Home', bot, msg, 'borse_alloggi');
+  }else if(msg.text.toLowerCase() == 'dichiarazione di invalidità o disabilità'){
+    how.homeBorse('https://infostudenti.unitn.it/it/borse-di-studio-e-agevolazioni', './Borse_Home', bot, msg, 'bisogni_particolari');
+  }else if(msg.text.toLowerCase() == 'attesa di laurea'){
+    how.homeBorse('https://infostudenti.unitn.it/it/borse-di-studio-e-agevolazioni', './Borse_Home', bot, msg, 'attesa_laurea');
+  }else if(msg.text.toLowerCase() == 'libera circolazione'){
+    how.homeBorse('https://infostudenti.unitn.it/it/borse-di-studio-e-agevolazioni', './Borse_Home', bot, msg, 'libera_circolazione');
+  }else if(msg.text.toLowerCase() == 'trasferimenti'){
+
+    var text = "Qui puoi trovare tutte le informazioni riguardanti le modalità e i requisiti per i trasferimenti da e verso UniTrento";
+    var keyboard = {
+      reply_markup: JSON.stringify({
+        keyboard: [
+            ['Trasferimento verso un altro ateneo'],
+            ['Trasferimento da un altro ateno'],
+            ['Trasferimento da un altro ateneo Laurea Magistrale']
+        ],
+        one_time_keyboard: true,
+        resize_keyboard: true
+      })
+    };
+    console.log("TRASFERIMENTI");
+    how.homeTrasferimenti('https://infostudenti.unitn.it/it/trasferirsi-e-cambiare-corso', './Trasferimenti_Home', bot, msg, 'init');
+    bot.sendMessage(msg.chat.id, text, keyboard);
+  }else if(msg.text.toLowerCase() == 'trasferimento verso un altro ateneo'){
+    how.homeTrasferimenti('https://infostudenti.unitn.it/it/trasferirsi-e-cambiare-corso', './Traferimenti_Home', bot, msg, 'trasferimenti_verso');
+  }else if(msg.text.toLowerCase() == 'trasferimento da un altro ateneo laurea magistrale'){
+    how.homeTrasferimenti('https://infostudenti.unitn.it/it/trasferirsi-e-cambiare-corso', './Trasferimenti_Home', bot, msg, 'trasferimenti_da_magistrale');
+  }else if(msg.text.toLowerCase() == 'trasferimento da un altro ateno'){
+    how.homeTrasferimenti('https://infostudenti.unitn.it/it/trasferirsi-e-cambiare-corso', './Trasferimenti_Home', bot, msg, 'trasferimenti_da_triennale');
+  }else if(msg.text.toLowerCase() == 'supporto'){
+    console.log("SUPPORTO");
+    how.homeSupporto('https://infostudenti.unitn.it/it/supporto-studenti', './Supporto_Home', bot, msg, 'init');
+  }else if(msg.text.toLowerCase() == 'open day'){
+    console.log("OPEN DAY");
+    how.homeOpenDay('http://events.unitn.it/porteaperte-2017', './OpenDay_Home', bot, msg, 'init');
+  }else if(msg.text.toLowerCase() == 'futuro studente'){
+
+    var text = "Sei un futuro studente UNITN o vorresti diventarlo? Non riesci ad orientarti nelle varie pagine del sito e non trovi quello che ti serve?" +
+              " Questa sezione è proprio quello che stai cercando! Seleziona uno degli argomenti qui sotto!";
+    var keyboard = {
+      reply_markup: JSON.stringify({
+        keyboard: [
+            ['Didattica', 'Iscrizioni'],
+            ['Orientamento', 'Agevolazioni'],
+            ['Servizi', 'Ateneo'],
+            ['Prospective International Student'],
+            ['Non solo studio']
+        ],
+        one_time_keyboard: true,
+        resize_keyboard: true
+      })
+    };
+
+    console.log("FUTURO STUDENTE");
+    how.homeFuturoStudente('http://www.unitn.it/futuro-studente', './Futuro_Studente', bot, msg, 'init');
+    bot.sendMessage(msg.chat.id, text, keyboard);
+  }else if(msg.text.toLowerCase() == 'didattica'){
+    how.homeFuturoStudente('http://www.unitn.it/futuro-studente', './Futuro_Studente', bot, msg, 'didattica');
+  }else if(msg.text.toLowerCase() == 'iscrizioni'){
+    how.homeFuturoStudente('http://www.unitn.it/futuro-studente', './Futuro_Studente', bot, msg, 'iscrizioni');
+  }else if(msg.text.toLowerCase() == 'orientamento'){
+    how.homeFuturoStudente('http://www.unitn.it/futuro-studente', './Futuro_Studente', bot, msg, 'orientamento');
+  }else if(msg.text.toLowerCase() == 'agevolazioni'){
+    how.homeFuturoStudente('http://www.unitn.it/futuro-studente', './Futuro_Studente', bot, msg, 'agevolazioni');
+  }else if(msg.text.toLowerCase() == 'servizi'){
+    how.homeFuturoStudente('http://www.unitn.it/futuro-studente', './Futuro_Studente', bot, msg, 'servizi');
+  }else if(msg.text.toLowerCase() == 'ateneo'){
+    how.homeFuturoStudente('http://www.unitn.it/futuro-studente', './Futuro_Studente', bot, msg, 'ateneo');
+  }else if(msg.text.toLowerCase() == 'prospective international student'){
+    how.homeFuturoStudente('http://www.unitn.it/futuro-studente', './Futuro_Studente', bot, msg, 'international');
+  }else if(msg.text.toLowerCase() == 'non solo studio'){
+    how.homeFuturoStudente('http://www.unitn.it/futuro-studente', './Futuro_Studente', bot, msg, 'studio');
+  }else if(msg.text.toLowerCase() == 'home'){
+    var text = "Eccoti di nuovo nel menù principale!";
+    var keyboard = {
+        reply_markup: JSON.stringify({
+            keyboard: [
+        ['/Mezzi', 'HowTo'],
+        ['/Mensa'],
+        ['/OperaUniTN']
+            ],
+            one_time_keyboard: true,
+            resize_keyboard: true
+        })
+    };
+
+    bot.sendMessage(msg.chat.id, text, keyboard);
+  }else{
+    var matches = similar.findBestMatch(msg.text.toLowerCase(), keywords);
+    bot.sendMessage(msg.chat.id, "Non ho trovato il comando desiderato. Forse intendevi " + matches.bestMatch.target + "?");
+  }
 });
+
 
 bot.on('location', (msg) => {
     console.log("IN");
