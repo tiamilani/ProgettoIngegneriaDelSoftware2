@@ -64,7 +64,7 @@ exports.base = function(req, resp){
 
       break;
     case 'openDay':
-
+                    resp.end(openDay('https://infostudenti.unitn.it/it/ammissioni', './Ammissioni_Home'));
       break;
     case 'rinnovoIscrizioni':
 
@@ -78,13 +78,50 @@ exports.base = function(req, resp){
 
 }
 var ammissioni = function(){
-  
+
 
 
 
   var json = JSON.stringify({
 
   });
+
+  return json;
+}
+
+var openDay = function(link, dir){
+  var json;
+
+  let options = {
+    urls: [link],
+    directory: dir
+  };
+
+  console.log("INSIDE OPEN DAY FUNCTION");
+  openDayFolder(dir, options)
+    .then(file => {
+      readOpenDayFile(dir, file)
+      .then((dates) => {
+        var giorni = "";
+        for(j = 0; j < dates.length; j++){
+          giorni = giorni + dates[j] + "\n";
+        }
+        var prenotazioni = "";
+        for(i = 0; i < registrazione.length; i++){
+          prenotazioni = prenotazioni + registrazione[i] + "\n";
+        }
+
+        var message = "I giorni previsti per Porte Aperte sono: \n\n" + giorni +
+                      "\nSono disponibili i seguenti programmi: \n\n" + programs +
+                      "\n\nInoltre, per poter partecipare, è necessaria la registrazione \n\n" + prenotazioni;
+
+        json = JSON.stringify({
+          messaggio: message;
+        });
+
+      });
+    })
+    .catch((err) => {console.log(err); });
 
   return json;
 }

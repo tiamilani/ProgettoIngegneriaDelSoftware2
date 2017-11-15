@@ -48,7 +48,7 @@ function isEmptyObj(obj) {
   return true;
 }
 
-exports.openDayFolder = function (dir, options){
+function openDayFolder(dir, options){
   return new Promise(
     function(resolve, reject){
       if(!fs.existsSync(dir)){
@@ -67,7 +67,7 @@ exports.openDayFolder = function (dir, options){
   );
 }
 
-exports.readOpenDayFile = function(dir, file, bot, msg){
+function readOpenDayFile(dir, file){
   return new Promise(
     function(resolve, reject){
       if(isEmptyObj(link_openDay)){
@@ -369,7 +369,7 @@ var downloadPageOpenDay = function (link, dir, bot, msg, action){
   console.log("INSIDE OPEN DAY FUNCTION");
   openDayFolder(dir, options)
     .then(file => {
-      readOpenDayFile(dir, file, bot, msg)
+      readOpenDayFile(dir, file)
       .then((dates) => {
         var giorni = "";
         for(j = 0; j < dates.length; j++){
@@ -696,6 +696,11 @@ function controlAssign(title, link, bot, msg, node, $){
                       break;
   }
 }
+
+exports.openDayFolder = openDayFolder;
+exports.readOpenDayFile = readOpenDayFile;
+
+
 
 exports.homeTasse = downloadPageTasse;
 exports.homeAmmissioni = downloadPageAmmissioni;
