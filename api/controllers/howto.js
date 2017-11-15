@@ -122,7 +122,7 @@ var openDay = function(link, dir){
     .catch((err) => {console.log(err); });
 
     var json = JSON.stringify({
-      messaggio = 'ciao' + message
+      messaggio: 'ciao' + message
     });
 
   return json;
