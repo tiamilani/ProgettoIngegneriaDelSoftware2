@@ -104,7 +104,7 @@ var openDay = function(link, dir, resp){
     .then(file => {
       how.readOpenDayFile(dir, file)
       .then((dates) => {
-        openDaySaving(dates)
+        /*openDaySaving(dates)
         .then((message) => {
           console.log("terzo promise");
           openDayJSON(message)
@@ -112,16 +112,23 @@ var openDay = function(link, dir, resp){
             console.log("messaggio ricevuto");
             resp.end(json);
           })
+        });*/
+        var giorni = "";
+        for(var j = 0; j < dates.length; j++){
+          giorni = giorni + dates[j] + "\n";
+        }
+        var prenotazioni = "";
+        for(var i = 0; i < registrazione.length; i++){
+          prenotazioni = prenotazioni + registrazione[i] + "\n";
+        }
+
+        var json = JSON.stringify({
+          messaggio: 'funziona'
         });
+         resp.end(json);
       });
     })
     .catch((err) => {console.log(err); });
-
-    json = JSON.stringify({
-      messagio: 'diocane'
-    });
-
-    return json;
 }
 
 function openDaySaving(dates){
