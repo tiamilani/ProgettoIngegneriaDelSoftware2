@@ -99,7 +99,7 @@ var openDay = function(link, dir){
   };
 
   console.log("INSIDE WEB OPEN DAY FUNCTION");
-  /*how.openDayFolder(dir, options)
+  how.openDayFolder(dir, options)
     .then(file => {
       how.readOpenDayFile(dir, file)
       .then((dates) => {
@@ -118,17 +118,15 @@ var openDay = function(link, dir){
 
         console.log("Sto creando il json");
         json = JSON.stringify({
-          messaggio: 'ciao'
+          directory: dir,
+          indirizzo: link
         });
 
       });
     })
-    .catch((err) => {console.log(err); });*/
+    .catch((err) => {console.log(err); });
 
-    json = JSON.stringify({
-      directory: dir,
-      indirizzo: link
-    });
+
 
   return json;
 }
