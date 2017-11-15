@@ -27,9 +27,60 @@ var nonSoloStudio = {titolo: "", diretto: "", link: []};
 var saved = false;
 
 exports.base = function(req, resp){
-  var json = JSON.stringify({
+  /*var json = JSON.stringify({
     base: 'switch',
     type: 'howto'
   });
-  resp.end(json);
+  resp.end(json);*/
+
+  console.log('Switch per verificare la richiesta in corso');
+	resp.writeHead(200, {"Content-Type": "application/json"});
+
+  var section = req.query.section;
+  var subsection = req.query.sub;
+  var detail = req.query.detail;
+  var arg = req.query.arg;
+
+  switch (section) {
+    case 'ammissioni':
+                      resp.end.(ammissioni());
+      break;
+    case 'immatricolazioni':
+
+      break;
+    case 'tasseUniversitarie':
+
+      break;
+    case 'borseDiStudio':
+
+      break;
+    case 'trasferimenti':
+
+      break;
+    case 'supporto':
+
+      break;
+    case 'liberaCircolazione':
+
+      break;
+    case 'openDay':
+
+      break;
+    case 'rinnovoIscrizioni':
+
+      break;
+    case 'futuroStudente':
+
+      break;
+    default:
+
+  }
+
+}
+var ammissioni = function(){
+  var json = JSON.stringify({
+    section: 'ammissioni'
+  });
+
+  return json;
 }
