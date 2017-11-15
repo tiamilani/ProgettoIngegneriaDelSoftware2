@@ -124,6 +124,7 @@ function openDayFolder(dir, options){
         dw(options).then(result => {
           deleteFolderAndFile(dir, '.html');
           var file = fs.readdirSync(dir);
+          console.log(file);
           console.log("FILE SALVATO");
           resolve(file);
         }).catch((err) => {reject(/*"Impossibile accedere alla risorsa in questo momento. Riprovare più tardi"*/err); });
