@@ -2,6 +2,7 @@
 module.exports = function(app) {
 	var controller = require('../controllers/Controller');
 	var place = require ('../controllers/places');
+	var avvisi = require ('../controllers/avvisi');
 
 	// todoList Routes
 	app.route('/example')
@@ -13,6 +14,6 @@ module.exports = function(app) {
 		.post(place.luoghiUtili);
 
 	app.route('/avvisi')
-		.get(controller.dwAvvisi)
-		.post(controller.dwAvvisi);
+		.get(avvisi.dwAvvisi)
+		.post(avvisi.dwAvvisi);
 };

@@ -1,3 +1,5 @@
+/*--- LAST UPDATE: 2017-11-16 ---*/
+
 // ---------- REQUIRE ----------
 const fun = require ('./functions.js');
 const dw = require('website-scraper');
@@ -18,11 +20,10 @@ function parseHTMLFile(fileToParse, stringaDaConfrontare) {
 				},
 				ontext: function(tagText) {
 					if(insideTag == 1) {
-						console.log("AVVISO -> " + tagText);
 						if(waitingText == "")
 							waitingText = tagText;
 						else if(tagText.indexOf(stringaDaConfrontare) != -1) {
-							elements.push(waitingText.replace(/(\r\n|\n|\r)/gm, " "));
+							elements.push((waitingText.replace(/(\r\n|\n|\r)/gm, " ")).replace(/\"/g, ""));
 							waitingText = "";
 						}
 						else
@@ -54,7 +55,7 @@ function readHTMLFile(path, bot, msg) {
 
         		var stringaDaConfrontare = "inserito il " + currentDate_string + " da";
 
-				var avvisi = [];
+				var avvisi;
         		var fileText = fs.readFileSync(path, 'latin1'); //Lettura file index.html
         		fileText = fileText.replace("&#8203;", "");
 
@@ -65,7 +66,7 @@ function readHTMLFile(path, bot, msg) {
                   			if(bot != null)
                     			bot.sendMessage(msg.chat.id, "Nessun avviso per oggi");
                   			else
-                    			resolve(["Nessun avviso per oggi"]);
+                    			resolve("Nessun avviso per oggi");
                 		}
                 		else {
                   			if(bot != null)
@@ -90,13 +91,13 @@ function setURL(dipartimento) {
 
   	switch (dipartimento) {
     	case "DICAM":
-			options = { urls: ['http://www.science.unitn.it/avvisiesami/dicam/avvisi.php'], directory: './Avvisi/DICAM' };
+			options = { urls: 'http://www.science.unitn.it/avvisiesami/dicam/avvisi.php', directory: './Avvisi/DICAM' };
 			break;
     	case "DII":
-			options = { urls: ['http://www.science.unitn.it/avvisiesami/dii-cibio/visualizzare_avvisi.php'], directory: './Avvisi/DII' };
+			options = { urls: 'http://www.science.unitn.it/avvisiesami/dii-cibio/visualizzare_avvisi.php', directory: './Avvisi/DII' };
 			break;
     	case "CISCA":
-			options = { urls: ['http://www.science.unitn.it/cisca/avvisi/avvisi.php'], directory: './Avvisi/CISCA' };
+			options = { urls: 'http://www.science.unitn.it/cisca/avvisi/avvisi.php', directory: './Avvisi/CISCA' };
 			break;
     	default:
 			options = "ERROR";
@@ -106,25 +107,43 @@ function setURL(dipartimento) {
   	return options;
 }
 
-function downloadAvvisi(dipartimento, bot, msg) {
+function downloadAvvisi(dipartimentoRichiesto, bot, msg) {
   	return new Promise (
     	function (resolve, reject) {
       		//URL e directory utilizzati per scaricare e salvare i file
-      		let options = setURL(dipartimento);
-      		var jsonResult = "dentroDownload";
+      		let options = setURL(dipartimentoRichiesto);
 
       		if(options === "ERROR") {
         		if(bot != null)
           			bot.sendMessage(msg.chat.id, "Dipartimento non riconosciuto, si prega di riprovare");
-        		else
-          			resolve("Dipartimento non riconosciuto, si prega di riprovare");
+        		else {
+					var json = JSON.stringify
+					({
+						dipartimento: dipartimentoRichiesto,
+						urlDipartimento: "URL non valido",
+						avvisiDelGiorno: "Dipartimento non riconosciuto, si prega di riprovare"
+					});
+					resolve(json);
+				}
       		} else {
         		try {
           			//Elimino le cartelle
           			Promise.all([fun.deleteFolderRecursive("./Avvisi")]).then(values => {
             			//Scarico i file nella relativa cartella
             			dw(options)
-              				.then((result) => { jsonResult = readHTMLFile("./Avvisi/" + dipartimento + "/index.html", bot, msg); resolve(jsonResult);})
+              				.then((result) => {
+								readHTMLFile("./Avvisi/" + dipartimentoRichiesto + "/index.html", bot, msg)
+									.then(res => {
+										var json = JSON.stringify
+										({
+											dipartimento: dipartimentoRichiesto,
+											urlDipartimento: options['urls'],
+											avvisiDelGiorno: res
+										});
+										resolve(json.toString());
+									})
+									.catch((err) => { console.log(err.message); });
+							})
           					.catch((err) => { console.log(err.message); });
           			});
         		}
