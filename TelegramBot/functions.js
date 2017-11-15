@@ -5,20 +5,24 @@ const ext = require('path');
 const rmrf = require('rimraf');
 const rc = require('read-chunk');
 const ft = require('file-type');
+const htmlparser = require('htmlparser2');
+const systemSleep = require('system-sleep');
 
 // ---------- FUNCTIONS ----------
-var deleteAll = function (path) {
-    if (fs.existsSync(path)) {
-        fs.readdirSync(path).forEach(function(file) {
-            var curPath = path + "/" + file;
-			if (!fs.lstatSync(curPath).isDirectory())
-				fs.unlinkSync(curPath);
-			else {
-				deleteAll(curPath);
-				try { fs.rmdirSync(curPath); } catch(e) { }
-			}
-        });
-    }
+function deleteAll (path) {
+    return new Promise((resolve, reject) => {
+        if (fs.existsSync(path)) {
+            fs.readdirSync(path).forEach(function(file) {
+                var curPath = path + "/" + file;
+    			if (!fs.lstatSync(curPath).isDirectory())
+    				fs.unlinkSync(curPath);
+    			else {
+    				deleteAll(curPath);
+    				try { fs.rmdirSync(curPath); console.log(true); return resolve(true); } catch(e) { console.log(false); return reject(false); }
+    			}
+            });
+        } else { console.log(true); return resolve(true); }
+    });
 }
 
 var deleteFolderRecursive = function (path) {
@@ -38,6 +42,7 @@ var deleteFolderRecursive = function (path) {
 }
 
 var downloadFiles = function (link, dir, bot, msg) {
+    console.log("in");
     let options = {
         urls: [link],
         directory: dir,
@@ -45,18 +50,9 @@ var downloadFiles = function (link, dir, bot, msg) {
         maxDepth: 1
     };
 
-	/*try {
-		var stats = fs.statSync(dir);
-		var now = new Date().getTime();
-		var endTime = new Date(stats.birthtime).getTime() + 5; // 1 Month = 2592000
-
-		if (now > endTime) { deleteAll(dir); }
-	}
-	catch(err) { }*/
-
     if (!fs.existsSync(dir)) {
         dw(options).then((result) => {
-
+            
 			deleteFolderRecursive(dir);
 			Promise.all([deleteFolderRecursive]).then(values => {
 				var tmpFiles = fs.readdirSync(dir);
@@ -84,7 +80,7 @@ var downloadFiles = function (link, dir, bot, msg) {
 				else
 					bot.sendMessage(msg.chat.id, "Purtroppo non ci sono file da visualizzare...");
 			});
-		}).catch((err) => { console.log("Errore nel download dei file richiesti"); });
+		}).catch((err) => { console.error(err); });
 	}
 	else {
 		var tmpFiles = fs.readdirSync(dir);
@@ -113,55 +109,78 @@ var getDistance = function(p1, p2) {
     return d; // returns the distance in meter
 };
 
-var deleteFilesWebcam = function (path, filesNotRemove) {
-	if (fs.existsSync(path)) {
-		fs.readdirSync(path).forEach(function(file, index){
-			var curPath = path + "/" + file;
-			if (!fs.lstatSync(curPath).isDirectory()) {
-                let i;
-                let b;
-                for(i = 0, b = 0; i < filesNotRemove.length; i++)
-                {
-                    if(file == filesNotRemove[i])
-                        b = 1;
-                }
+function deleteFilesWebcam (path, filesNotRemove) {
+    return new Promise((resolve, reject) => {
+    	if (fs.existsSync(path)) {
+    		fs.readdirSync(path).forEach(function(file, index){
+    			var curPath = path + "/" + file;
+    			if (!fs.lstatSync(curPath).isDirectory()) {
+                    let i;
+                    let b;
+                    for(i = 0, b = 0; i < filesNotRemove.length; i++)
+                    {
+                        if(file == filesNotRemove[i])
+                            b = 1;
+                    }
 
-                if(b == 0)
-                    fs.unlinkSync(curPath);
-			}
-			else {
-				deleteFilesWebcam(curPath, filesNotRemove);
-				try { fs.rmdirSync(curPath); } catch(e) { }
-			}
-		});
-	}
+                    if(b == 0)
+                        fs.unlinkSync(curPath);
+    			}
+    			else {
+    				deleteFilesWebcam(curPath, filesNotRemove);
+    				try { fs.rmdirSync(curPath); return resolve(true); } catch(e) { return reject(false); }
+    			}
+    		});
+    	} else { return resolve(true); }
+    });
 }
 
 var downloadPhoto = function (link, dir, filesNotRemove) {
-    let options = {
-        urls: [link],
-        directory: dir
-    };
+    return new Promise((resolve, reject) => {
+        let options = {
+            urls: [link],
+            directory: dir
+        };
 
-    dw(options).then((result) => {
-		deleteFilesWebcam(dir, filesNotRemove);
+        dw(options).then((result) => {
+    		deleteFilesWebcam(dir, filesNotRemove)
+                .then((result) => {
+                    if(result) {
+                        var tmpFiles = fs.readdirSync(dir + '/images');
 
-		Promise.all([deleteFilesWebcam]).then(values => {
-            var tmpFiles = fs.readdirSync(dir + '/images');
+            	        let i;
+            			let buffer;
+            			let type;
+            	        for(i = 0; i < tmpFiles.length; i++)
+            				fs.renameSync(dir + '/images/' + tmpFiles[i], dir + '/' + tmpFiles[i]);
 
-	        let i;
-			let buffer;
-			let type;
-	        for(i = 0; i < tmpFiles.length; i++)
-				fs.renameSync(dir + '/images/' + tmpFiles[i], dir + '/' + tmpFiles[i]);
-
-            rmrf(dir + '/images', function () {});
-		});
-	}).catch((err) => { console.log("Errore nel download dei file richiesti"); });
+                        rmrf(dir + '/images', function () {});console.log(result);
+                        return resolve(true);
+                    }
+                })
+                .catch(err => {
+                    return reject(err);
+                });
+    	}).catch((err) => { return reject(err); });
+    });
 }
 
+function toDate(dStr, format) {
+	var now = new Date();
+	if (format == "h:m:s") {
+        var arrSplit = dStr.split(":");
+ 		now.setHours(arrSplit[0]);
+ 		now.setMinutes(arrSplit[1]);
+ 		now.setSeconds(arrSplit[2]);
+ 		return now;
+	}else
+		return "Invalid Format";
+}
 
 // ---------- EXPORTS ----------
+exports.rimuoviDir = deleteAll;
+exports.deleteFolderRecursive = deleteFolderRecursive;
 exports.richiestaFile = downloadFiles;
 exports.richiestaFotoMensa = downloadPhoto;
 exports.distanceBetween = getDistance;
+exports.convertDate = toDate;

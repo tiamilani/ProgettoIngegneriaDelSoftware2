@@ -11,4 +11,8 @@ module.exports = function(app) {
 	app.route("/localizza")
 		.get(place.luoghiUtili)
 		.post(place.luoghiUtili);
+
+	app.route('/avvisi')
+		.get(controller.dwAvvisi)
+		.post(controller.dwAvvisi);
 };
