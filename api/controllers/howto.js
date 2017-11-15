@@ -121,6 +121,7 @@ var openDay = function(link, dir){
           directory: dir,
           indirizzo: link
         });
+        return json;
 
       });
     })
@@ -128,5 +129,5 @@ var openDay = function(link, dir){
 
 
 
-  return json;
+  //return json;
 }
