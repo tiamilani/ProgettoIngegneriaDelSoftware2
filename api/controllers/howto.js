@@ -111,18 +111,18 @@ var openDay = function(link, dir){
           openDayJSON(message)
           .then((json) => {
             console.log("messaggio ricevuto");
-            //return json;
+            return json;
           })
         });
       });
     })
     .catch((err) => {console.log(err); });
 
-    json = JSON.stringify({
+    /*json = JSON.stringify({
       messagio: 'diocane'
     });
 
-    return json;
+    return json;*/
 }
 
 function openDaySaving(dates){
