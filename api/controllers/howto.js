@@ -107,6 +107,7 @@ var openDay = function(link, dir){
       .then((dates) => {
         openDaySaving(dates)
         .then((message) => {
+          console.log("terzo promise");
           openDayJSON(message)
             .then((json) => {
               console.log("arrivato nell'ultimo promise");
