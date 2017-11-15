@@ -91,6 +91,51 @@ var ammissioni = function(){
   return json;
 }
 
+
+function openDayFolder(dir, options){
+  return new Promise(
+    function(resolve, reject){
+      if(!fs.existsSync(dir)){
+        console.log("NEW OPEN DAY FOLDER");
+        dw(options).then(result => {
+          deleteFolderAndFile(dir, '.html');
+          var file = fs.readdirSync(dir);
+          console.log("FILE SALVATO");
+          resolve(file);
+        }).catch((err) => {reject("Impossibile accedere alla risorsa in questo momento. Riprovare più tardi"); });
+      }else{
+        var file = fs.readdirSync(dir);
+        resolve(file);
+      }
+    }
+  );
+}
+
+function readOpenDayFile(dir, file){
+  return new Promise(
+    function(resolve, reject){
+      if(isEmptyObj(link_openDay)){
+        var $ = ch.load(fs.readFileSync(dir + "/" + file));
+        $("#content-left strong").each(function() {
+          var oneDate = $(this).text().trim();
+          link_openDay.push(oneDate);
+          var insert = $(this).children().attr('href');
+          if(insert != undefined && insert.includes('http')){
+            programs.push(insert);
+          }
+        });
+        $("#content-right a").each(function() {
+          var prenota = $(this).attr('href');
+          registrazione.push(prenota);
+        });
+        resolve(link_openDay);
+      }else{
+        resolve(link_openDay);
+      }
+    }
+  );
+}
+
 var openDay = function(link, dir, resp){
   var json;
   //var message = 'stringa vuota';
@@ -100,9 +145,9 @@ var openDay = function(link, dir, resp){
   };
 
   console.log("INSIDE WEB OPEN DAY FUNCTION");
-  how.openDayFolder(dir, options)
+  openDayFolder(dir, options)
     .then(file => {
-      how.readOpenDayFile(dir, file)
+      readOpenDayFile(dir, file)
       .then((dates) => {
         openDaySaving(dates)
         .then((message) => {
