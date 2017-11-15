@@ -14,13 +14,14 @@ const how = require('./howto.js');
 const similar = require('string-similarity');
 
 
-const keywords = ['home', 'howto', 'ammissioni', 'immatricolazioni', 'borse di studio', 'tasse universitarie', 'supporto', 'libera circolazione', 'trasferimenti',
+const keywords = ['home', 'howto', 'ammissioni', 'immatricolazioni', 'Borse di studio', 'tasse universitarie', 'supporto', 'libera circolazione', 'trasferimenti',
                   'open day', 'rinnovo iscrizioni', 'futuro studente', 'didattica', 'orientamento', 'iscrizioni', 'agevolazioni', 'ateneo', 'servizi',
                   'non solo studio', 'prospective international student', 'ammissioni lauree e lauree magistrali a ciclo unico', 'ammissioni lauree magistrali',
                   'immatricolazioni lauree e lauree magistrali a ciclo unico', 'immatricolazioni lauree magistrali', 'pagamenti', 'rimborsi', 'tasse a.a. 17-18',
                   'isee a.a. 17-18', 'borse di studio e posto alloggio', 'dichiarazione di invalidità o disabilità', 'attesa di laurea', 'trasferimento verso un altro ateneo',
                   'trasferimento da un altro ateneo', 'trasferimento da un altro ateneo laurea magistrale', 'rinnovo iscrizione con pagamento tasse',
-                  'rinnovo iscrizione con richiesta di borsa di studio', 'rinnovo iscrizione studenti con bisogni particolari'];
+                  'rinnovo iscrizione con richiesta di borsa di studio', 'rinnovo iscrizione studenti con bisogni particolari', '/start'. 'Avvisi'
+                  'DICAM', 'DII', 'CISCA', 'luoghi utili'];
 
 
 console.log('REQUIRE FATTI');
