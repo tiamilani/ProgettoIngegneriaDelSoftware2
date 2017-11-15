@@ -103,11 +103,11 @@ var openDay = function(link, dir){
       how.readOpenDayFile(dir, file)
       .then((dates) => {
         var giorni = "";
-        for(j = 0; j < dates.length; j++){
+        for(var j = 0; j < dates.length; j++){
           giorni = giorni + dates[j] + "\n";
         }
         var prenotazioni = "";
-        for(i = 0; i < registrazione.length; i++){
+        for(var i = 0; i < registrazione.length; i++){
           prenotazioni = prenotazioni + registrazione[i] + "\n";
         }
 
