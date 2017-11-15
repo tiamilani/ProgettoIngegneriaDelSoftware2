@@ -102,7 +102,7 @@ function openDayFolder(dir, options){
           var file = fs.readdirSync(dir);
           console.log("FILE SALVATO");
           resolve(file);
-        }).catch((err) => {reject("Impossibile accedere alla risorsa in questo momento. Riprovare più tardi"); });
+        }).catch((err) => {reject(/*"Impossibile accedere alla risorsa in questo momento. Riprovare più tardi"*/err); });
       }else{
         var file = fs.readdirSync(dir);
         resolve(file);
