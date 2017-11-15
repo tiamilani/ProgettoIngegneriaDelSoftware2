@@ -109,7 +109,6 @@ var openDay = function(link, dir){
         .then((message) => {
           console.log("terzo promise");
           openDayJSON(message);
-          });
         });
       });
     })
