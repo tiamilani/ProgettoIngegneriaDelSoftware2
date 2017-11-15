@@ -144,9 +144,9 @@ function openDayJSON(message){
   return new Promise(
     function(resolve, reject){
       var json = JSON.stringify({
-        days = message.days,
-        programs = message.programs,
-        ticket = message.prenotazioni
+        days: message.days,
+        programs: message.programs,
+        ticket: message.prenotazioni
       });
       resolve(json);
     });
