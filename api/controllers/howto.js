@@ -140,7 +140,7 @@ function openDaySaving(dates){
   });
 }
 
-function openDayJSON(message){
+/*function openDayJSON(message){
   return new Promise(
     function(resolve, reject){
       var json = JSON.stringify({
@@ -148,4 +148,4 @@ function openDayJSON(message){
       });
       resolve(json);
     });
-}
+}*/
