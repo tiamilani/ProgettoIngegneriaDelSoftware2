@@ -91,7 +91,7 @@ var ammissioni = function(){
   return json;
 }
 
-var openDay = function(link, dir){
+var openDay = function(link, dir, resp){
   var json;
   //var message = 'stringa vuota';
   let options = {
