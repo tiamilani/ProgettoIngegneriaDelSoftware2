@@ -97,7 +97,7 @@ var openDay = function(link, dir){
     directory: dir
   };
 
-  console.log("INSIDE OPEN DAY FUNCTION");
+  console.log("INSIDE WEB OPEN DAY FUNCTION");
   how.openDayFolder(dir, options)
     .then(file => {
       how.readOpenDayFile(dir, file)
@@ -115,6 +115,7 @@ var openDay = function(link, dir){
                       "\nSono disponibili i seguenti programmi: \n\n" + programs +
                       "\n\nInoltre, per poter partecipare, è necessaria la registrazione \n\n" + prenotazioni;
 
+        console.log("Sto creando il json");
         json = JSON.stringify({
           messaggio: message
         });

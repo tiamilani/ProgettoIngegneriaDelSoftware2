@@ -366,7 +366,7 @@ var downloadPageOpenDay = function (link, dir, bot, msg, action){
     directory: dir
   };
 
-  console.log("INSIDE OPEN DAY FUNCTION");
+  console.log("INSIDE BOT OPEN DAY FUNCTION");
   openDayFolder(dir, options)
     .then(file => {
       readOpenDayFile(dir, file)
