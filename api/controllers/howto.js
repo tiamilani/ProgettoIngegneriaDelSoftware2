@@ -92,6 +92,7 @@ var ammissioni = function(){
 
 var openDay = function(link, dir){
 
+  var message = 'stringa vuota';
   let options = {
     urls: [link],
     directory: dir
@@ -111,7 +112,7 @@ var openDay = function(link, dir){
           prenotazioni = prenotazioni + registrazione[i] + "\n";
         }
 
-        var message = "I giorni previsti per Porte Aperte sono: \n\n" + giorni +
+        message = "I giorni previsti per Porte Aperte sono: \n\n" + giorni +
                       "\nSono disponibili i seguenti programmi: \n\n" + programs +
                       "\n\nInoltre, per poter partecipare, è necessaria la registrazione \n\n" + prenotazioni;
 
@@ -122,7 +123,7 @@ var openDay = function(link, dir){
     .catch((err) => {console.log(err); });
 
     var json = JSON.stringify({
-      messaggio: 'ciao' + message
+      messaggio: message
     });
 
   return json;
