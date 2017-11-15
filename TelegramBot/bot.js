@@ -11,7 +11,7 @@ const unzip = require('adm-zip');
 const csv = require('fast-csv');
 const Join = require('mongo-join');
 const how = require('./howto.js');
-const similar = require('string-similarity');
+const similar = require('../string-similarity');
 
 
 const keywords = ['home', 'howto', 'ammissioni', 'immatricolazioni', 'borse di studio', 'tasse universitarie', 'supporto', 'libera circolazione', 'trasferimenti',
