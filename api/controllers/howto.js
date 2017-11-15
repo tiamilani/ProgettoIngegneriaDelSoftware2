@@ -109,6 +109,7 @@ var openDay = function(link, dir){
         .then((message) => {
           openDayJSON(message)
             .then((json) => {
+              console.log("arrivato nell'ultimo promise");
               return json;
           });
         });
