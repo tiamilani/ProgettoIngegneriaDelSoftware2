@@ -43,7 +43,7 @@ exports.base = function(req, resp){
 
   switch (section) {
     case 'ammissioni':
-                      resp.end.(ammissioni());
+                      resp.end(ammissioni());
       break;
     case 'immatricolazioni':
 
