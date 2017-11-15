@@ -110,6 +110,7 @@ var openDay = function(link, dir){
           console.log("terzo promise");
           openDayJSON(message)
           .then((json) => {
+            console.log("messaggio ricevuto");
             return json;
           })
         });
