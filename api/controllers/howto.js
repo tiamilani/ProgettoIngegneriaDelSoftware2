@@ -109,8 +109,8 @@ var openDay = function(link, dir){
         .then((message) => {
           console.log("terzo promise");
           openDayJSON(message)
-          .then((stringa) => {
-            console.log(stringa);
+          .then((json) => {
+            console.log('Ho ricevuto il messaggio');
           })
         });
       });
@@ -149,6 +149,9 @@ function openDaySaving(dates){
 function openDayJSON(message){
   return new Promise(
     function(resolve, reject){
-      resolve('ciao');
+      var json = JSON.stringify({
+        messaggio: 'funziona'
+      });
+      resolve(json);
     });
 }
