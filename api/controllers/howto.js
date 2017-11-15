@@ -133,7 +133,7 @@ function openDaySaving(dates){
                   "\nSono disponibili i seguenti programmi: \n\n" + programs +
                   "\n\nInoltre, per poter partecipare, è necessaria la registrazione \n\n" + prenotazioni;*/
 
-    var message = {days: giorni, prog: programs, ticket: prenotazioni};
+    var message = {days: dates, prog: programs, ticket: prenotazioni};
 
     console.log("Sto creando il json");
     resolve(message);
