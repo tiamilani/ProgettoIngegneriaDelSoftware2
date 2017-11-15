@@ -115,7 +115,7 @@ var openDay = function(link, dir){
     })
     .catch((err) => {console.log(err); });
 
-    var json = JSON.stringify({
+    json = JSON.stringify({
       messagio: 'diocane'
     });
 
