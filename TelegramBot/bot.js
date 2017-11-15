@@ -141,6 +141,9 @@ function routeCommands (msg, id, connection) {
                         case 'Luoghi_F2':
                             place.Luoghi_F3 (bot, msg, con);
                             break;
+						case 'Luoghi_F3':
+							place.Luoghi_F4 (bot, msg, con);
+							break;
 					}
                 }
 				else if ((result.last_command).includes("Mensa")) {
@@ -153,13 +156,13 @@ function routeCommands (msg, id, connection) {
                 else if ((result.last_command).includes("Scadenza")) {
                     switch (result.last_command) {
                         case 'Inserisci_Scadenza':
-                            dead.Inserisci_Scadenza(bot, msg, con);
+                            dead.inserisciScadenza(bot, msg, con);
                             break;
                         case 'Modifica_Scadenza':
-                            dead.Modifica_Scadenza(bot, msg, con);
+                            dead.modificaScadenza(bot, msg, con);
                             break;
                         case 'Elimina_Scadenza':
-                            dead.Elimina_Scadenza(bot, msg, con);
+                            dead.eliminaScadenza(bot, msg, con);
                                 break;
                     }
                 }
