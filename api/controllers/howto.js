@@ -106,14 +106,15 @@ var openDay = function(link, dir){
         openDaySaving(dates)
         .then((message) => {
           console.log(message);
-            var json = JSON.stringify({
-              messaggio: message
+            json = JSON.stringify({
+              messaggio: 'bau'
             });
-            return json;
         });
       });
     })
     .catch((err) => {console.log(err); });
+
+    return json;
 }
 
 function openDaySaving(dates){
