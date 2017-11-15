@@ -108,9 +108,10 @@ var openDay = function(link, dir){
         openDaySaving(dates)
         .then((message) => {
           console.log(message);
-            json = JSON.stringify({
-              messaggio: 'bau'
-            });
+          json = JSON.stringify({
+            messaggio: 'bau'
+          });
+          return json;
         });
       });
     })
@@ -120,7 +121,7 @@ var openDay = function(link, dir){
       messagio: 'diocane'
     });*/
 
-    return json;
+    //return json;
 }
 
 function openDaySaving(dates){
