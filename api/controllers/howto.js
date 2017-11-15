@@ -111,6 +111,7 @@ function openDayFolder(dir, options){
   );
 }
 
+
 function readOpenDayFile(dir, file){
   return new Promise(
     function(resolve, reject){
