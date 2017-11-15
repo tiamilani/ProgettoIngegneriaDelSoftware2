@@ -129,6 +129,9 @@ function openDaySaving(dates){
       prenotazioni = prenotazioni + registrazione[i] + "\n";
     }
 
+    console.log("date" + dates);
+
+
     /*var message = "I giorni previsti per Porte Aperte sono: \n\n" + giorni +
                   "\nSono disponibili i seguenti programmi: \n\n" + programs +
                   "\n\nInoltre, per poter partecipare, è necessaria la registrazione \n\n" + prenotazioni;*/
