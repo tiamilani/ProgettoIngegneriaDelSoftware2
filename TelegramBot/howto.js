@@ -48,7 +48,7 @@ function isEmptyObj(obj) {
   return true;
 }
 
-function openDayFolder(dir, options){
+exports.openDayFolder = function (dir, options){
   return new Promise(
     function(resolve, reject){
       if(!fs.existsSync(dir)){
@@ -67,7 +67,7 @@ function openDayFolder(dir, options){
   );
 }
 
-function readOpenDayFile(dir, file, bot, msg){
+exports.readOpenDayFile = function(dir, file, bot, msg){
   return new Promise(
     function(resolve, reject){
       if(isEmptyObj(link_openDay)){

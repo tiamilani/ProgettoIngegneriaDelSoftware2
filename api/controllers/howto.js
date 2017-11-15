@@ -78,8 +78,12 @@ exports.base = function(req, resp){
 
 }
 var ammissioni = function(){
+  
+
+
+
   var json = JSON.stringify({
-    section: 'ammissioni'
+
   });
 
   return json;
