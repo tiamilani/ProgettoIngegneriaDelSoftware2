@@ -107,13 +107,17 @@ var openDay = function(link, dir){
         openDaySaving(dates)
         .then((message) => {
           console.log(message);
-            json = JSON.stringify({
+            /*json = JSON.stringify({
               messaggio: 'bau'
-            });
+            });*/
         });
       });
     })
     .catch((err) => {console.log(err); });
+
+    var json = console.stringify({
+      messagio: 'diocane'
+    });
 
     return json;
 }
