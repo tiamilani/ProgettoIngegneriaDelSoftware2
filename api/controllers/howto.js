@@ -117,7 +117,7 @@ var openDay = function(link, dir){
 
         console.log("Sto creando il json");
         json = JSON.stringify({
-          messaggio: message
+          messaggio: 'ciao'
         });
 
       });
