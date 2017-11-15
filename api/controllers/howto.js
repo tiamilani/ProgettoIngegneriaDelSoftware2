@@ -64,9 +64,8 @@ exports.base = function(req, resp){
 
       break;
     case 'openDay':
-                    var json = openDay('https://infostudenti.unitn.it/it/supporto-studenti', './Supporto_Home');
+                    openDay('https://infostudenti.unitn.it/it/supporto-studenti', './Supporto_Home', resp);
                     console.log("Funzione completata");
-                    resp.end(json);
 
       break;
     case 'rinnovoIscrizioni':
@@ -111,18 +110,18 @@ var openDay = function(link, dir){
           openDayJSON(message)
           .then((json) => {
             console.log("messaggio ricevuto");
-            return json;
+            resp.end(json);
           })
         });
       });
     })
     .catch((err) => {console.log(err); });
 
-    /*json = JSON.stringify({
+    json = JSON.stringify({
       messagio: 'diocane'
     });
 
-    return json;*/
+    return json;
 }
 
 function openDaySaving(dates){
