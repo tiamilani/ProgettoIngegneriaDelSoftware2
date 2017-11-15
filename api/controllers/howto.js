@@ -119,7 +119,8 @@ var openDay = function(link, dir){
 }
 
 function openDaySaving(dates){
-  return new Promise(resolve, reject){
+  return new Promise(
+    function(resolve, reject){
     var giorni = "";
     for(var j = 0; j < dates.length; j++){
       giorni = giorni + dates[j] + "\n";
@@ -136,5 +137,5 @@ function openDaySaving(dates){
 
     console.log("Sto creando il json");
     resolve(message);
-  }
+  });
 }
