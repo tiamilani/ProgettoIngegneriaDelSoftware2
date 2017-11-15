@@ -64,7 +64,8 @@ exports.base = function(req, resp){
 
       break;
     case 'openDay':
-                    resp.end(openDay('https://infostudenti.unitn.it/it/ammissioni', './Ammissioni_Home'));
+                    var json = openDay('https://infostudenti.unitn.it/it/supporto-studenti', './Supporto_Home');
+                    resp.end(json));
                     console.log("Funzione completata");
       break;
     case 'rinnovoIscrizioni':
