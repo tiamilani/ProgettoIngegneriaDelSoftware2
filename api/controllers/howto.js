@@ -91,7 +91,6 @@ var ammissioni = function(){
 }
 
 var openDay = function(link, dir){
-  var json;
 
   let options = {
     urls: [link],
@@ -117,17 +116,16 @@ var openDay = function(link, dir){
                       "\n\nInoltre, per poter partecipare, è necessaria la registrazione \n\n" + prenotazioni;
 
         console.log("Sto creando il json");
-        json = JSON.stringify({
-          directory: dir,
-          indirizzo: link
-        });
-        return json;
 
       });
     })
     .catch((err) => {console.log(err); });
 
+    var json = JSON.stringify({
+      days: giorni,
+      prog: programs,
+      registration: prenotazioni
+    });
 
-
-  //return json;
+  return json;
 }
