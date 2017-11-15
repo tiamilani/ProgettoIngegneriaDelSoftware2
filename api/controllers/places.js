@@ -105,8 +105,6 @@ exports.luoghiUtili = function(req, resp) {
 			break;
 	}
 
-	var json;
-
 	switch (name) {
 		case "biblioteca":
 			console.log("Name biblioteca");

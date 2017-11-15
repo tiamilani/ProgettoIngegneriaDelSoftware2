@@ -20,8 +20,8 @@ const keywords = ['home', 'howto', 'ammissioni', 'immatricolazioni', 'Borse di s
                   'immatricolazioni lauree e lauree magistrali a ciclo unico', 'immatricolazioni lauree magistrali', 'pagamenti', 'rimborsi', 'tasse a.a. 17-18',
                   'isee a.a. 17-18', 'borse di studio e posto alloggio', 'dichiarazione di invalidità o disabilità', 'attesa di laurea', 'trasferimento verso un altro ateneo',
                   'trasferimento da un altro ateneo', 'trasferimento da un altro ateneo laurea magistrale', 'rinnovo iscrizione con pagamento tasse',
-                  'rinnovo iscrizione con richiesta di borsa di studio', 'rinnovo iscrizione studenti con bisogni particolari', '/start', 'Avvisi', 
-                  'DICAM', 'DII', 'CISCA', 'luoghi utili'];
+                  'rinnovo iscrizione con richiesta di borsa di studio', 'rinnovo iscrizione studenti con bisogni particolari', '/start', 'Avvisi',
+                  'dicam', 'dii', 'cisca', 'luoghi utili'];
 
 
 console.log('REQUIRE FATTI');
