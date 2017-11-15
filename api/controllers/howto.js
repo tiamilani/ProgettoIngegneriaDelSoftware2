@@ -107,7 +107,10 @@ var openDay = function(link, dir, resp){
         openDaySaving(dates)
         .then((message) => {
           console.log("terzo promise");
-          resp.end(json);
+          openDayJSON(message)
+          .then((json) => {
+            resp.end(json)
+          });
         });
       });
     })
@@ -126,26 +129,25 @@ function openDaySaving(dates){
       prenotazioni = prenotazioni + registrazione[i] + "\n";
     }
 
-    /*message = "I giorni previsti per Porte Aperte sono: \n\n" + giorni +
-              "\nSono disponibili i seguenti programmi: \n\n" + programs +
-              "\n\nInoltre, per poter partecipare, è necessaria la registrazione \n\n" + prenotazioni;*/
-    var message = 'ciao';
+    /*var message = "I giorni previsti per Porte Aperte sono: \n\n" + giorni +
+                  "\nSono disponibili i seguenti programmi: \n\n" + programs +
+                  "\n\nInoltre, per poter partecipare, è necessaria la registrazione \n\n" + prenotazioni;*/
 
-    var json = JSON.stringify({
-      messaggio: 'funziona'
-    });
+    var message = {days: giorni, prog: programs, ticket: prenotazioni};
 
     console.log("Sto creando il json");
-    resolve(json);
+    resolve(message);
   });
 }
 
-/*function openDayJSON(message){
+function openDayJSON(message){
   return new Promise(
     function(resolve, reject){
       var json = JSON.stringify({
-        : 'funziona'
+        days = message.days,
+        programs = message.programs,
+        ticket = message.prenotazioni
       });
       resolve(json);
     });
-}*/
+}
