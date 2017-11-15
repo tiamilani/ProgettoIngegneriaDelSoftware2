@@ -98,9 +98,9 @@ var openDay = function(link, dir){
   };
 
   console.log("INSIDE OPEN DAY FUNCTION");
-  openDayFolder(dir, options)
+  how.openDayFolder(dir, options)
     .then(file => {
-      readOpenDayFile(dir, file)
+      how.readOpenDayFile(dir, file)
       .then((dates) => {
         var giorni = "";
         for(j = 0; j < dates.length; j++){
