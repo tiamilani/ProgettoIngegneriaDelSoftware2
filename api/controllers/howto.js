@@ -124,7 +124,6 @@ function openDayFolder(dir, options){
         dw(options).then(result => {
           deleteFolderAndFile(dir, '.html');
           var file = fs.readdirSync(dir);
-          console.log(file);
           console.log("FILE SALVATO");
           resolve(file);
         }).catch((err) => {reject(/*"Impossibile accedere alla risorsa in questo momento. Riprovare più tardi"*/err); });
@@ -140,8 +139,10 @@ function openDayFolder(dir, options){
 function readOpenDayFile(dir, file){
   return new Promise(
     function(resolve, reject){
+      console.log(file);
       if(isEmptyObj(link_openDay)){
         var $ = ch.load(fs.readFileSync(dir + "/" + file));
+        console.log($);
         $("#content-left strong").each(function() {
           var oneDate = $(this).text().trim();
           link_openDay.push(oneDate);
