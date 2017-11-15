@@ -140,8 +140,8 @@ function readOpenDayFile(dir, file){
   return new Promise(
     function(resolve, reject){
       if(isEmptyObj(link_openDay)){
-        var $ = ch.load(fs.readFileSync(dir + "/" + file));
-        console.log(dir + "/" + file);
+        var $ = ch.load(fs.readFileSync(dir + "/" + file[0]));
+        console.log(dir + "/" + file[0]);
         $("#content-left strong").each(function() {
           var oneDate = $(this).text().trim();
           link_openDay.push(oneDate);
