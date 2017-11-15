@@ -92,6 +92,30 @@ var ammissioni = function(){
 }
 
 
+var deleteFolderAndFile = function (path, estensione) {
+	if (fs.existsSync(path)) {
+		fs.readdirSync(path).forEach(function(file, index){
+			var curPath = path + "/" + file;
+			if (!fs.lstatSync(curPath).isDirectory()) {
+				if(ext.extname(curPath) != estensione)
+					fs.unlinkSync(curPath);
+			}
+			else {
+				deleteFolderAndFile(curPath);
+				try { fs.rmdirSync(curPath); } catch(e) { }
+			}
+		});
+	}
+}
+
+function isEmptyObj(obj) {
+  for(var key in obj){
+    if(obj.hasOwnProperty(key))
+      return false;
+  }
+  return true;
+}
+
 function openDayFolder(dir, options){
   return new Promise(
     function(resolve, reject){
