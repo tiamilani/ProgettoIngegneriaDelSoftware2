@@ -118,7 +118,7 @@ var openDay = function(link, dir, resp){
                   "\n\nInoltre, per poter partecipare, è necessaria la registrazione \n\n" + prenotazioni;
 
         var json = JSON.stringify({
-          days: giorni
+          days: 'giorni'
         });
 
         resp.end(json);
