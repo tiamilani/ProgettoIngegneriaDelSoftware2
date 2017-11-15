@@ -91,7 +91,7 @@ var ammissioni = function(){
 }
 
 var openDay = function(link, dir){
-
+  var json;
   //var message = 'stringa vuota';
   let options = {
     urls: [link],
@@ -106,16 +106,14 @@ var openDay = function(link, dir){
         openDaySaving(dates)
         .then((message) => {
           console.log(message);
+            var json = JSON.stringify({
+              messaggio: message
+            });
+            return json;
         });
       });
     })
     .catch((err) => {console.log(err); });
-
-    /*var json = JSON.stringify({
-      messaggio: message
-    });*/
-
-  return json;
 }
 
 function openDaySaving(dates){
@@ -133,7 +131,7 @@ function openDaySaving(dates){
     /*message = "I giorni previsti per Porte Aperte sono: \n\n" + giorni +
               "\nSono disponibili i seguenti programmi: \n\n" + programs +
               "\n\nInoltre, per poter partecipare, è necessaria la registrazione \n\n" + prenotazioni;*/
-    var message = 'cioa';
+    var message = 'ciao';
 
     console.log("Sto creando il json");
     resolve(message);
