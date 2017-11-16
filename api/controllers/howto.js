@@ -338,15 +338,15 @@ function ammissioniSaving(action){
     switch(action){
       case('ammissioni_triennali'):
                                     var json = JSON.stringify({
-                                      explain: ,
-                                      link:
+                                      explain: link_ammissioni.explain_triennale,
+                                      link: link_ammissioni.triennale
                                     });
                                     resolve(json);
       break;
       case('ammissioni_magistrali'):
                                     var json = JSON.stringify({
-                                      explain: ,
-                                      link:
+                                      explain: link_ammissioni.explain_magistrale,
+                                      link: link_ammissioni.magistrale
                                     });
                                     resolve(json);
       break;
