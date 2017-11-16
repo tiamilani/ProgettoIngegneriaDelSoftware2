@@ -196,6 +196,7 @@ function openDaySaving(dates){
       giorni = giorni + dates[j] + "\n";
     }
     var prenotazioni = "";
+    console.log("prenotazioni" + prenotazioni.length);
     for(var i = 0; i < registrazione.length; i++){
       prenotazioni = prenotazioni + registrazione[i] + "\n";
     }
