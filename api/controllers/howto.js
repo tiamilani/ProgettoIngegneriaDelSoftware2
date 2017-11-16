@@ -171,9 +171,9 @@ var openDay = function(link, dir, resp){
   };
 
   console.log("INSIDE WEB OPEN DAY FUNCTION");
-  how.openDayFolder(dir, options)
+  openDayFolder(dir, options)
     .then(file => {
-      how.readOpenDayFile(dir, file)
+      readOpenDayFile(dir, file)
       .then((dates) => {
         openDaySaving(dates)
         .then((message) => {
@@ -196,9 +196,9 @@ function openDaySaving(dates){
       giorni = giorni + dates[j] + "\n";
     }
     var prenotazioni = "";
-    console.log("prenotazioni" + prenotazioni.length);
-    for(var i = 0; i < registrazione.length; i++){
-      prenotazioni = prenotazioni + registrazione[i] + "\n";
+    console.log("prenotazioni" + how.prenotazioni.length);
+    for(var i = 0; i < how.registrazione.length; i++){
+      prenotazioni = prenotazioni + how.registrazione[i] + "\n";
     }
 
     console.log("date" + dates.length);
@@ -208,7 +208,7 @@ function openDaySaving(dates){
                   "\nSono disponibili i seguenti programmi: \n\n" + programs +
                   "\n\nInoltre, per poter partecipare, è necessaria la registrazione \n\n" + prenotazioni;*/
 
-    var message = {days: dates, prog: programs, ticket: prenotazioni};
+    var message = {days: dates, prog: how.programs, ticket: prenotazioni};
 
     console.log("Sto creando il json");
     resolve(message);
