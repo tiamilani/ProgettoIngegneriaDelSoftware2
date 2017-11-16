@@ -140,11 +140,9 @@ function readOpenDayFile(dir, file){
     function(resolve, reject){
       if(isEmptyObj(link_openDay)){
         var $ = ch.load(fs.readFileSync(dir + "/" + file));
-        console.log(dir + "/" + file);
         $("#content-left strong").each(function() {
           var oneDate = $(this).text().trim();
           link_openDay.push(oneDate);
-          console.log(link_openDay[link_openDay-1]);
           var insert = $(this).children().attr('href');
           if(insert != undefined && insert.includes('http')){
             programs.push(insert);
@@ -155,8 +153,6 @@ function readOpenDayFile(dir, file){
           registrazione.push(prenota);
         });
 
-        console.log("Programmi:" + programs.length);
-        console.log("Registrazione: " + registrazione.length);
         resolve(link_openDay);
       }else{
         resolve(link_openDay);
@@ -179,12 +175,9 @@ var openDay = function(link, dir, resp){
       readOpenDayFile(dir, file)
       .then((dates) => {
         openDaySaving(dates)
-        .then((message) => {
+        .then((json) => {
           console.log("terzo promise");
-          openDayJSON(message)
-          .then((json) => {
-            resp.end(json)
-          });
+          resp.end(json);
         });
       });
     })
@@ -194,31 +187,26 @@ var openDay = function(link, dir, resp){
 function openDaySaving(dates){
   return new Promise(
     function(resolve, reject){
-    var giorni = "";
-    for(var j = 0; j < dates.length; j++){
-      giorni = giorni + dates[j] + "\n";
-    }
-    var prenotazioni = "";
-    console.log("prenotazioni" + prenotazioni.length);
-    for(var i = 0; i < registrazione.length; i++){
-      prenotazioni = prenotazioni + registrazione[i] + "\n";
-    }
-
-    console.log("date" + dates.length);
-
 
     /*var message = "I giorni previsti per Porte Aperte sono: \n\n" + giorni +
                   "\nSono disponibili i seguenti programmi: \n\n" + programs +
                   "\n\nInoltre, per poter partecipare, è necessaria la registrazione \n\n" + prenotazioni;*/
 
-    var message = {days: dates, prog: programs, ticket: prenotazioni};
+    var message = {days: dates, prog: programs, ticket: registrazione};
+
+
+    var json = JSON.stringify({
+      days: message.days,
+      programs: message.prog,
+      ticket: message.ticket
+    });
 
     console.log("Sto creando il json");
-    resolve(message);
+    resolve(json);
   });
 }
 
-function openDayJSON(message){
+/*function openDayJSON(message){
   return new Promise(
     function(resolve, reject){
       var json = JSON.stringify({
@@ -228,4 +216,4 @@ function openDayJSON(message){
       });
       resolve(json);
     });
-}
+}*/
