@@ -174,9 +174,9 @@ var openDay = function(link, dir, resp){
   };
 
   console.log("INSIDE WEB OPEN DAY FUNCTION");
-  how.openDayFolder(dir, options)
+  openDayFolder(dir, options)
     .then(file => {
-      how.readOpenDayFile(dir, file)
+      readOpenDayFile(dir, file)
       .then((dates) => {
         openDaySaving(dates)
         .then((message) => {
