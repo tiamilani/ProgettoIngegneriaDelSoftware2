@@ -43,38 +43,37 @@ exports.base = function(req, resp){
 
   switch (section) {
     case 'ammissioni':
-                      resp.end(ammissioni());
+                      ammissioni('https://infostudenti.unitn.it/it/ammissioni', './Ammissioni_Home', 'ammissioni', link_ammissioni, resp, subsection);
       break;
-    case 'immatricolazioni':
 
+    case 'immatricolazioni':
+                            immatricolazioni();
       break;
     case 'tasseUniversitarie':
-
+                              tasseUniversitarie();
       break;
     case 'borseDiStudio':
-
+                          borseDiStudio();
       break;
     case 'trasferimenti':
-
+                          trasferimenti();
       break;
     case 'supporto':
-
+                    supporto();
       break;
     case 'liberaCircolazione':
-
+                              liberaCircolazione();
       break;
     case 'openDay':
                     openDay('http://events.unitn.it/porteaperte-2017', './OpenDay_Home', resp);
-
       break;
     case 'rinnovoIscrizioni':
-
+                              rinnovoIscrizioni();
       break;
     case 'futuroStudente':
-
+                          futuroStudente();
       break;
-    default:
-
+    default: break;
   }
 
 }
@@ -89,6 +88,8 @@ var ammissioni = function(){
 
   return json;
 }
+
+
 
 
 var deleteFolderAndFile = function (path, estensione) {
@@ -162,8 +163,6 @@ function readOpenDayFile(dir, file){
 }
 
 var openDay = function(link, dir, resp){
-  var json;
-  //var message = 'stringa vuota';
   let options = {
     urls: [link],
     directory: dir
@@ -188,17 +187,10 @@ function openDaySaving(dates){
   return new Promise(
     function(resolve, reject){
 
-    /*var message = "I giorni previsti per Porte Aperte sono: \n\n" + giorni +
-                  "\nSono disponibili i seguenti programmi: \n\n" + programs +
-                  "\n\nInoltre, per poter partecipare, è necessaria la registrazione \n\n" + prenotazioni;*/
-
-    var message = {days: dates, prog: programs, ticket: registrazione};
-
-
     var json = JSON.stringify({
-      days: message.days,
-      programs: message.prog,
-      ticket: message.ticket
+      days: dates,
+      programs: programs,
+      registration: registrazione
     });
 
     console.log("Sto creando il json");
@@ -206,14 +198,159 @@ function openDaySaving(dates){
   });
 }
 
-/*function openDayJSON(message){
+function infoFolder(dir, options){
   return new Promise(
     function(resolve, reject){
-      var json = JSON.stringify({
-        days: message.days,
-        programs: message.prog,
-        ticket: message.ticket
+      if(!fs.existsSync(dir)){
+        console.log("NEW INFO FOLDER");
+        dw(options).then(result => {
+          deleteFolderAndFile(dir, '.html');
+          var file = fs.readdirSync(dir);
+          console.log("FILE SALVATO");
+          resolve(file);
+        }).catch((err) => {reject("Impossibile accedere alla risorsa in questo momento. Riprovare più tardi"); });
+      }else{
+        var file = fs.readdirSync(dir);
+        resolve(file);
+      }
+    }
+  );
+}
+
+function readInfoFiles(dir, file, page, oggetto){
+  return new Promise(
+    function(resolve, reject){
+      if(isEmptyObj(oggetto)){
+        var $ = ch.load(fs.readFileSync(dir + "/" + file));
+        $("a").each(function () {
+            var oneLink = $(this).attr('href');
+            var oneDescription = $(this).parent().siblings().text().trim();
+            oneLink = String(oneLink);
+            oneDescription = String(oneDescription);
+            if(oneLink.includes('infostudenti')){
+              if(page == 'tasse'){
+                if(oneLink.includes('rimborso')){
+                  link_tasse.rimborsi = oneLink;
+                  link_tasse.explain_rimborsi = oneDescription;
+                }else if(oneLink.includes('tasse')){
+                  link_tasse.tasse = oneLink;
+                  link_tasse.explain_tasse = oneDescription;
+                }else if(oneLink.includes('pagamenti')){
+                  link_tasse.pagamenti = oneLink;
+                  link_tasse.explain_pagamenti = oneDescription;
+                }else if(oneLink.includes('isee')  && !oneLink.includes('stranieri')){
+                  link_tasse.iseeIT = oneLink;
+                  link_tasse.explain_iseeIT = oneDescription;
+                }else if(oneLink.includes('isee') && oneLink.includes('stranieri')){
+                  link_tasse.iseeEX = oneLink;
+                  link_tasse.explain_iseeEX = oneDescription;
+                }
+              }else if(page == 'ammissioni'){
+                if(oneLink.includes('lauree-triennali') && oneLink.includes('lauree-magistrali')){
+                  link_ammissioni.triennale = oneLink;
+                  link_ammissioni.explain_triennale = oneDescription;
+                }else{
+                  link_ammissioni.magistrale = oneLink;
+                  link_ammissioni.explain_magistrale = oneDescription;
+                }
+              }else if(page == 'immatricolazioni'){
+                if(oneLink.includes('lauree-triennali') && oneLink.includes('lauree-magistrali')){
+                  link_immatricolazioni.triennale = oneLink;
+                  link_immatricolazioni.explain_triennale = oneDescription;
+                }else{
+                  link_immatricolazioni.magistrale = oneLink;
+                  link_immatricolazioni.explain_magistrale = oneDescription;
+                }
+              }else if(page == 'rinnovi'){
+                if(oneLink.includes('pagamento-tasse')){
+                  link_rinnovi.tasse = oneLink;
+                  link_rinnovi.explain_tasse = oneDescription;
+                }else if(oneLink.includes('borsa-di-studio')){
+                  link_rinnovi.borsa = oneLink;
+                  link_rinnovi.explain_borsa = oneDescription;
+                }else if(oneLink.includes('bisogni-speciali')){
+                  link_rinnovi.particolari = oneLink;
+                  link_rinnovi.explain_particolari = oneDescription;
+                }
+              }else if(page == 'borse'){
+                if(oneLink.includes('borsa-di-studio') && oneLink.includes('posto-alloggio')){
+                  link_borse.agevolazioni = oneLink;
+                  link_borse.explain_agevolazioni = oneDescription;
+                }else if(oneLink.includes('bisogni-speciali')){
+                  link_borse.invalidita = oneLink;
+                  link_borse.explain_invalidita = oneDescription;
+                }else if(oneLink.includes('libera-circolazione')){
+                  link_borse.circolazione = oneLink;
+                  link_borse.explain_circolazione = oneDescription;
+                }else if(oneLink.includes('attesa-di-laurea')){
+                  link_borse.attesa = oneLink;
+                  link_borse.explain_attesa = oneDescription;
+                }
+              }else if(page == 'trasferimenti'){
+                if(oneLink.includes('verso-altro-ateneo')){
+                  link_trasferimenti.verso = oneLink;
+                  link_trasferimenti.explain_verso = oneDescription;
+                }else if(oneLink.includes('da-altro-ateneo') && oneLink.includes('laurea-magistrale')){
+                  link_trasferimenti.da_magistrale = oneLink;
+                  link_trasferimenti.explain_da_magistrale = oneDescription;
+                }
+              }else if(page == 'supporto'){
+                if(oneLink.includes('prenotazione')){
+                  link_supporto.prenotazione = oneLink;
+                  link_supporto.explain_prenotazione = oneDescription;
+                }
+              }
+            }
+        });
+        resolve();
+      }else{
+        resolve();
+      }
+    }
+  );
+}
+
+var ammissioni = function(link, dir, page, oggetto, resp, action){
+  let options = {
+    urls: [link],
+    directory: dir
+  };
+
+  console.log("INSIDE WEB AMMISSIONI FUNCTION");
+  infoFolder(dir, options)
+    .then(file => {
+      readInfoFiles(dir, file, page, oggetto)
+      .then(() => {
+        ammissioniSaving(action)
+        .then((json) => {
+          console.log("terzo promise");
+          resp.end(json);
+        });
       });
-      resolve(json);
-    });
-}*/
+    })
+    .catch((err) => {console.log(err); });
+}
+
+function ammissioniSaving(action){
+  return new Promise(
+    function(resolve, reject){
+
+    switch(action){
+      case('ammissioni_triennali'):
+                                    var json = JSON.stringify({
+                                      explain: ,
+                                      link:
+                                    });
+                                    resolve(json);
+      break;
+      case('ammissioni_magistrali'):
+                                    var json = JSON.stringify({
+                                      explain: ,
+                                      link:
+                                    });
+                                    resolve(json);
+      break;
+    }
+
+  });
+}

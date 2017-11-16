@@ -697,13 +697,6 @@ function controlAssign(title, link, bot, msg, node, $){
   }
 }
 
-exports.openDayFolder = openDayFolder;
-exports.readOpenDayFile = readOpenDayFile;
-exports.registrazione = registrazione;
-exports.programs = programs;
-
-
-
 exports.homeTasse = downloadPageTasse;
 exports.homeAmmissioni = downloadPageAmmissioni;
 exports.homeImmatricolazioni = downloadPageImmatricolazioni;
