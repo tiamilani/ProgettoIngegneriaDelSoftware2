@@ -154,6 +154,9 @@ function readOpenDayFile(dir, file){
           var prenota = $(this).attr('href');
           registrazione.push(prenota);
         });
+
+        console.log("Programmi:" + programs.length);
+        console.log("Registrazione: " + registrazione.length);
         resolve(link_openDay);
       }else{
         resolve(link_openDay);
