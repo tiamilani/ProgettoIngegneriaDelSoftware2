@@ -64,8 +64,7 @@ exports.base = function(req, resp){
 
       break;
     case 'openDay':
-                    openDay('https://infostudenti.unitn.it/it/supporto-studenti', './Supporto_Home', resp);
-                    console.log("Funzione completata");
+                    openDay('http://events.unitn.it/porteaperte-2017', './OpenDay_Home', resp);
 
       break;
     case 'rinnovoIscrizioni':
@@ -92,7 +91,7 @@ var ammissioni = function(){
 }
 
 
-var deleteFolderAndFile = function (path, estensione) {
+/*var deleteFolderAndFile = function (path, estensione) {
 	if (fs.existsSync(path)) {
 		fs.readdirSync(path).forEach(function(file, index){
 			var curPath = path + "/" + file;
@@ -126,7 +125,7 @@ function openDayFolder(dir, options){
           var file = fs.readdirSync(dir);
           console.log("FILE SALVATO");
           resolve(file);
-        }).catch((err) => {reject(/*"Impossibile accedere alla risorsa in questo momento. Riprovare più tardi"*/err); });
+        }).catch((err) => {reject(err); });
       }else{
         var file = fs.readdirSync(dir);
         resolve(file);
@@ -161,7 +160,7 @@ function readOpenDayFile(dir, file){
       }
     }
   );
-}
+}*/
 
 var openDay = function(link, dir, resp){
   var json;
@@ -172,9 +171,9 @@ var openDay = function(link, dir, resp){
   };
 
   console.log("INSIDE WEB OPEN DAY FUNCTION");
-  openDayFolder(dir, options)
+  how.openDayFolder(dir, options)
     .then(file => {
-      readOpenDayFile(dir, file)
+      how.readOpenDayFile(dir, file)
       .then((dates) => {
         openDaySaving(dates)
         .then((message) => {
