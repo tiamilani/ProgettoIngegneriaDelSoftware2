@@ -140,11 +140,12 @@ function readOpenDayFile(dir, file){
   return new Promise(
     function(resolve, reject){
       if(isEmptyObj(link_openDay)){
-        var $ = ch.load(fs.readFileSync(dir + "/" + file[0]));
-        console.log(dir + "/" + file[0]);
+        var $ = ch.load(fs.readFileSync(dir + "/" + file));
+        console.log(dir + "/" + file);
         $("#content-left strong").each(function() {
           var oneDate = $(this).text().trim();
           link_openDay.push(oneDate);
+          console.log(link_openDay[link_openDay-1]);
           var insert = $(this).children().attr('href');
           if(insert != undefined && insert.includes('http')){
             programs.push(insert);
