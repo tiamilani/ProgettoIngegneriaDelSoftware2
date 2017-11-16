@@ -47,7 +47,7 @@ exports.base = function(req, resp){
       break;
 
     case 'immatricolazioni':
-                            immatricolazioni();
+                            immatricolazioni('https://infostudenti.unitn.it/it/immatricolazioni', './Immatricolazioni_Home', 'immatricolazioni', link_immatricolazioni, resp, subsection);
       break;
     case 'tasseUniversitarie':
                               tasseUniversitarie();
@@ -347,6 +347,51 @@ function ammissioniSaving(action){
                                     var json = JSON.stringify({
                                       explain: link_ammissioni.explain_magistrale,
                                       link: link_ammissioni.magistrale
+                                    });
+                                    resolve(json);
+      break;
+    }
+
+  });
+}
+
+var immatricolazioni = function(link, dir, page, oggetto, resp, action){
+  let options = {
+    urls: [link],
+    directory: dir
+  };
+
+  console.log("INSIDE WEB IMMATRICOLAZIONI FUNCTION");
+  infoFolder(dir, options)
+    .then(file => {
+      readInfoFiles(dir, file, page, oggetto)
+      .then(() => {
+        ammissioniSaving(action)
+        .then((json) => {
+          console.log("terzo promise");
+          resp.end(json);
+        });
+      });
+    })
+    .catch((err) => {console.log(err); });
+}
+
+function immatricolazioniSaving(action){
+  return new Promise(
+    function(resolve, reject){
+
+    switch(action){
+      case('immatricolazioni_triennali'):
+                                    var json = JSON.stringify({
+                                      explain: link_immatricolazioni.explain_triennale,
+                                      link: link_immatricolazioni.triennale
+                                    });
+                                    resolve(json);
+      break;
+      case('immatricolazioni_magistrali'):
+                                    var json = JSON.stringify({
+                                      explain: link_immatricolazioni.explain_magistrale,
+                                      link: link_immatricolazioni.magistrale
                                     });
                                     resolve(json);
       break;
