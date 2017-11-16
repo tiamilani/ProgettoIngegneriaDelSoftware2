@@ -91,7 +91,7 @@ var ammissioni = function(){
 }
 
 
-/*var deleteFolderAndFile = function (path, estensione) {
+var deleteFolderAndFile = function (path, estensione) {
 	if (fs.existsSync(path)) {
 		fs.readdirSync(path).forEach(function(file, index){
 			var curPath = path + "/" + file;
@@ -160,7 +160,7 @@ function readOpenDayFile(dir, file){
       }
     }
   );
-}*/
+}
 
 var openDay = function(link, dir, resp){
   var json;
@@ -196,7 +196,7 @@ function openDaySaving(dates){
       giorni = giorni + dates[j] + "\n";
     }
     var prenotazioni = "";
-    console.log("prenotazioni" + how.prenotazioni.length);
+    console.log("prenotazioni" + prenotazioni.length);
     for(var i = 0; i < registrazione.length; i++){
       prenotazioni = prenotazioni + registrazione[i] + "\n";
     }
