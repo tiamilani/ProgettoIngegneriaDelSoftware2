@@ -62,7 +62,7 @@ exports.base = function(req, resp){
                     supporto('https://infostudenti.unitn.it/it/supporto-studenti', './Supporto_Home', 'supporto', link_supporto, resp);
       break;
     case 'liberaCircolazione':
-                              liberaCircolazione('https://infostudenti.unitn.it/it/borse-di-studio-e-agevolazioni', './Borse_Home', 'borse', link_borse, resp, 'libera-circolazione');
+                              borseDiStudio('https://infostudenti.unitn.it/it/borse-di-studio-e-agevolazioni', './Borse_Home', 'borse', link_borse, resp, 'libera-circolazione');
       break;
     case 'openDay':
                     openDay('http://events.unitn.it/porteaperte-2017', './OpenDay_Home', resp);
@@ -617,5 +617,60 @@ function supportoSaving(){
       link: link_supporto.prenotazione
     });
     resolve(json);
+  });
+}
+
+var rinnovoIscrizioni = function(link, dir, page, oggetto, resp){
+  let options = {
+    urls: [link],
+    directory: dir
+  };
+
+  console.log("INSIDE WEB TASSE FUNCTION");
+  infoFolder(dir, options)
+    .then(file => {
+      readInfoFiles(dir, file, page, oggetto)
+      .then(() => {
+        rinnovoIscrizioniSaving()
+        .then((json) => {
+          console.log("terzo promise");
+          resp.end(json);
+        })
+        .catch((err) => {console.log(err); });
+      })
+      .catch((err) => {console.log(err); });
+    })
+    .catch((err) => {console.log(err); });
+}
+
+function rinnovoIscrizioniSaving(action){
+  return new Promise(
+    function(resolve, reject){
+
+    switch(action){
+      case('rinnovo-e-tasse'):
+                        var json = JSON.stringify({
+                          explain: link_rinnovi.explain_tasse,
+                          link: link_rinnovi.tasse
+                        });
+                        resolve(json);
+      break;
+
+      case('rinnovo-e-borse'):
+                        var json = JSON.stringify({
+                          explain: link_rinnovi.explain_borsa,
+                          link: link_rinnovi.borsa
+                        });
+                        resolve(json);
+      break;
+
+      case('rinnovo-bisogni-particolari'):
+                    var json = JSON.stringify({
+                      explain: link_rinnovi.explain_particolari,
+                      link: link_rinnovi.particolari
+                    });
+                    resolve(json);
+      break;
+    }
   });
 }
