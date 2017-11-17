@@ -617,7 +617,5 @@ function supportoSaving(){
       link: link_supporto.prenotazione
     });
     resolve(json);
-
-    }
   });
 }
