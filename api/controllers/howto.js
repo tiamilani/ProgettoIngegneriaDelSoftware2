@@ -53,22 +53,22 @@ exports.base = function(req, resp){
                               tasseUniversitarie('https://infostudenti.unitn.it/it/tasse-universitarie', './Tasse_Home', 'tasse', link_tasse, resp, subsection);
       break;
     case 'borseDiStudio':
-                          borseDiStudio();
+                          borseDiStudio('https://infostudenti.unitn.it/it/borse-di-studio-e-agevolazioni', './Borse_Home', 'borse', link_borse, resp, subsection);
       break;
     case 'trasferimenti':
-                          trasferimenti();
+                          trasferimenti('https://infostudenti.unitn.it/it/trasferirsi-e-cambiare-corso', './Trasferimenti_Home', 'traferimenti', link_trasferimenti, resp, subsection);
       break;
     case 'supporto':
-                    supporto();
+                    supporto('https://infostudenti.unitn.it/it/supporto-studenti', './Supporto_Home', 'supporto', link_supporto, resp, subsection);
       break;
     case 'liberaCircolazione':
-                              liberaCircolazione();
+                              liberaCircolazione('https://infostudenti.unitn.it/it/borse-di-studio-e-agevolazioni', './Borse_Home', 'borse', link_borse, resp, 'libera-circolazione');
       break;
     case 'openDay':
                     openDay('http://events.unitn.it/porteaperte-2017', './OpenDay_Home', resp);
       break;
     case 'rinnovoIscrizioni':
-                              rinnovoIscrizioni();
+                              rinnovoIscrizioni('https://infostudenti.unitn.it/it/rinnovo-iscrizioni', './Rinnovi_Home', 'rinnovi', link_rinnovi, resp, subsection);
       break;
     case 'futuroStudente':
                           futuroStudente();
@@ -458,6 +458,67 @@ function tasseUniversitarieSaving(action){
                       link_EX: link_tasse.iseeEX,
                       explain_IT: link_tasse.explain_iseeIT,
                       link_IT: link_tasse.iseeIT
+                    });
+                    resolve(json);
+      break;
+    }
+  });
+}
+
+var borseDiStudio = function(link, dir, page, oggetto, resp, action){
+  let options = {
+    urls: [link],
+    directory: dir
+  };
+
+  console.log("INSIDE WEB TASSE FUNCTION");
+  infoFolder(dir, options)
+    .then(file => {
+      readInfoFiles(dir, file, page, oggetto)
+      .then(() => {
+        tasseUniversitarieSaving(action)
+        .then((json) => {
+          console.log("terzo promise");
+          resp.end(json);
+        });
+      });
+    })
+    .catch((err) => {console.log(err); });
+}
+
+function borseDiStudioSaving(action){
+  return new Promise(
+    function(resolve, reject){
+
+    switch(action){
+      case('bisogni-speciali'):
+                        var json = JSON.stringify({
+                          explain: link_borse.explain_invalidita,
+                          link: link_borse.invalidità
+                        });
+                        resolve(json);
+      break;
+
+      case('attesa-di-laurea'):
+                        var json = JSON.stringify({
+                          explain: link_borse.explain_attesa,
+                          link: link_borse.attesa
+                        });
+                        resolve(json);
+      break;
+
+      case('libera-circolazione'):
+                    var json = JSON.stringify({
+                      explain: link_borse.explain_circolazione,
+                      link: link_borse.circolazione
+                    });
+                    resolve(json);
+      break;
+
+      case('borsa-e-alloggio'):
+                    var json = JSON.stringify({
+                      explain: link_borse.explain_borsa,
+                      link: link_borse.borsa,
                     });
                     resolve(json);
       break;
