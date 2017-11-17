@@ -648,6 +648,7 @@ var rinnovoIscrizioni = function(link, dir, page, oggetto, resp){
 function rinnovoIscrizioniSaving(action){
   return new Promise(
     function(resolve, reject){
+      console.log(Giunti nel terzo promise);
 
     switch(action){
       case('rinnovo-e-tasse'):
