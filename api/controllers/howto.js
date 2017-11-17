@@ -480,8 +480,10 @@ var borseDiStudio = function(link, dir, page, oggetto, resp, action){
         .then((json) => {
           console.log("terzo promise");
           resp.end(json);
-        });
-      });
+        })
+        .catch((err) => {console.log(err); });
+      })
+      .catch((err) => {console.log(err); });
     })
     .catch((err) => {console.log(err); });
 }
@@ -517,8 +519,8 @@ function borseDiStudioSaving(action){
 
       case('borsa-e-alloggio'):
                     var json = JSON.stringify({
-                      explain: link_borse.explain_borsa,
-                      link: link_borse.borsa,
+                      explain: link_borse.explain_agevolazioni,
+                      link: link_borse.agevolazioni,
                     });
                     resolve(json);
       break;
