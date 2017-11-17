@@ -581,6 +581,7 @@ function trasferimentiSaving(action){
                     });
                     resolve(json);
       break;
+    }
   });
 }
 
