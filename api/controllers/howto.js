@@ -67,7 +67,7 @@ exports.base = function(req, resp){
     case 'openDay':
                     openDay('http://events.unitn.it/porteaperte-2017', './OpenDay_Home', resp);
       break;
-    case 'rinnovoIscrizioni':
+    case 'rinnovi':
                               rinnovoIscrizioni('https://infostudenti.unitn.it/it/rinnovo-iscrizioni', './Rinnovi_Home', 'rinnovi', link_rinnovi, resp, subsection);
       break;
     case 'futuroStudente':
