@@ -417,8 +417,10 @@ var tasseUniversitarie = function(link, dir, page, oggetto, resp, action){
         .then((json) => {
           console.log("terzo promise");
           resp.end(json);
-        });
-      });
+        })
+        .catch((err) => {console.log(err); });
+      })
+      .catch((err) => {console.log(err); });
     })
     .catch((err) => {console.log(err); });
 }
@@ -496,7 +498,7 @@ function borseDiStudioSaving(action){
       case('bisogni-speciali'):
                         var json = JSON.stringify({
                           explain: link_borse.explain_invalidita,
-                          link: link_borse.invalidità
+                          link: link_borse.invalidita
                         });
                         resolve(json);
       break;
@@ -520,10 +522,66 @@ function borseDiStudioSaving(action){
       case('borsa-e-alloggio'):
                     var json = JSON.stringify({
                       explain: link_borse.explain_agevolazioni,
-                      link: link_borse.agevolazioni,
+                      link: link_borse.agevolazioni
                     });
                     resolve(json);
       break;
+    }
+  });
+}
+
+var trasferimenti = function(link, dir, page, oggetto, resp, action){
+  let options = {
+    urls: [link],
+    directory: dir
+  };
+
+  console.log("INSIDE WEB TASSE FUNCTION");
+  infoFolder(dir, options)
+    .then(file => {
+      readInfoFiles(dir, file, page, oggetto)
+      .then(() => {
+        trasferimentiSaving(action)
+        .then((json) => {
+          console.log("terzo promise");
+          resp.end(json);
+        })
+        .catch((err) => {console.log(err); });
+      })
+      .catch((err) => {console.log(err); });
+    })
+    .catch((err) => {console.log(err); });
+}
+
+function trasferimentiSaving(action){
+  return new Promise(
+    function(resolve, reject){
+
+    switch(action){
+      case('trasferimenti-verso'):
+                        var json = JSON.stringify({
+                          explain: link_trasferimenti.explain_verso,
+                          link: link_trasferimenti.verso
+                        });
+                        resolve(json);
+      break;
+
+      case('trasferimenti-da'):
+                        var json = JSON.stringify({
+                          explain: 'In progress',
+                          link: 'Nothing'
+                        });
+                        resolve(json);
+      break;
+
+      case('trasferimenti-da-magistrale'):
+                    var json = JSON.stringify({
+                      explain: link_trasferimenti.explain_da_magistrale,
+                      link: link_trasferimenti.da_magistrale
+                    });
+                    resolve(json);
+      break;
+link_trasferimenti
     }
   });
 }
