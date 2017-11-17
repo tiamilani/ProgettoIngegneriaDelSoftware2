@@ -476,7 +476,7 @@ var borseDiStudio = function(link, dir, page, oggetto, resp, action){
     .then(file => {
       readInfoFiles(dir, file, page, oggetto)
       .then(() => {
-        tasseUniversitarieSaving(action)
+        borseDiStudioeSaving(action)
         .then((json) => {
           console.log("terzo promise");
           resp.end(json);
