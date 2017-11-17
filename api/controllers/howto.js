@@ -52,7 +52,7 @@ exports.base = function(req, resp){
     case 'tasseUniversitarie':
                               tasseUniversitarie('https://infostudenti.unitn.it/it/tasse-universitarie', './Tasse_Home', 'tasse', link_tasse, resp, subsection);
       break;
-    case 'borseDiStudio':
+    case 'borse':
                           borseDiStudio('https://infostudenti.unitn.it/it/borse-di-studio-e-agevolazioni', './Borse_Home', 'borse', link_borse, resp, subsection);
       break;
     case 'trasferimenti':
