@@ -626,14 +626,16 @@ var rinnovoIscrizioni = function(link, dir, page, oggetto, resp){
     directory: dir
   };
 
-  console.log("INSIDE WEB TASSE FUNCTION");
+  console.log("INSIDE WEB RINNOVI FUNCTION");
   infoFolder(dir, options)
     .then(file => {
+      console.log(" -> primo promise");
       readInfoFiles(dir, file, page, oggetto)
       .then(() => {
+        console.log(" -> secondo promise");
         rinnovoIscrizioniSaving()
         .then((json) => {
-          console.log("terzo promise");
+          console.log(" -> terzo promise");
           resp.end(json);
         })
         .catch((err) => {console.log(err); });
