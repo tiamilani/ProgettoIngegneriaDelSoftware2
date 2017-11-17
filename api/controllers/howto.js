@@ -50,7 +50,7 @@ exports.base = function(req, resp){
                             immatricolazioni('https://infostudenti.unitn.it/it/immatricolazioni', './Immatricolazioni_Home', 'immatricolazioni', link_immatricolazioni, resp, subsection);
       break;
     case 'tasseUniversitarie':
-                              tasseUniversitarie();
+                              tasseUniversitarie('https://infostudenti.unitn.it/it/tasse-universitarie', './Tasse_Home', 'tasse', link_tasse, resp, subsection);
       break;
     case 'borseDiStudio':
                           borseDiStudio();
@@ -388,6 +388,7 @@ function immatricolazioniSaving(action){
                                     });
                                     resolve(json);
       break;
+
       case('immatricolazioni_magistrali'):
                                     var json = JSON.stringify({
                                       explain: link_immatricolazioni.explain_magistrale,
@@ -395,7 +396,71 @@ function immatricolazioniSaving(action){
                                     });
                                     resolve(json);
       break;
+
     }
 
+  });
+}
+
+var tasseUniversitarie = function(link, dir, page, oggetto, resp, action){
+  let options = {
+    urls: [link],
+    directory: dir
+  };
+
+  console.log("INSIDE WEB TASSE FUNCTION");
+  infoFolder(dir, options)
+    .then(file => {
+      readInfoFiles(dir, file, page, oggetto)
+      .then(() => {
+        tasseUniversitarieSaving(action)
+        .then((json) => {
+          console.log("terzo promise");
+          resp.end(json);
+        });
+      });
+    })
+    .catch((err) => {console.log(err); });
+}
+
+function tasseUniversitarieSaving(action){
+  return new Promise(
+    function(resolve, reject){
+
+    switch(action){
+      case('rimborsi'):
+                        var json = JSON.stringify({
+                          explain: link_tasse.explain_rimborsi,
+                          link: link_tasse.rimborsi
+                        });
+                        resolve(json);
+      break;
+
+      case('pagamenti'):
+                        var json = JSON.stringify({
+                          explain: link_tasse.explain_pagamenti,
+                          link: link_tasse.pagamenti
+                        });
+                        resolve(json);
+      break;
+
+      case('tasse'):
+                    var json = JSON.stringify({
+                      explain: link_tasse.explain_tasse,
+                      link: link_tasse.tasse
+                    });
+                    resolve(json);
+      break;
+
+      case('isee'):
+                    var json = JSON.stringify({
+                      explain_EX: link_tasse.explain_iseeEX,
+                      link_EX: link_tasse.iseeEX,
+                      explain_IT: link_tasse.explain_iseeIT,
+                      link_IT: link_tasse.iseeIT
+                    });
+                    resolve(json);
+      break;
+    }
   });
 }
