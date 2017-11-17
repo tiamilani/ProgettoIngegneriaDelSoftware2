@@ -59,7 +59,7 @@ exports.base = function(req, resp){
                           trasferimenti('https://infostudenti.unitn.it/it/trasferirsi-e-cambiare-corso', './Trasferimenti_Home', 'trasferimenti', link_trasferimenti, resp, subsection);
       break;
     case 'supporto':
-                    supporto('https://infostudenti.unitn.it/it/supporto-studenti', './Supporto_Home', 'supporto', link_supporto, resp, subsection);
+                    supporto('https://infostudenti.unitn.it/it/supporto-studenti', './Supporto_Home', 'supporto', link_supporto, resp);
       break;
     case 'liberaCircolazione':
                               liberaCircolazione('https://infostudenti.unitn.it/it/borse-di-studio-e-agevolazioni', './Borse_Home', 'borse', link_borse, resp, 'libera-circolazione');
@@ -581,7 +581,42 @@ function trasferimentiSaving(action){
                     });
                     resolve(json);
       break;
-link_trasferimenti
+  });
+}
+
+var supporto = function(link, dir, page, oggetto, resp){
+  let options = {
+    urls: [link],
+    directory: dir
+  };
+
+  console.log("INSIDE WEB TASSE FUNCTION");
+  infoFolder(dir, options)
+    .then(file => {
+      readInfoFiles(dir, file, page, oggetto)
+      .then(() => {
+        supportoSaving()
+        .then((json) => {
+          console.log("terzo promise");
+          resp.end(json);
+        })
+        .catch((err) => {console.log(err); });
+      })
+      .catch((err) => {console.log(err); });
+    })
+    .catch((err) => {console.log(err); });
+}
+
+function supportoSaving(){
+  return new Promise(
+    function(resolve, reject){
+
+    var json = JSON.stringify({
+      explain: link_supporto.explain_preno,
+      link: link_supporto.prenotazione
+    });
+    resolve(json);
+
     }
   });
 }
