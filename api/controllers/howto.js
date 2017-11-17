@@ -648,10 +648,11 @@ var rinnovoIscrizioni = function(link, dir, page, oggetto, resp){
 function rinnovoIscrizioniSaving(action){
   return new Promise(
     function(resolve, reject){
-      console.log(Giunti nel terzo promise);
+      console.log("Giunti nel terzo promise");
 
     switch(action){
       case('rinnovo-e-tasse'):
+                        console.log("rnnovo-e-tasse");
                         var json = JSON.stringify({
                           explain: link_rinnovi.explain_tasse,
                           link: link_rinnovi.tasse
@@ -660,6 +661,7 @@ function rinnovoIscrizioniSaving(action){
       break;
 
       case('rinnovo-e-borse'):
+                        console.log("rinnove-e-borse");
                         var json = JSON.stringify({
                           explain: link_rinnovi.explain_borsa,
                           link: link_rinnovi.borsa
@@ -668,6 +670,7 @@ function rinnovoIscrizioniSaving(action){
       break;
 
       case('rinnovo-bisogni-particolari'):
+                    console.log("rinnovo-bisogni-particolari");
                     var json = JSON.stringify({
                       explain: link_rinnovi.explain_particolari,
                       link: link_rinnovi.particolari
