@@ -613,7 +613,7 @@ function supportoSaving(){
     function(resolve, reject){
 
     var json = JSON.stringify({
-      explain: link_supporto.explain_preno,
+      explain: link_supporto.explain_prenotazione,
       link: link_supporto.prenotazione
     });
     resolve(json);
