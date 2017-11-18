@@ -77,19 +77,6 @@ exports.base = function(req, resp){
   }
 
 }
-var ammissioni = function(){
-
-
-
-
-  var json = JSON.stringify({
-
-  });
-
-  return json;
-}
-
-
 
 
 var deleteFolderAndFile = function (path, estensione) {
@@ -336,14 +323,14 @@ function ammissioniSaving(action){
     function(resolve, reject){
 
     switch(action){
-      case('ammissioni_triennali'):
+      case('ammissioni-triennali'):
                                     var json = JSON.stringify({
                                       explain: link_ammissioni.explain_triennale,
                                       link: link_ammissioni.triennale
                                     });
                                     resolve(json);
       break;
-      case('ammissioni_magistrali'):
+      case('ammissioni-magistrali'):
                                     var json = JSON.stringify({
                                       explain: link_ammissioni.explain_magistrale,
                                       link: link_ammissioni.magistrale
