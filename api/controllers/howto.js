@@ -39,7 +39,6 @@ exports.base = function(req, resp){
   var section = req.query.section;
   var subsection = req.query.sub;
   var detail = req.query.detail;
-  var arg = req.query.arg;
 
   switch (section) {
     case 'ammissioni':
@@ -50,7 +49,7 @@ exports.base = function(req, resp){
                             immatricolazioni('https://infostudenti.unitn.it/it/immatricolazioni', './Immatricolazioni_Home', 'immatricolazioni', link_immatricolazioni, resp, subsection);
       break;
     case 'tasseUniversitarie':
-                              tasseUniversitarie('https://infostudenti.unitn.it/it/tasse-universitarie', './Tasse_Home', 'tasse', link_tasse, resp, subsection);
+                              tasseUniversitarie('https://infostudenti.unitn.it/it/tasse-universitarie', './Tasse_Home', 'tasse', link_tasse, resp, subsection, detail);
       break;
     case 'borse':
                           borseDiStudio('https://infostudenti.unitn.it/it/borse-di-studio-e-agevolazioni', './Borse_Home', 'borse', link_borse, resp, subsection);
@@ -389,7 +388,7 @@ function immatricolazioniSaving(action){
   });
 }
 
-var tasseUniversitarie = function(link, dir, page, oggetto, resp, action){
+var tasseUniversitarie = function(link, dir, page, oggetto, resp, action, detail){
   let options = {
     urls: [link],
     directory: dir
@@ -400,7 +399,7 @@ var tasseUniversitarie = function(link, dir, page, oggetto, resp, action){
     .then(file => {
       readInfoFiles(dir, file, page, oggetto)
       .then(() => {
-        tasseUniversitarieSaving(action)
+        tasseUniversitarieSaving(action, detail)
         .then((json) => {
           console.log("terzo promise");
           resp.end(json);
@@ -442,13 +441,24 @@ function tasseUniversitarieSaving(action){
       break;
 
       case('isee'):
-                    var json = JSON.stringify({
-                      explain_EX: link_tasse.explain_iseeEX,
-                      link_EX: link_tasse.iseeEX,
-                      explain_IT: link_tasse.explain_iseeIT,
-                      link_IT: link_tasse.iseeIT
-                    });
-                    resolve(json);
+                    switch(detail){
+                      case('residenti'):
+                                        var json = JSON.stringify({
+                                          explain: link_tasse.explain_iseeIT,
+                                          link: link_tasse.iseeIT
+                                        });
+                                        resolve(json);
+
+                      break;
+                      case('non-residenti');
+                                              var json = JSON.stringify({
+                                                explain: link_tasse.explain_iseeEX,
+                                                link: link_tasse.iseeEX
+                                              });
+                                              resolve(json);
+
+                      break;
+                    }
       break;
     }
   });
