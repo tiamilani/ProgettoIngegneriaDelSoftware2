@@ -450,7 +450,7 @@ function tasseUniversitarieSaving(action){
                                         resolve(json);
 
                       break;
-                      case('non-residenti');
+                      case('non-residenti'):
                                               var json = JSON.stringify({
                                                 explain: link_tasse.explain_iseeEX,
                                                 link: link_tasse.iseeEX
