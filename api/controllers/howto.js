@@ -411,7 +411,7 @@ var tasseUniversitarie = function(link, dir, page, oggetto, resp, action, detail
     .catch((err) => {console.log(err); });
 }
 
-function tasseUniversitarieSaving(action){
+function tasseUniversitarieSaving(action, detail){
   return new Promise(
     function(resolve, reject){
 
