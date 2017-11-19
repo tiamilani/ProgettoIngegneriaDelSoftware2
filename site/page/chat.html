@@ -119,14 +119,25 @@
 									</div>
 									<div conv-case="avvisi">
 										<input type="text" conv-question="Gli avvisi che riusciamo ad ottenre sono solo quelli dei seguenti dipartimenti:" no-answer="true">
-										<input type="text" conv-question="Gli avvisi che riusciamo ad ottenre sono solo quelli dei seguenti dipartimenti:" no-answer="true">
-										<input type="text" conv-question="Gli avvisi che riusciamo ad ottenre sono solo quelli dei seguenti dipartimenti:" no-answer="true">
-										<input type="text" conv-question="Gli avvisi che riusciamo ad ottenre sono solo quelli dei seguenti dipartimenti:" no-answer="true">
-										<select name="luogoDiInteresse" conv-question="Dove ti interessa cercare?">
-		                                    <option value="trento">Trento</option>
-		                                    <option value="mesiano">Mesiano</option>
-											<option value="povo">Povo</option>
+										<input type="text" conv-question="DICAM, Dipartimento Ingegneria Civile Ambietale Meccanica" no-answer="true">
+										<input type="text" conv-question="DII, Dipartimento Ingegneria Industriale" no-answer="true">
+										<input type="text" conv-question="CISCA, Comprende i dipartimenti di Ingegneria Scienze dell'Informazione, Fisica e Matematica" no-answer="true">
+										<select name="sezioneAvvisi" conv-question="Dove ti interessa cercare?">
+		                                    <option value="DICAM" callback="avvisiDicam">DICAM</option>
+		                                    <option value="DII" callback="avvisiDii">DII</option>
+											<option value="CISCA" callback="avvisiCisca">CISCA</option>
 		                                </select>
+										<div conv-fork="sezioneAvvisi">
+		                                    <div conv-case="DICAM">
+		                                        <input type="text" conv-question="Ecco a te gli avvisi del giorno al DICAM :)" no-answer="true">
+											</div>
+											<div conv-case="DII">
+		                                        <input type="text" conv-question="Ecco a te gli avvisi del giorno al DII :)" no-answer="true">
+											</div>
+											<div conv-case="CISCA">
+		                                        <input type="text" conv-question="Ecco a te gli avvisi del giorno all CISCA :)" no-answer="true">
+											</div>
+										</div>
 									</div>
 								</div>
 								<select conv-question="Mi spiace ma in questa sezione non ho altro da mostrarti, torniamo al menu principale, ok? :)">
@@ -144,10 +155,26 @@
 
 		<script type="text/javascript" src="../js/chat/chatFunction.js"></script>
 		<script type="text/javascript" src="../js/chat/luoghiUtili/places.js"></script>
+		<script type="text/javascript" src="../js/chat/avvisi/avvisi.js"></script>
 
 		<script>
 			function ricarica() {
 				reload();
+			}
+
+			function avvisiDicam() {
+				console.log("Sono la funzione che dovrebbe far partire la richiesta");
+				avvisi("DICAM");
+			}
+
+			function avvisiDii() {
+				console.log("Sono la funzione che dovrebbe far partire la richiesta");
+				avvisi("DII");
+			}
+
+			function avvisiCisca() {
+				console.log("Sono la funzione che dovrebbe far partire la richiesta");
+				avvisi("CISCA");
 			}
 
 			function luoghiUtiliBibliotecaTrento(){

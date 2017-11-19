@@ -1,5 +1,6 @@
 var links = [
-    'page/response.html'
+    'page/luoghiUtili.html',
+	'page/avvisi.html'
 ];
 
 var one, two;
