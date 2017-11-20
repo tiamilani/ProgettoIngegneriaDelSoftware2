@@ -1,4 +1,4 @@
-/*--- LAST UPDATE: 2017-11-16 ---*/
+/*--- LAST UPDATE: 2017-11-20 ---*/
 
 // ---------- REQUIRE ----------
 const fun = require ('./functions.js');
@@ -66,7 +66,7 @@ function readHTMLFile(path, bot, msg) {
                   			if(bot != null)
                     			bot.sendMessage(msg.chat.id, "Nessun avviso per oggi");
                   			else
-                    			resolve("Nessun avviso per oggi");
+                    			resolve(["Nessun avviso per oggi"]);
                 		}
                 		else {
                   			if(bot != null)
@@ -121,7 +121,7 @@ function downloadAvvisi(dipartimentoRichiesto, bot, msg) {
 					({
 						dipartimento: dipartimentoRichiesto,
 						urlDipartimento: "URL non valido",
-						avvisiDelGiorno: "Dipartimento non riconosciuto, si prega di riprovare"
+						avvisiDelGiorno: ["Dipartimento non riconosciuto, si prega di riprovare"]
 					});
 					resolve(json);
 				}
