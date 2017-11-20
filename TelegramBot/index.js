@@ -1,4 +1,4 @@
-const bot = require('./bot');
+//const bot = require('./bot');
 /*const express = require('express');
 const bodyParser = require('body-parser');
 const util = require('util');

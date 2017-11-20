@@ -7,6 +7,7 @@
 		<link rel="stylesheet" href="../css/content.css">
 
 		<script type="text/javascript" src="../js/jquery-1.12.3.min.js"></script>
+		<link rel="stylesheet" href="../css/sviluppatori.css">
 		<!-- Latest compiled and minified CSS -->
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
@@ -14,13 +15,16 @@
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
 
 		<!-- Latest compiled and minified JavaScript -->
-		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>	</head>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+	</head>
 
 	<body style="background-color: aquamarine;">
+
 		<div class="container">
 			<nav class="navbar navbar-inverse navbar-fixed-top">
 				<div class="container">
 					<div class="navbar-header">
+						<img src="../img/UniTNHelpCenter.png" alt="LOGO" height="50" width="50">
 						<a class="navbar-brand" href="../index.html">UniTn Help Center</a>
 					</div>
 					<div id="navbar" class="collapse navbar-collapse">
@@ -35,7 +39,49 @@
 		</div>
 
 		<div class="container-fluid" id="container-fluid">
-			<h1>chi siamo</h1>
+			<div class="row">
+		        <div class="col-6 description">
+		            <h1>Ciao</h1>
+		            <p>
+		                Siamo un gruppo di studenti di Informatica all'UniversitÃ  degli Studi di Trento.<br>
+		                Benvenuto nel nostro nuovo bot
+		            </p>
+		        </div>
+		    </div>
+
+		    <div>
+		        <div class="row justify-content-center">
+		            <div class="col-6 description">
+		                <h1 id="findUs">Dove Trovarci</h1>
+		            </div>
+		        </div>
+		        <div class="row justify-content-around">
+		            <div id="mapObject" style="height: 400px; width: 600px"></div>
+		        </div>
+		    </div>
+
+		    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyATC6NxeSsKDBncZwJ4aDivvvs6_5iusSc&callback=createMapAboutUs" async defer></script>
+		    <script type="text/javascript">
+		    var myCenter;
+		    function createMapAboutUs() {
+		        myCenter = new google.maps.LatLng(46.066993034254345, 11.149814128875732);
+		        var mapCanvas = document.getElementById("mapObject");
+
+		        var mapOptions = {
+		            center: myCenter,
+		            zoom: 16,
+		            mapType: google.maps.MapTypeId.ROADMAP
+		        };
+
+		        var map = new google.maps.Map(mapCanvas, mapOptions);
+
+		        var marker = new google.maps.Marker({
+		            position: myCenter
+		        });
+
+		        marker.setMap(map);
+		    }
+		    </script>
 		</div>
 
 		<footer class="footer footer-fixed-bottom">
