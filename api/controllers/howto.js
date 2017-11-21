@@ -740,18 +740,18 @@ function controlAssign(title, link, node, $){
                       if(isEmptyObj(didattica.link)){
                         node.siblings().children("li").children("a").each(function(){
                           var ref = $(this).attr('href');
-                          var desc = $(this).text().trim();
+                          var desc = $(this).text().trim().toLowerCase();
                           console.log(desc);
+
                           if(!ref.includes('http')){
                             ref = 'www.unitn.it' + ref;
                           }
 
-                          console.log('costruendo didattica.link');
-                          if(ref.includes('corsi'))
+                          if(desc.includes('corsi'))
                             didattica.link.corsi = ref;
-                          else if(ref.includes('dottorati'))
+                          else if(desc.includes('dottorati'))
                             didattica.link.dottorati = ref;
-                          else if(ref.includes('master'))
+                          else if(desc.includes('master'))
                             didattica.link.master = ref;
 
                         });
@@ -759,7 +759,7 @@ function controlAssign(title, link, node, $){
 
                       break;
 
-    /*case 'iscrizioni':
+    case 'iscrizioni':
                       if(iscrizioni.titolo == ""){
                         iscrizioni.titolo = title;
                       }
@@ -770,13 +770,25 @@ function controlAssign(title, link, node, $){
                         iscrizioni.diretto = link;
                       }
 
-                      if(iscrizioni.link.length == 0){
+                      if(isEmptyObj(inscrizioni.link)){
                         node.siblings().children("li").children("a").each(function(){
                           var ref = $(this).attr('href');
+                          var desc = $(this).text().trim().toLowerCase();
+                          console.log(desc);
+
                           if(!ref.includes('http')){
                             ref = 'www.unitn.it' + ref;
                           }
-                          iscrizioni.link.push(ref)
+
+                          if(desc.includes('ammissioni'))
+                            iscrizioni.link.ammissioni = ref;
+                          else if(desc.includes('infostudenti'))
+                            iscrizioni.link.info = ref;
+                          else if(desc.includes('titoli'))
+                            iscrizioni.link.titli = ref;
+                          else if(desc.includes('tasse'))
+                            iscrizioni.link.tasse = ref;
+
                         });
                       }
 
