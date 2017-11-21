@@ -49,7 +49,7 @@ function connectToDatabase (connection) {
 				con.query("SHOW TABLES", function (err, result) {
 					if (err) return reject(err);
 
-					if(result.length < 9)
+					if(result.length < 10)
 						return reject("Aggiornamento degli Orari in Corso...");
 
 					return resolve(con);
@@ -60,7 +60,7 @@ function connectToDatabase (connection) {
 			connection.query("SHOW TABLES", function (err, result) {
 				if (err) return reject(err);
 
-				if(result.length < 9)
+				if(result.length < 10)
 					return reject("Aggiornamento degli Orari in Corso...");
 
 				return resolve(connection);
@@ -151,41 +151,40 @@ function createTables (bot, id, connection) {
 				filename: "tte_urbano.zip"
 			};
 
-			console.log("Documenti: " + fs.readdirSync('./Documenti'));
-			console.log("Images: " + fs.readdirSync('./Images'));
-
 			tte(url, options, function(err) {
 				if (err) throw err;
 
-				let zip = new unzip("./tte_db/tte_urbano.zip");
+				try {
+					let zip = new unzip("./tte_db/tte_urbano.zip");
 
-				zip.extractAllToAsync('./tte_db', true, function (err) {
-					if (err) throw err;
+					zip.extractAllToAsync('./tte_db', true, function (err) {
+						if (err) throw err;
 
-					let tmpFiles = fs.readdirSync('./tte_db');
-					let fileName;
-					for(let i = 0; i < tmpFiles.length; i++)
-					{
-						fileName = ext.parse(tmpFiles[i]).name;
+						let tmpFiles = fs.readdirSync('./tte_db');
+						let fileName;
+						for(let i = 0; i < tmpFiles.length; i++)
+						{
+							fileName = ext.parse(tmpFiles[i]).name;
 
-						if(tmpFiles[i].includes("agency") || tmpFiles[i].includes("feed") || tmpFiles[i].includes(".zip") || tmpFiles[i].includes("shape"))
-							fs.unlinkSync('./tte_db' + '/' + tmpFiles[i]);
-						else if(tmpFiles[i].includes(".txt"))
-							fs.renameSync('./tte_db' + '/' + tmpFiles[i], './tte_db' + '/' + fileName + '.csv');
-					}
+							if(tmpFiles[i].includes("agency") || tmpFiles[i].includes("feed") || tmpFiles[i].includes(".zip") || tmpFiles[i].includes("shape"))
+								fs.unlinkSync('./tte_db' + '/' + tmpFiles[i]);
+							else if(tmpFiles[i].includes(".txt"))
+								fs.renameSync('./tte_db' + '/' + tmpFiles[i], './tte_db' + '/' + fileName + '.csv');
+						}
 
-					tmpFiles = fs.readdirSync('./tte_db');
-					for(let i = 0; i < tmpFiles.length; i++) {
-						let dirFile = './tte_db/' + tmpFiles[i];
-						let file = tmpFiles[i];
-						let nameFile = ext.parse(file).name;
+						tmpFiles = fs.readdirSync('./tte_db');
+						for(let i = 0; i < tmpFiles.length; i++) {
+							let dirFile = './tte_db/' + tmpFiles[i];
+							let file = tmpFiles[i];
+							let nameFile = ext.parse(file).name;
 
-						createTableSupport(dirFile, file, nameFile, con, bot, id);
-					}
-				});
+							createTableSupport(dirFile, file, nameFile, con, bot, id);
+						}
+					});
+				} catch (e) { bot.sendMessage(id, "Riprova: " + e); }
 			});
 		})
-		.catch(err => {
+		.catch((err) => {
 			bot.sendMessage(id, err);
 		});
 }

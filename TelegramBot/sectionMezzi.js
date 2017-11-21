@@ -1,6 +1,6 @@
 // ---------- REQUIRE ----------
 const fun = require ('./functions.js');
-const db = require('./sectionDevelop');
+const db = require('./sectionDevelop.js');
 
 // ---------- FUNCTIONS ----------
 function checkID (id, lastCommand, connection) {
@@ -52,11 +52,12 @@ function createHome () {
         reply_markup: JSON.stringify({
 			keyboard: [
 				['Mezzi'],
-				['Mensa'],
-				['OperaUniTN'],
+				//['Mensa'],
+				//['OperaUniTN'],
 				['Luoghi'],
 				['Avvisi'],
-				['Scadenze']
+				['Scadenze'],
+                ['Nearest']
 			],
             one_time_keyboard: true,
             resize_keyboard: true
@@ -86,11 +87,13 @@ function createChoice (array, npr, argument, checkName, requestPosition) {
             elements.push(item);
         }
 
-        var item = [];
-        for(let j = array.length - rest; j < array.length; j++)
-            item.push((array[j])[argument]);
+		if(rest != 0) {
+	        var item = [];
+	        for(let j = array.length - rest; j < array.length; j++)
+	            item.push((array[j])[argument]);
 
-        elements.push(item);
+	        elements.push(item);
+		}
     }
 
     if(requestPosition)
@@ -1102,7 +1105,7 @@ function Next_F2_Name_F2 (bot, msg, connection) {
 							else {
 								checkID(msg.chat.id, '/start', con)
 									.then((result) => {
-										var text = "Mi dispiace ma la linea selezionata ha terminato le corse per oggi...";
+										var text = "Mi dispiace ma tutte le linee hanno terminato le corse per oggi...";
 
 										bot.sendMessage(msg.chat.id, text, createHome());
 									})

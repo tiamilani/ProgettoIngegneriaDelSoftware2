@@ -762,11 +762,12 @@ function createHome () {
         reply_markup: JSON.stringify({
 			keyboard: [
 				['Mezzi'],
-				['Mensa'],
-				['OperaUniTN'],
+				//['Mensa'],
+				//['OperaUniTN'],
 				['Luoghi'],
 				['Avvisi'],
-				['Scadenze']
+				['Scadenze'],
+                ['Nearest']
 			],
             one_time_keyboard: true,
             resize_keyboard: true
@@ -858,11 +859,9 @@ bot.on('text', function(msg) {
 });
 
 bot.on('location', function(msg) {
-    console.log("Location");
     db.initiateConnection(databaseConnection)
         .then((con) => {
             databaseConnection = con;
-            console.log("routes");
             routeCommands(msg, msg.chat.id, con);
         })
         .catch(err => {
@@ -871,13 +870,10 @@ bot.on('location', function(msg) {
 });
 
 bot.on('callback_query', function(msg) {
-    console.log("bot?");
     if(msg.from.is_bot == false) {
-        console.log("callback");
         db.initiateConnection(databaseConnection)
             .then((con) => {
                 databaseConnection = con;
-                console.log("routes");
                 routeCommands(msg, msg.message.chat.id, con);
             })
             .catch(err => {

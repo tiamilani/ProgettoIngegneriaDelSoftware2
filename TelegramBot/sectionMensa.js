@@ -41,11 +41,12 @@ function createHome () {
 		reply_markup: JSON.stringify({
 			keyboard: [
 				['Mezzi'],
-				['Mensa'],
-				['OperaUniTN'],
+				//['Mensa'],
+				//['OperaUniTN'],
 				['Luoghi'],
 				['Avvisi'],
-				['Scadenze']
+				['Scadenze'],
+                ['Nearest']
 			],
             one_time_keyboard: true,
             resize_keyboard: true

@@ -206,12 +206,13 @@ function createHome () {
 		parse_mode: "Markdown",
         reply_markup: JSON.stringify({
 			keyboard: [
-				['Mezzi'],
-				['Mensa'],
-				['OperaUniTN'],
+                ['Mezzi'],
+				//['Mensa'],
+				//['OperaUniTN'],
 				['Luoghi'],
 				['Avvisi'],
-				['Scadenze']
+				['Scadenze'],
+                ['Nearest']
 			],
             one_time_keyboard: true,
             resize_keyboard: true
