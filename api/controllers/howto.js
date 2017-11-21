@@ -1132,18 +1132,18 @@ var futuroStudenteSaving = function(subsection, detail){
                                                   resolve(json);
                               break;
                               case('infostudenti'):
-                                                  var json = JSON.stringify({
-                                                    explain: "",
-                                                    link: iscrizioni.link.info
-                                                  });
-                                                  resolve(json);
+                                                    var json = JSON.stringify({
+                                                      explain: "",
+                                                      link: iscrizioni.link.info
+                                                    });
+                                                    resolve(json);
                               break;
                               case('riconoscimento-titoli'):
-                                              var json = JSON.stringify({
-                                                explain: "",
-                                                link: iscrizioni.link.titoli
-                                              });
-                                              resolve(json);
+                                                            var json = JSON.stringify({
+                                                              explain: "",
+                                                              link: iscrizioni.link.titoli
+                                                            });
+                                                            resolve(json);
                               break;
                               case('tasse'):
                                             var json = JSON.stringify({
@@ -1157,75 +1157,75 @@ var futuroStudenteSaving = function(subsection, detail){
         case('orientamento'):
                               switch(detail){
                                 case('costo'):
-                                                    var json = JSON.stringify({
-                                                      explain: "",
-                                                      link: orientamento.link.costo
-                                                    });
-                                                    resolve(json);
+                                              var json = JSON.stringify({
+                                                explain: "",
+                                                link: orientamento.link.costo
+                                              });
+                                              resolve(json);
                                 break;
                                 case('sito-orienta'):
-                                                    var json = JSON.stringify({
-                                                      explain: "",
-                                                      link: orientamento.link.orienta
-                                                    });
-                                                    resolve(json);
+                                                      var json = JSON.stringify({
+                                                        explain: "",
+                                                        link: orientamento.link.orienta
+                                                      });
+                                                      resolve(json);
                                 break;
                                 case('unitrento-orienta'):
-                                                var json = JSON.stringify({
-                                                  explain: "",
-                                                  link: orientamento.link.unitrento
-                                                });
-                                                resolve(json);
+                                                          var json = JSON.stringify({
+                                                            explain: "",
+                                                            link: orientamento.link.unitrento
+                                                          });
+                                                          resolve(json);
                                 break;
                               }
         break;
         case('agevolazioni'):
                             switch(detail){
                               case('borse'):
-                                                  var json = JSON.stringify({
-                                                    explain: "",
-                                                    link: agevolazioni.link.borse
-                                                  });
-                                                  resolve(json);
-                              break;
-                              case('alloggi'):
-                                                  var json = JSON.stringify({
-                                                    explain: "",
-                                                    link: agevolazioni.link.alloggi
-                                                  });
-                                                  resolve(json);
-                              break;
-                              case('servizi-opera'):
-                                              var json = JSON.stringify({
-                                                explain: "",
-                                                link: agevolazioni.link.servizi
-                                              });
-                                              resolve(json);
-                              break;
-                              case('collegio'): //non funziona
                                             var json = JSON.stringify({
                                               explain: "",
-                                              link: agevolazioni.link.clesio
+                                              link: agevolazioni.link.borse
                                             });
                                             resolve(json);
+                              break;
+                              case('alloggi'):
+                                                var json = JSON.stringify({
+                                                  explain: "",
+                                                  link: agevolazioni.link.alloggi
+                                                });
+                                                resolve(json);
+                              break;
+                              case('servizi-opera'):
+                                                    var json = JSON.stringify({
+                                                      explain: "",
+                                                      link: agevolazioni.link.servizi
+                                                    });
+                                                    resolve(json);
+                              break;
+                              case('collegio'): //non funziona
+                                                var json = JSON.stringify({
+                                                  explain: "",
+                                                  link: agevolazioni.link.clesio
+                                                });
+                                                resolve(json);
                               break;
                             }
         break;
         case('servizi'):
                             switch(detail){
                               case('biblioteca'):
-                                                var json = JSON.stringify({
-                                                  explain: "",
-                                                  link: servizi.link.biblioteca
-                                                });
-                                                resolve(json);
+                                                  var json = JSON.stringify({
+                                                    explain: "",
+                                                    link: servizi.link.biblioteca
+                                                  });
+                                                  resolve(json);
                               break;
                               case('mense'):
-                                                var json = JSON.stringify({
-                                                  explain: "",
-                                                  link: servizi.link.mense
-                                                });
-                                                resolve(json);
+                                              var json = JSON.stringify({
+                                                explain: "",
+                                                link: servizi.link.mense
+                                              });
+                                              resolve(json);
                               break;
                               case('alloggi'):
                                                 var json = JSON.stringify({
@@ -1235,53 +1235,53 @@ var futuroStudenteSaving = function(subsection, detail){
                                                 resolve(json);
                               break;
                               case('job-guidance'):
-                                                var json = JSON.stringify({
-                                                  explain: "",
-                                                  link: servizi.link.job
-                                                });
-                                                resolve(json);
+                                                    var json = JSON.stringify({
+                                                      explain: "",
+                                                      link: servizi.link.job
+                                                    });
+                                                    resolve(json);
                               break;
                               case('cla'):
-                                                var json = JSON.stringify({
-                                                  explain: "",
-                                                  link: servizi.link.cla
-                                                });
-                                                resolve(json);
+                                          var json = JSON.stringify({
+                                            explain: "",
+                                            link: servizi.link.cla
+                                          });
+                                          resolve(json);
                               break;
                               case('consulenza'):
-                                                var json = JSON.stringify({
-                                                  explain: "",
-                                                  link: servizi.link.consulenza
-                                                });
-                                                resolve(json);
+                                                  var json = JSON.stringify({
+                                                    explain: "",
+                                                    link: servizi.link.consulenza
+                                                  });
+                                                  resolve(json);
                               break;
                               case('matlab'):
-                                                var json = JSON.stringify({
-                                                  explain: "",
-                                                  link: servizi.link.matlab
-                                                });
-                                                resolve(json);
+                                              var json = JSON.stringify({
+                                                explain: "",
+                                                link: servizi.link.matlab
+                                              });
+                                              resolve(json);
                               break;
                               case('informatici'): //non funziona
-                                                var json = JSON.stringify({
-                                                  explain: "",
-                                                  link: servizi.link.infomatici
-                                                });
-                                                resolve(json);
+                                                  var json = JSON.stringify({
+                                                    explain: "",
+                                                    link: servizi.link.infomatici
+                                                  });
+                                                  resolve(json);
                               break;
                               case('civile'):
-                                                var json = JSON.stringify({
-                                                  explain: "",
-                                                  link: servizi.link.civile
-                                                });
-                                                resolve(json);
+                                              var json = JSON.stringify({
+                                                explain: "",
+                                                link: servizi.link.civile
+                                              });
+                                              resolve(json);
                               break;s
                               case('bisogni-speciali'):
-                                                var json = JSON.stringify({
-                                                  explain: "",
-                                                  link: servizi.link.speciali
-                                                });
-                                                resolve(json);
+                                                        var json = JSON.stringify({
+                                                          explain: "",
+                                                          link: servizi.link.speciali
+                                                        });
+                                                        resolve(json);
                               break;
                               case('tutorato'):
                                                 var json = JSON.stringify({
@@ -1295,18 +1295,18 @@ var futuroStudenteSaving = function(subsection, detail){
         case('ateneo'):
                             switch(detail){
                               case('presentazione'):
-                                                  var json = JSON.stringify({
-                                                    explain: "",
-                                                    link: ateneo.link.presentazione
-                                                  });
-                                                  resolve(json);
+                                                    var json = JSON.stringify({
+                                                      explain: "",
+                                                      link: ateneo.link.presentazione
+                                                    });
+                                                    resolve(json);
                               break;
                               case('strutture'):
-                                                  var json = JSON.stringify({
-                                                    explain: "",
-                                                    link: ateneo.link.strutture
-                                                  });
-                                                  resolve(json);
+                                                var json = JSON.stringify({
+                                                  explain: "",
+                                                  link: ateneo.link.strutture
+                                                });
+                                                resolve(json);
                               break;
                               case('numeri'):
                                               var json = JSON.stringify({
@@ -1316,103 +1316,103 @@ var futuroStudenteSaving = function(subsection, detail){
                                               resolve(json);
                               break;
                               case('rankings'):
-                                            var json = JSON.stringify({
-                                              explain: "",
-                                              link: ateneo.link.rankings
-                                            });
-                                            resolve(json);
+                                                var json = JSON.stringify({
+                                                  explain: "",
+                                                  link: ateneo.link.rankings
+                                                });
+                                                resolve(json);
                               break;
                               case('trentino-e-trento'):
-                                              var json = JSON.stringify({
-                                                explain: "",
-                                                link: ateneo.link.trentino
-                                              });
-                                              resolve(json);
+                                                        var json = JSON.stringify({
+                                                          explain: "",
+                                                          link: ateneo.link.trentino
+                                                        });
+                                                        resolve(json);
                               break;
                               case('come-raggiungerci'):
-                                            var json = JSON.stringify({
-                                              explain: "",
-                                              link: ateneo.link.indicazioni
-                                            });
-                                            resolve(json);
+                                                        var json = JSON.stringify({
+                                                          explain: "",
+                                                          link: ateneo.link.indicazioni
+                                                        });
+                                                        resolve(json);
                               break;
                             }
         break;
         case('pis'):
                             switch(detail){
                               case('international-in-trento'):
-                                                  var json = JSON.stringify({
-                                                    explain: "",
-                                                    link: international.link.students
-                                                  });
-                                                  resolve(json);
+                                                              var json = JSON.stringify({
+                                                                explain: "",
+                                                                link: international.link.students
+                                                              });
+                                                              resolve(json);
                               break;
                               case('studiare-lavorare'):
-                                                  var json = JSON.stringify({
-                                                    explain: "",
-                                                    link: international.link.lavorare
-                                                  });
-                                                  resolve(json);
+                                                        var json = JSON.stringify({
+                                                          explain: "",
+                                                          link: international.link.lavorare
+                                                        });
+                                                        resolve(json);
                               break;
                             }
         break;
         case('non-solo-studio'):
                             switch(detail){
                               case('apple'):
-                                                  var json = JSON.stringify({
-                                                    explain: "",
-                                                    link: ateneo.link.apple
-                                                  });
-                                                  resolve(json);
+                                            var json = JSON.stringify({
+                                              explain: "",
+                                              link: nonSoloStudio.link.apple
+                                            });
+                                            resolve(json);
                               break;
                               case('associazioni-studentesche'):
+                                                                var json = JSON.stringify({
+                                                                  explain: "",
+                                                                  link: nonSoloStudio.link.studenti
+                                                                });
+                                                                resolve(json);
+                              break;
+                              case('opera'):
+                                            var json = JSON.stringify({
+                                              explain: "",
+                                              link: nonSoloStudio.link.opera
+                                            });
+                                            resolve(json);
+                              break;
+                              case('prestabici'):
                                                   var json = JSON.stringify({
                                                     explain: "",
-                                                    link: ateneo.link.studenti
+                                                    link: nonSoloStudio.link.prestabici
                                                   });
                                                   resolve(json);
                               break;
-                              case('opera'):
-                                              var json = JSON.stringify({
-                                                explain: "",
-                                                link: ateneo.link.opera
-                                              });
-                                              resolve(json);
-                              break;
-                              case('prestabici'):
-                                            var json = JSON.stringify({
-                                              explain: "",
-                                              link: ateneo.link.prestabici
-                                            });
-                                            resolve(json);
-                              break;
                               case('rappresentanti'):
-                                              var json = JSON.stringify({
-                                                explain: "",
-                                                link: ateneo.link.rappresentanti
-                                              });
-                                              resolve(json);
+                                                      var json = JSON.stringify({
+                                                        explain: "",
+                                                        link: nonSoloStudio.link.rappresentanti
+                                                      });
+                                                      resolve(json);
                               break;
                               case('associazioni-universitarie'):
-                                            var json = JSON.stringify({
-                                              explain: "",
-                                              link: ateneo.link.associazioni
-                                            });
-                                            resolve(json);
+                                                                  var json = JSON.stringify({
+                                                                    explain: "",
+                                                                    link: nonSoloStudio.link.associazioni
+                                                                  });
+                                                                  resolve(json);
                               break;
                               case('unisport'):
-                                              var json = JSON.stringify({
-                                                explain: "",
-                                                link: ateneo.link.sport
-                                              });
-                                              resolve(json);
+                                                var json = JSON.stringify({
+                                                  explain: "",
+                                                  link: nonSoloStudio.link.sport
+                                                });
+                                                resolve(json);
                               break;
                               case('link-giovani'):
-                                            var json = JSON.stringify({
-                                              explain: "",
-                                              link: ateneo.link.giovani
-                                            });
-                                            resolve(json);
+                                                    var json = JSON.stringify({
+                                                      explain: "",
+                                                      link: nonSoloStudio.link.giovani
+                                                    });
+                                                    resolve(json);
                               break;
                             }
         break;
