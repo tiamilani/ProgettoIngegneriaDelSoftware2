@@ -42,14 +42,14 @@ exports.base = function(req, resp){
 
   switch (section) {
     case 'ammissioni':
-                      ammissioni('https://infostudenti.unitn.it/it/ammissioni', './Ammissioni_Home', 'ammissioni', link_ammissioni, resp, subsection);
+                      ammissioni('https://infostudenti.unitn.it/it/ammissioni', './Ammissioni_Home', 'ammissioni', link_ammissioni, resp, section, subsection);
       break;
 
     case 'immatricolazioni':
-                            immatricolazioni('https://infostudenti.unitn.it/it/immatricolazioni', './Immatricolazioni_Home', 'immatricolazioni', link_immatricolazioni, resp, subsection);
+                            immatricolazioni('https://infostudenti.unitn.it/it/immatricolazioni', './Immatricolazioni_Home', 'immatricolazioni', link_immatricolazioni, resp, section, subsection);
       break;
     case 'tasseUniversitarie':
-                              tasseUniversitarie('https://infostudenti.unitn.it/it/tasse-universitarie', './Tasse_Home', 'tasse', link_tasse, resp, subsection, detail);
+                              tasseUniversitarie('https://infostudenti.unitn.it/it/tasse-universitarie', './Tasse_Home', 'tasse', link_tasse, resp, section, subsection, detail);
       break;
     case 'borse':
                           borseDiStudio('https://infostudenti.unitn.it/it/borse-di-studio-e-agevolazioni', './Borse_Home', 'borse', link_borse, resp, subsection);
@@ -296,7 +296,7 @@ function readInfoFiles(dir, file, page, oggetto){
   );
 }
 
-var ammissioni = function(link, dir, page, oggetto, resp, action){
+var ammissioni = function(link, dir, page, oggetto, resp, section, subsection){
   let options = {
     urls: [link],
     directory: dir
@@ -307,7 +307,7 @@ var ammissioni = function(link, dir, page, oggetto, resp, action){
     .then(file => {
       readInfoFiles(dir, file, page, oggetto)
       .then(() => {
-        ammissioniSaving(action)
+        ammissioniSaving(section, subsection)
         .then((json) => {
           console.log("terzo promise");
           resp.end(json);
@@ -317,15 +317,17 @@ var ammissioni = function(link, dir, page, oggetto, resp, action){
     .catch((err) => {console.log(err); });
 }
 
-function ammissioniSaving(action){
+function ammissioniSaving(section, subsection){
   return new Promise(
     function(resolve, reject){
 
-    switch(action){
+    switch(subsection){
       case('ammissioni-triennali'):
                                     var json = JSON.stringify({
                                       explain: link_ammissioni.explain_triennale,
                                       link: link_ammissioni.triennale
+                                      section: section,
+                                      subsection: subsection
                                     });
                                     resolve(json);
       break;
@@ -333,6 +335,8 @@ function ammissioniSaving(action){
                                     var json = JSON.stringify({
                                       explain: link_ammissioni.explain_magistrale,
                                       link: link_ammissioni.magistrale
+                                      section: section,
+                                      subsection: subsection
                                     });
                                     resolve(json);
       break;
@@ -341,7 +345,7 @@ function ammissioniSaving(action){
   });
 }
 
-var immatricolazioni = function(link, dir, page, oggetto, resp, action){
+var immatricolazioni = function(link, dir, page, oggetto, resp, section, subsection){
   let options = {
     urls: [link],
     directory: dir
@@ -352,7 +356,7 @@ var immatricolazioni = function(link, dir, page, oggetto, resp, action){
     .then(file => {
       readInfoFiles(dir, file, page, oggetto)
       .then(() => {
-        immatricolazioniSaving(action)
+        immatricolazioniSaving(section, subsection)
         .then((json) => {
           console.log("terzo promise");
           resp.end(json);
@@ -362,15 +366,17 @@ var immatricolazioni = function(link, dir, page, oggetto, resp, action){
     .catch((err) => {console.log(err); });
 }
 
-function immatricolazioniSaving(action){
+function immatricolazioniSaving(section, subsection){
   return new Promise(
     function(resolve, reject){
 
-    switch(action){
+    switch(subsection){
       case('immatricolazioni-triennali'):
                                     var json = JSON.stringify({
                                       explain: link_immatricolazioni.explain_triennale,
                                       link: link_immatricolazioni.triennale
+                                      section: section,
+                                      subsection: subsection
                                     });
                                     resolve(json);
       break;
@@ -379,6 +385,8 @@ function immatricolazioniSaving(action){
                                     var json = JSON.stringify({
                                       explain: link_immatricolazioni.explain_magistrale,
                                       link: link_immatricolazioni.magistrale
+                                      section: section,
+                                      subsection: subsection
                                     });
                                     resolve(json);
       break;
@@ -388,7 +396,7 @@ function immatricolazioniSaving(action){
   });
 }
 
-var tasseUniversitarie = function(link, dir, page, oggetto, resp, action, detail){
+var tasseUniversitarie = function(link, dir, page, oggetto, resp, section, subsection, detail){
   let options = {
     urls: [link],
     directory: dir
@@ -399,7 +407,7 @@ var tasseUniversitarie = function(link, dir, page, oggetto, resp, action, detail
     .then(file => {
       readInfoFiles(dir, file, page, oggetto)
       .then(() => {
-        tasseUniversitarieSaving(action, detail)
+        tasseUniversitarieSaving(section, subsection, detail)
         .then((json) => {
           console.log("terzo promise");
           resp.end(json);
@@ -411,15 +419,17 @@ var tasseUniversitarie = function(link, dir, page, oggetto, resp, action, detail
     .catch((err) => {console.log(err); });
 }
 
-function tasseUniversitarieSaving(action, detail){
+function tasseUniversitarieSaving(section, subsection, detail){
   return new Promise(
     function(resolve, reject){
 
-    switch(action){
+    switch(subsection){
       case('rimborsi'):
                         var json = JSON.stringify({
                           explain: link_tasse.explain_rimborsi,
                           link: link_tasse.rimborsi
+                          section: section,
+                          subsection: subsection,
                         });
                         resolve(json);
       break;
@@ -428,6 +438,8 @@ function tasseUniversitarieSaving(action, detail){
                         var json = JSON.stringify({
                           explain: link_tasse.explain_pagamenti,
                           link: link_tasse.pagamenti
+                          section: section,
+                          subsection: subsection,
                         });
                         resolve(json);
       break;
@@ -436,6 +448,8 @@ function tasseUniversitarieSaving(action, detail){
                     var json = JSON.stringify({
                       explain: link_tasse.explain_tasse,
                       link: link_tasse.tasse
+                      section: section,
+                      subsection: subsection,
                     });
                     resolve(json);
       break;
@@ -446,6 +460,9 @@ function tasseUniversitarieSaving(action, detail){
                                         var json = JSON.stringify({
                                           explain: link_tasse.explain_iseeIT,
                                           link: link_tasse.iseeIT
+                                          section: section,
+                                          subsection: subsection,
+                                          detail: detail
                                         });
                                         resolve(json);
 
@@ -454,6 +471,9 @@ function tasseUniversitarieSaving(action, detail){
                                               var json = JSON.stringify({
                                                 explain: link_tasse.explain_iseeEX,
                                                 link: link_tasse.iseeEX
+                                                section: section,
+                                                subsection: subsection,
+                                                detail: detail
                                               });
                                               resolve(json);
 
@@ -464,7 +484,7 @@ function tasseUniversitarieSaving(action, detail){
   });
 }
 
-var borseDiStudio = function(link, dir, page, oggetto, resp, action){
+var borseDiStudio = function(link, dir, page, oggetto, resp, section, subsection){
   let options = {
     urls: [link],
     directory: dir
@@ -475,7 +495,7 @@ var borseDiStudio = function(link, dir, page, oggetto, resp, action){
     .then(file => {
       readInfoFiles(dir, file, page, oggetto)
       .then(() => {
-        borseDiStudioSaving(action)
+        borseDiStudioSaving(section, subsection)
         .then((json) => {
           console.log("terzo promise");
           resp.end(json);
@@ -487,11 +507,11 @@ var borseDiStudio = function(link, dir, page, oggetto, resp, action){
     .catch((err) => {console.log(err); });
 }
 
-function borseDiStudioSaving(action){
+function borseDiStudioSaving(section, subsection){
   return new Promise(
     function(resolve, reject){
 
-    switch(action){
+    switch(subsection){
       case('bisogni-speciali'):
                         var json = JSON.stringify({
                           explain: link_borse.explain_invalidita,
@@ -911,7 +931,7 @@ function controlAssign(title, link, node, $){
 
                       break;
 
-    /*case 'l\'ateneo':
+    case 'l\'ateneo':
                       if(ateneo.titolo == ""){
                         ateneo.titolo = title;
                       }
@@ -931,13 +951,26 @@ function controlAssign(title, link, node, $){
                           if(!ref.includes('http')){
                             ref = 'www.unitn.it' + ref;
                           }
-                          ateneo.link.push(ref)
+
+                          if(desc.includes('presentazione'))
+                            agevolazioni.link.presentazione = ref;
+                          else if(desc.includes('strutture'))
+                            agevolazioni.link.strutture = ref;
+                          else if(desc.includes('numeri'))
+                            agevolazioni.link.numeri = ref;
+                          else if(desc.includes('rankings'))
+                            agevolazioni.link.rankings = ref;
+                          else if(desc.includes('trentino'))
+                            agevolazioni.link.trentino = ref;
+                          else if(desc.includes('raggiungerci'))
+                            agevolazioni.link.indicazioni = ref;
+
                         });
                       }
 
                       break;
 
-    case 'prospective international student':
+    /*case 'prospective international student':
                       if(international.titolo == ""){
                         international.titolo = title;
                       }
@@ -957,7 +990,16 @@ function controlAssign(title, link, node, $){
                           if(!ref.includes('http')){
                             ref = 'www.unitn.it' + ref;
                           }
-                          international.link.push(ref)
+
+                          if(desc.includes('borse'))
+                            agevolazioni.link.borse = ref;
+                          else if(desc.includes('alloggi'))
+                            agevolazioni.link.alloggi = ref;
+                          else if(desc.includes('servizi'))
+                            agevolazioni.link.servizi = ref;
+                          else if(desc.includes('collegio'))
+                            agevolazioni.link.clesio = ref;
+
                         });
                       }
 
@@ -983,7 +1025,16 @@ function controlAssign(title, link, node, $){
                           if(!ref.includes('http')){
                             ref = 'www.unitn.it' + ref;
                           }
-                          nonSoloStudio.link.push(ref)
+
+                          if(desc.includes('borse'))
+                            agevolazioni.link.borse = ref;
+                          else if(desc.includes('alloggi'))
+                            agevolazioni.link.alloggi = ref;
+                          else if(desc.includes('servizi'))
+                            agevolazioni.link.servizi = ref;
+                          else if(desc.includes('collegio'))
+                            agevolazioni.link.clesio = ref;
+
                         });
                       }
 
