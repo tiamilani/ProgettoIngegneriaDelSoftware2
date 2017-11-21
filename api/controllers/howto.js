@@ -827,7 +827,7 @@ function controlAssign(title, link, node, $){
 
                       break;
 
-    /*case 'agevolazioni':
+    case 'agevolazioni':
                       if(agevolazioni.titolo == ""){
                         agevolazioni.titolo = title;
                       }
@@ -838,19 +838,31 @@ function controlAssign(title, link, node, $){
                         agevolazioni.diretto = link;
                       }
 
-                      if(agevolazioni.link.length == 0){
+                      if(isEmptyObj(agevolazioni.link)){
                         node.siblings().children("li").children("a").each(function(){
                           var ref = $(this).attr('href');
+                          var desc = $(this).text().trim().toLowerCase();
+                          console.log(desc);
+
                           if(!ref.includes('http')){
                             ref = 'www.unitn.it' + ref;
                           }
-                          agevolazioni.link.push(ref)
+
+                          if(desc.includes('borse'))
+                            agevolazioni.link.borse = ref;
+                          else if(desc.includes('alloggi'))
+                            agevolazioni.link.alloggi = ref;
+                          else if(desc.includes('servizi'))
+                            agevolazioni.link.servizi = ref;
+                          else if(desc.includes('colleggio'))
+                            agevolazioni.link.clesio = ref;
+
                         });
                       }
 
                       break;
 
-    case 'servizi':
+    /*case 'servizi':
                       if(servizi.titolo == ""){
                         servizi.titolo = title;
                       }
@@ -861,9 +873,12 @@ function controlAssign(title, link, node, $){
                         servizi.diretto = link;
                       }
 
-                      if(servizi.link.length == 0){
+                      if(isEmptyObj(servizi.link)){
                         node.siblings().children("li").children("a").each(function(){
                           var ref = $(this).attr('href');
+                          var desc = $(this).text().trim().toLowerCase();
+                          console.log(desc);
+
                           if(!ref.includes('http')){
                             ref = 'www.unitn.it' + ref;
                           }
@@ -884,9 +899,12 @@ function controlAssign(title, link, node, $){
                         ateneo.diretto = link;
                       }
 
-                      if(ateneo.link.length == 0){
+                      if(isEmptyObj(ateneo.link)){
                         node.siblings().children("li").children("a").each(function(){
                           var ref = $(this).attr('href');
+                          var desc = $(this).text().trim().toLowerCase();
+                          console.log(desc);
+
                           if(!ref.includes('http')){
                             ref = 'www.unitn.it' + ref;
                           }
@@ -907,9 +925,12 @@ function controlAssign(title, link, node, $){
                         international.diretto = link;
                       }
 
-                      if(international.link.length == 0){
+                      if(isEmptyObj(international.link)){
                         node.siblings().children("li").children("a").each(function(){
                           var ref = $(this).attr('href');
+                          var desc = $(this).text().trim().toLowerCase();
+                          console.log(desc);
+
                           if(!ref.includes('http')){
                             ref = 'www.unitn.it' + ref;
                           }
@@ -930,9 +951,12 @@ function controlAssign(title, link, node, $){
                         nonSoloStudio.diretto = link;
                       }
 
-                      if(nonSoloStudio.link.length == 0){
+                      if(isEmptyObj(nonSoloStudio.link)){
                         node.siblings().children("li").children("a").each(function(){
                           var ref = $(this).attr('href');
+                          var desc = $(this).text().trim().toLowerCase();
+                          console.log(desc);
+
                           if(!ref.includes('http')){
                             ref = 'www.unitn.it' + ref;
                           }
@@ -1055,6 +1079,38 @@ var futuroStudenteSaving = function(subsection, detail){
                                                 resolve(json);
                                 break;
                               }
+        break;
+        case('agevolazioni'):
+                            switch(detail){
+                              case('borse'):
+                                                  var json = JSON.stringify({
+                                                    explain: "",
+                                                    link: agevolazioni.link.borse
+                                                  });
+                                                  resolve(json);
+                              break;
+                              case('alloggi'):
+                                                  var json = JSON.stringify({
+                                                    explain: "",
+                                                    link: agevolazioni.link.alloggi
+                                                  });
+                                                  resolve(json);
+                              break;
+                              case('servizi-opera'):
+                                              var json = JSON.stringify({
+                                                explain: "",
+                                                link: agevolazioni.link.servizi
+                                              });
+                                              resolve(json);
+                              break;
+                              case('collegio'):
+                                            var json = JSON.stringify({
+                                              explain: "",
+                                              link: agevolazioni.link.clesio
+                                            });
+                                            resolve(json);
+                              break;
+                            }
         break;
       }
   });
