@@ -70,7 +70,7 @@ exports.base = function(req, resp){
                               rinnovoIscrizioni('https://infostudenti.unitn.it/it/rinnovo-iscrizioni', './Rinnovi_Home', 'rinnovi', link_rinnovi, resp, subsection);
       break;
     case 'futuroStudente':
-                          futuroStudente('http://www.unitn.it/futuro-studente', './Futuro_Studente', './Futuro_Studente', section, subsection, detail);
+                          futuroStudente('http://www.unitn.it/futuro-studente', './Futuro_Studente', './Futuro_Studente', subsection, detail);
       break;
     default: break;
   }
@@ -921,7 +921,7 @@ function controlAssign(title, link, node, $){
   }
 }
 
-var futuroStudente = function(link, dir, resp, section, subsection, detail){
+var futuroStudente = function(link, dir, resp, subsection, detail){
   let options = {
     urls: [link],
     directory: dir
@@ -934,7 +934,7 @@ var futuroStudente = function(link, dir, resp, section, subsection, detail){
       readStudentFile(dir, file)
       .then(() => {
         console.log(" -> secondo promise");
-        /*rinnovoIscrizioniSaving(action)
+        futuroStudenteSaving(action)
         .then((json) => {
           console.log(" -> terzo promise");
           resp.end(json);
@@ -944,4 +944,18 @@ var futuroStudente = function(link, dir, resp, section, subsection, detail){
       .catch((err) => {console.log(err); });
     })
     .catch((err) => {console.log(err); });
+}
+
+var futuroStudenteSaving(subsection, detail){
+  return new Promise({
+    function(resolve, reject){
+      var json = JSON.stringify({
+        explain: 'tutto arrivato'
+        subsection: subsection,
+        arg: detail
+      });
+
+      resolve(json);
+      }
+  });
 }
