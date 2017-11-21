@@ -737,7 +737,7 @@ function controlAssign(title, link, node, $){
                         didattica.diretto = link;
                       }
 
-                      if(didattica.link.length == 0){
+                      if(isEmptyObj(didattica.link)){
                         node.siblings().children("li").children("a").each(function(){
                           var ref = $(this).attr('href');
                           var desc = $(this).text().trim();
