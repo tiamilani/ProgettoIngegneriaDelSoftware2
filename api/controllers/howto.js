@@ -1063,7 +1063,7 @@ function controlAssign(title, link, node, $){
                         });
                       }
 
-                      break;*/
+                      break;
   }
 }
 
