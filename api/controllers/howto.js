@@ -785,7 +785,7 @@ function controlAssign(title, link, node, $){
                           else if(desc.includes('infostudenti'))
                             iscrizioni.link.info = ref;
                           else if(desc.includes('titoli'))
-                            iscrizioni.link.titli = ref;
+                            iscrizioni.link.titoli = ref;
                           else if(desc.includes('tasse'))
                             iscrizioni.link.tasse = ref;
 
@@ -794,7 +794,7 @@ function controlAssign(title, link, node, $){
 
                       break;
 
-    /*case 'orientamento':
+    case 'orientamento':
                       if(orientamento.titolo == ""){
                         orientamento.titolo = title;
                       }
@@ -805,17 +805,29 @@ function controlAssign(title, link, node, $){
                         orientamento.diretto = link;
                       }
 
-                      node.siblings().children("li").children("a").each(function(){
-                        var ref = $(this).attr('href');
-                        if(!ref.includes('http')){
-                          ref = 'www.unitn.it' + ref;
-                        }
-                        orientamento.link.push(ref)
-                      });
+                      if(isEmptyObj(orientamento.link)){
+                        node.siblings().children("li").children("a").each(function(){
+                          var ref = $(this).attr('href');
+                          var desc = $(this).text().trim().toLowerCase();
+                          console.log(desc);
+
+                          if(!ref.includes('http')){
+                            ref = 'www.unitn.it' + ref;
+                          }
+
+                          if(desc.includes('costo'))
+                            orientamento.link.costo = ref;
+                          else if(desc.includes('sito orienta'))
+                            orientamento.link.orienta = ref;
+                          else if(desc.includes('unitrento'))
+                            orientamento.link.unirento = ref;
+
+                        });
+                      }
 
                       break;
 
-    case 'agevolazioni':
+    /*case 'agevolazioni':
                       if(agevolazioni.titolo == ""){
                         agevolazioni.titolo = title;
                       }
@@ -964,29 +976,86 @@ var futuroStudenteSaving = function(subsection, detail){
       switch(subsection){
         case('didattica'):
                           switch(detail){
-                          case('corsi'):
-                                        var json = JSON.stringify({
-                                          explain: "",
-                                          link: didattica.link.corsi
-                                        });
-                                        resolve(json);
-                          break;
-                          case('dottorati'):
-                                            var json = JSON.stringify({
-                                              explain: "",
-                                              link: didattica.link.dottorati
-                                            });
-                                            resolve(json);
-                          break;
-                          case('master'):
+                            case('corsi'):
                                           var json = JSON.stringify({
                                             explain: "",
-                                            link: didattica.link.master
+                                            link: didattica.link.corsi
                                           });
                                           resolve(json);
-                          break;
+                            break;
+                            case('dottorati'):
+                                              var json = JSON.stringify({
+                                                explain: "",
+                                                link: didattica.link.dottorati
+                                              });
+                                              resolve(json);
+                            break;
+                            case('master'):
+                                            var json = JSON.stringify({
+                                              explain: "",
+                                              link: didattica.link.master
+                                            });
+                                            resolve(json);
+                            break;
                           }
-                          break;
+        break;
+        case('iscrizioni'):
+                            switch(detail){
+                              case('ammissioni'):
+                                                  var json = JSON.stringify({
+                                                    explain: "",
+                                                    link: iscrizioni.link.amissioni
+                                                  });
+                                                  resolve(json);
+                              break;
+                              case('infostudenti'):
+                                                  var json = JSON.stringify({
+                                                    explain: "",
+                                                    link: iscrizioni.link.info
+                                                  });
+                                                  resolve(json);
+                              break;
+                              case('titoli'):
+                                              var json = JSON.stringify({
+                                                explain: "",
+                                                link: iscrizioni.link.titoli
+                                              });
+                                              resolve(json);
+                              break;
+                              case('tasse'):
+                                            var json = JSON.stringify({
+                                              explain: "",
+                                              link: iscrizioni.link.tasse
+                                            });
+                                            resolve(json);
+                              break;
+                            }
+        break;
+        case('orientamento'):
+                              switch(detail){
+                                case('costo'):
+                                                    var json = JSON.stringify({
+                                                      explain: "",
+                                                      link: orientamento.link.costo
+                                                    });
+                                                    resolve(json);
+                                break;
+                                case('sito-orienta'):
+                                                    var json = JSON.stringify({
+                                                      explain: "",
+                                                      link: orientamento.link.orienta
+                                                    });
+                                                    resolve(json);
+                                break;
+                                case('unitrento-orienta'):
+                                                var json = JSON.stringify({
+                                                  explain: "",
+                                                  link: orientamento.link.unitrento
+                                                });
+                                                resolve(json);
+                                break;
+                              }
+        break;
       }
   });
 }
