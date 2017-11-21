@@ -946,7 +946,7 @@ var futuroStudente = function(link, dir, resp, subsection, detail){
     .catch((err) => {console.log(err); });
 }
 
-var futuroStudenteSaving(subsection, detail){
+var futuroStudenteSaving = function(subsection, detail){
   return new Promise({
     function(resolve, reject){
       var json = JSON.stringify({
