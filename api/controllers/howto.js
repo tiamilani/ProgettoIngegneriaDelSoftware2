@@ -70,7 +70,7 @@ exports.base = function(req, resp){
                               rinnovoIscrizioni('https://infostudenti.unitn.it/it/rinnovo-iscrizioni', './Rinnovi_Home', 'rinnovi', link_rinnovi, resp, subsection);
       break;
     case 'futuroStudente':
-                          futuroStudente('http://www.unitn.it/futuro-studente', './Futuro_Studente', './Futuro_Studente', subsection, detail);
+                          futuroStudente('http://www.unitn.it/futuro-studente', './Futuro_Studente', resp, subsection, detail);
       break;
     default: break;
   }
@@ -934,7 +934,7 @@ var futuroStudente = function(link, dir, resp, subsection, detail){
       readStudentFile(dir, file)
       .then(() => {
         console.log(" -> secondo promise");
-        futuroStudenteSaving(action)
+        futuroStudenteSaving(subsection, detail)
         .then((json) => {
           console.log(" -> terzo promise");
           resp.end(json);
