@@ -1132,10 +1132,10 @@ var futuroStudenteSaving = function(subsection, detail){
         break;
         case('iscrizioni'):
                             switch(detail){
-                              case('ammissioni'): // non funziona
+                              case('ammissioni'):
                                                   var json = JSON.stringify({
                                                     explain: "",
-                                                    link: iscrizioni.link.amissioni
+                                                    link: iscrizioni.link.ammissioni
                                                   });
                                                   resolve(json);
                               break;
@@ -1270,10 +1270,10 @@ var futuroStudenteSaving = function(subsection, detail){
                                               });
                                               resolve(json);
                               break;
-                              case('informatici'): //non funziona
+                              case('informatici'):
                                                   var json = JSON.stringify({
                                                     explain: "",
-                                                    link: servizi.link.infomatici
+                                                    link: servizi.link.informatici
                                                   });
                                                   resolve(json);
                               break;
@@ -1373,7 +1373,7 @@ var futuroStudenteSaving = function(subsection, detail){
                                             });
                                             resolve(json);
                               break;
-                              case('associazioni-studentesche'):  // non funziona
+                              case('associazioni-studentesche'):
                                                                 var json = JSON.stringify({
                                                                   explain: "",
                                                                   link: nonSoloStudio.link.studenti
