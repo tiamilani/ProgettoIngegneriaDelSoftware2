@@ -606,7 +606,7 @@ function trasferimentiSaving(section, subsection){
       case('trasferimenti-da-magistrale'):
                     var json = JSON.stringify({
                       explain: link_trasferimenti.explain_da_magistrale,
-                      link: link_trasferimenti.da_magistrale
+                      link: link_trasferimenti.da_magistrale,
                       section: section,
                       subsection: subsection
                     });
