@@ -6,6 +6,7 @@ const alert = require ('./sectionAvvisi.js');
 const place = require ('./sectionLuoghiUtili.js');
 const eat = require ('./sectionMensa.js');
 //const cron = require('node-schedule');
+
 const TelegramBot = require('node-telegram-bot-api');
 
 // ---------- CONFIG ----------
@@ -17,9 +18,14 @@ const TOKEN = process.env.TELEGRAM_TOKEN || '466491462:AAF8RxkhGR00Mylr0LGZfFWUM
 };
 const bot = new TelegramBot(TOKEN, options);
 bot.setWebHook(`${url}/bot${TOKEN}`);*/
-const url = process.env.APP_URL || 'https://unitnhelpbot.herokuapp.com:443';
-const bot = new TelegramBot(TOKEN, {polling: true});
-console.log('BOT STARTED');
+const url = process.env.APP_URL || 'https://botingse2.herokuapp.com:443';
+
+const bot = new TelegramBot(TOKEN);
+
+// This informs the Telegram servers of the new webhook.
+bot.setWebHook(`${url}/bot${TOKEN}`);
+
+console.log('BOT STARTED webHook: ' + `${url}/bot${TOKEN}`);
 
 var databaseConnection = undefined;
 
@@ -881,3 +887,5 @@ bot.on('callback_query', function(msg) {
             });
     }
 });
+
+exports.BOT = bot;

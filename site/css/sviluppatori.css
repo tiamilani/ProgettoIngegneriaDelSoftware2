@@ -1,0 +1,59 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/*
+    Created on : 7-ott-2017, 13.56.03
+    Author     : damiano
+*/
+
+.description{
+    text-align: center;
+    margin-bottom: 1.5em;
+}
+
+.description h1{
+    text-align: center;
+    font-family: 'Cookie', cursive;
+    margin-bottom: 0.5em;
+    margin-top: 1em;
+}
+
+.card-title{
+    font-family: 'Lato', Open Sans;
+    font-style: italic;
+    font-weight: bold;
+}
+
+.rounded-circle{
+    width: 200px;
+    height: auto;
+    margin: 0.5em;
+}
+
+/*div .card{
+    border: none;
+}*/
+
+.card-subtitle{
+    font-style: italic;
+    font-family: 'Lato', Open Sans;
+}
+
+.card-social{
+    display: table;
+    margin: 0 auto 1em auto;
+}
+
+a{
+    margin: 5px;
+}
+
+#mapObject{
+    margin-bottom: 1em;
+}
+
+div .col{
+    padding: 0;
+}

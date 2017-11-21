@@ -2,6 +2,8 @@
 module.exports = function(app) {
 	var controller = require('../controllers/Controller');
 	var place = require ('../controllers/places');
+	var telegramController = require ('../controllers/telegramController');
+	const TOKEN = process.env.TELEGRAM_TOKEN || '466491462:AAF8RxkhGR00Mylr0LGZfFWUMvPVWSHqUPE';
 	var avvisi = require ('../controllers/avvisi');
 	const urban = require ('../controllers/mezzi.js');
 
@@ -33,4 +35,8 @@ module.exports = function(app) {
 	app.route('/avvisiLinee')
 		.get(urban.Avvisi_Linee)
 		.post(urban.Avvisi_Linee);
+
+	// We are receiving updates at the route below!
+	app.route(`/bot${TOKEN}`)
+		.post(telegramController.update);
 };
