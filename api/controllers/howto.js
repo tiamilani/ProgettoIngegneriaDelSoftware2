@@ -854,7 +854,7 @@ function controlAssign(title, link, node, $){
                             agevolazioni.link.alloggi = ref;
                           else if(desc.includes('servizi'))
                             agevolazioni.link.servizi = ref;
-                          else if(desc.includes('colleggio'))
+                          else if(desc.includes('collegio'))
                             agevolazioni.link.clesio = ref;
 
                         });
@@ -862,7 +862,7 @@ function controlAssign(title, link, node, $){
 
                       break;
 
-    /*case 'servizi':
+    case 'servizi':
                       if(servizi.titolo == ""){
                         servizi.titolo = title;
                       }
@@ -882,13 +882,36 @@ function controlAssign(title, link, node, $){
                           if(!ref.includes('http')){
                             ref = 'www.unitn.it' + ref;
                           }
-                          servizi.link.push(ref)
+
+                          if(desc.includes('biblioteca'))
+                            servizi.link.biblioteca = ref;
+                          else if(desc.includes('mense'))
+                            servizi.link.mense = ref;
+                          else if(desc.includes('alloggi'))
+                            servizi.link.alloggi = ref;
+                          else if(desc.includes('job guidance'))
+                            servizi.link.job = ref;
+                          else if(desc.includes('cla'))
+                            servizi.link.cla = ref;
+                          else if(desc.includes('consulenza'))
+                            servizi.link.consulenza = ref;
+                          else if(desc.includes('matlab'))
+                            servizi.link.matlab = ref;
+                          else if(desc.includes('informatici'))
+                            servizi.link.informatici = ref;
+                          else if(desc.includes('civile'))
+                            servizi.link.civile = ref;
+                          else if(desc.includes('speciali'))
+                            servizi.link.speciali = ref;
+                          else if(desc.includes('tutorato'))
+                            servizi.link.tutorato = ref;
+
                         });
                       }
 
                       break;
 
-    case 'l\'ateneo':
+    /*case 'l\'ateneo':
                       if(ateneo.titolo == ""){
                         ateneo.titolo = title;
                       }
@@ -1109,6 +1132,87 @@ var futuroStudenteSaving = function(subsection, detail){
                                               link: agevolazioni.link.clesio
                                             });
                                             resolve(json);
+                              break;
+                            }
+        break;
+        case('servizi'):
+                            switch(detail){
+                              case('biblioteca'):
+                                                var json = JSON.stringify({
+                                                  explain: "",
+                                                  link: servizi.link.biblioteca
+                                                });
+                                                resolve(json);
+                              break;
+                              case('mense'):
+                                                var json = JSON.stringify({
+                                                  explain: "",
+                                                  link: servizi.link.mense
+                                                });
+                                                resolve(json);
+                              break;
+                              case('alloggi'):
+                                                var json = JSON.stringify({
+                                                  explain: "",
+                                                  link: servizi.link.alloggi
+                                                });
+                                                resolve(json);
+                              break;
+                              case('job-guidance'):
+                                                var json = JSON.stringify({
+                                                  explain: "",
+                                                  link: servizi.link.job
+                                                });
+                                                resolve(json);
+                              break;
+                              case('cla'):
+                                                var json = JSON.stringify({
+                                                  explain: "",
+                                                  link: servizi.link.cla
+                                                });
+                                                resolve(json);
+                              break;
+                              case('consulenza'):
+                                                var json = JSON.stringify({
+                                                  explain: "",
+                                                  link: servizi.link.consulenza
+                                                });
+                                                resolve(json);
+                              break;
+                              case('matlab'):
+                                                var json = JSON.stringify({
+                                                  explain: "",
+                                                  link: servizi.link.matlab
+                                                });
+                                                resolve(json);
+                              break;
+                              case('informatici'):
+                                                var json = JSON.stringify({
+                                                  explain: "",
+                                                  link: servizi.link.infomatici
+                                                });
+                                                resolve(json);
+                              break;
+                              case('civile'):
+                                                var json = JSON.stringify({
+                                                  explain: "",
+                                                  link: servizi.link.civile
+                                                });
+                                                resolve(json);
+                              break;s
+                              case('bisogni-speciali'):
+                                                var json = JSON.stringify({
+                                                  explain: "",
+                                                  link: servizi.link.speciali
+                                                });
+                                                resolve(json);
+                              break;
+                              case('tutorato'):
+                                                var json = JSON.stringify({
+                                                  explain: "",
+                                                  link: servizi.link.tutorato
+                                                });
+                                                resolve(json);
                               break;
                             }
         break;
