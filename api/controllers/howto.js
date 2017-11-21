@@ -16,14 +16,14 @@ var link_openDay = [];
 var programs = [];
 var registrazione = [];
 
-var didattica = {titolo: "", diretto: "", link: []};
-var iscrizioni = {titolo: "", diretto: "", link: []};
-var orientamento = {titolo: "", diretto: "", link: []};
-var agevolazioni = {titolo: "", diretto: "", link: []};
-var servizi = {titolo: "", diretto: "", link: []};
-var ateneo = {titolo: "", diretto: "", link: []};
-var international = {titolo: "", diretto: "", link: []};
-var nonSoloStudio = {titolo: "", diretto: "", link: []};
+var didattica = {titolo: "", diretto: "", link:{} };
+var iscrizioni = {titolo: "", diretto: "", link:{} };
+var orientamento = {titolo: "", diretto: "", link:{} };
+var agevolazioni = {titolo: "", diretto: "", link:{} };
+var servizi = {titolo: "", diretto: "", link:{} };
+var ateneo = {titolo: "", diretto: "", link:{} };
+var international = {titolo: "", diretto: "", link:{} };
+var nonSoloStudio = {titolo: "", diretto: "", link:{} };
 var saved = false;
 
 exports.base = function(req, resp){
@@ -70,7 +70,7 @@ exports.base = function(req, resp){
                               rinnovoIscrizioni('https://infostudenti.unitn.it/it/rinnovo-iscrizioni', './Rinnovi_Home', 'rinnovi', link_rinnovi, resp, subsection);
       break;
     case 'futuroStudente':
-                          futuroStudente();
+                          futuroStudente('http://www.unitn.it/futuro-studente', './Futuro_Studente', './Futuro_Studente', section, subsection, detail);
       break;
     default: break;
   }
@@ -367,7 +367,7 @@ function immatricolazioniSaving(action){
     function(resolve, reject){
 
     switch(action){
-      case('immatricolazioni_triennali'):
+      case('immatricolazioni-triennali'):
                                     var json = JSON.stringify({
                                       explain: link_immatricolazioni.explain_triennale,
                                       link: link_immatricolazioni.triennale
@@ -375,7 +375,7 @@ function immatricolazioniSaving(action){
                                     resolve(json);
       break;
 
-      case('immatricolazioni_magistrali'):
+      case('immatricolazioni-magistrali'):
                                     var json = JSON.stringify({
                                       explain: link_immatricolazioni.explain_magistrale,
                                       link: link_immatricolazioni.magistrale
@@ -672,4 +672,276 @@ function rinnovoIscrizioniSaving(action){
       break;
     }
   });
+}
+
+function studentFolder(dir, options){
+  return new Promise(
+    function(resolve, reject){
+      if(!fs.existsSync(dir)){
+        console.log("NEW STUDENT FOLDER");
+        dw(options).then(result => {
+          deleteFolderAndFile(dir, '.html');
+          var file = fs.readdirSync(dir);
+          console.log("FILE SALVATO");
+          resolve(file);
+        }).catch((err) => {reject("Impossibile accedere alla risorsa in questo momento. Riprovare più tardi"); });
+      }else{
+        var file = fs.readdirSync(dir);
+        resolve(file);
+      }
+    }
+  );
+}
+
+function readStudentFile(dir, file){
+  return new Promise(
+    function(resolve, reject){
+      console.log("SECOND PROMISE");
+      if(!saved){
+        var $ = ch.load(fs.readFileSync(dir + "/" + file));
+        $("#section-content ul.menu li.expanded > a").each(function() {
+          var title = $(this).text().trim();
+          var link = $(this).attr('href');
+
+          controlAssign(title, link, bot, msg, $(this), $);
+
+        });
+
+        $("#section-content ul.menu li.expanded > span").each(function() {
+          var title1 = $(this).text().trim();
+
+          controlAssign(title1, "", bot, msg, $(this), $);
+        });
+
+        saved = true;
+      }
+
+    resolve();
+    }
+  );
+}
+
+
+function controlAssign(title, link, bot, msg, node, $){
+
+  console.log(title.toLowerCase());
+  switch(title.toLowerCase()){
+    case 'didattica':
+                      if(didattica.titolo == ""){
+                        didattica.titolo = title;
+                      }
+                      if(link.length != 0 && didattica.diretto.length == 0){
+                        if(!link.includes('http')){
+                          link = 'www.unitn.it' + link;
+                        }
+                        didattica.diretto = link;
+                      }
+
+                      if(didattica.link.length == 0){
+                        node.siblings().children("li").children("a").each(function(){
+                          var ref = $(this).attr('href');
+                          var desc = $(this).text().trim();
+                          console.log(desc);
+                          if(!ref.includes('http')){
+                            ref = 'www.unitn.it' + ref;
+                          }
+
+                          if(isEmptyObj(didattica.link)){
+                            console.log('didattica.link è vuoto, lo riempio');
+                            if(ref.includes('corsi'))
+                              didattica.link.corsi = ref;
+                            else if(ref.includes('dottorati'))
+                              didattica.link.dottorati = ref;
+                            else if(ref.includes('master'))
+                              didattica.link.master = ref;
+                          }
+                        });
+                      }
+
+                      break;
+
+    case 'iscrizioni':
+                      if(iscrizioni.titolo == ""){
+                        iscrizioni.titolo = title;
+                      }
+                      if(link.length != 0 && iscrizioni.diretto.length == 0){
+                        if(!link.includes('http')){
+                          link = 'www.unitn.it' + link;
+                        }
+                        iscrizioni.diretto = link;
+                      }
+
+                      if(iscrizioni.link.length == 0){
+                        node.siblings().children("li").children("a").each(function(){
+                          var ref = $(this).attr('href');
+                          if(!ref.includes('http')){
+                            ref = 'www.unitn.it' + ref;
+                          }
+                          iscrizioni.link.push(ref)
+                        });
+                      }
+
+                      break;
+
+    case 'orientamento':
+                      if(orientamento.titolo == ""){
+                        orientamento.titolo = title;
+                      }
+                      if(link.length != 0){
+                        if(!link.includes('http')){
+                          link = 'www.unitn.it' + link;
+                        }
+                        orientamento.diretto = link;
+                      }
+
+                      node.siblings().children("li").children("a").each(function(){
+                        var ref = $(this).attr('href');
+                        if(!ref.includes('http')){
+                          ref = 'www.unitn.it' + ref;
+                        }
+                        orientamento.link.push(ref)
+                      });
+
+                      break;
+
+    case 'agevolazioni':
+                      if(agevolazioni.titolo == ""){
+                        agevolazioni.titolo = title;
+                      }
+                      if(link.length != 0 && agevolazioni.diretto.length == 0){
+                        if(!link.includes('http')){
+                          link = 'www.unitn.it' + link;
+                        }
+                        agevolazioni.diretto = link;
+                      }
+
+                      if(agevolazioni.link.length == 0){
+                        node.siblings().children("li").children("a").each(function(){
+                          var ref = $(this).attr('href');
+                          if(!ref.includes('http')){
+                            ref = 'www.unitn.it' + ref;
+                          }
+                          agevolazioni.link.push(ref)
+                        });
+                      }
+
+                      break;
+
+    case 'servizi':
+                      if(servizi.titolo == ""){
+                        servizi.titolo = title;
+                      }
+                      if(link.length != 0 && servizi.diretto.length == 0){
+                        if(!link.includes('http')){
+                          link = 'www.unitn.it' + link;
+                        }
+                        servizi.diretto = link;
+                      }
+
+                      if(servizi.link.length == 0){
+                        node.siblings().children("li").children("a").each(function(){
+                          var ref = $(this).attr('href');
+                          if(!ref.includes('http')){
+                            ref = 'www.unitn.it' + ref;
+                          }
+                          servizi.link.push(ref)
+                        });
+                      }
+
+                      break;
+
+    case 'l\'ateneo':
+                      if(ateneo.titolo == ""){
+                        ateneo.titolo = title;
+                      }
+                      if(link.length != 0 && ateneo.diretto.length == 0){
+                        if(!link.includes('http')){
+                          link = 'www.unitn.it' + link;
+                        }
+                        ateneo.diretto = link;
+                      }
+
+                      if(ateneo.link.length == 0){
+                        node.siblings().children("li").children("a").each(function(){
+                          var ref = $(this).attr('href');
+                          if(!ref.includes('http')){
+                            ref = 'www.unitn.it' + ref;
+                          }
+                          ateneo.link.push(ref)
+                        });
+                      }
+
+                      break;
+
+    case 'prospective international student':
+                      if(international.titolo == ""){
+                        international.titolo = title;
+                      }
+                      if(link.length != 0 && international.diretto.length == 0){
+                        if(!link.includes('http')){
+                          link = 'www.unitn.it' + link;
+                        }
+                        international.diretto = link;
+                      }
+
+                      if(international.link.length == 0){
+                        node.siblings().children("li").children("a").each(function(){
+                          var ref = $(this).attr('href');
+                          if(!ref.includes('http')){
+                            ref = 'www.unitn.it' + ref;
+                          }
+                          international.link.push(ref)
+                        });
+                      }
+
+                      break;
+
+    case 'non solo studio':
+                      if(nonSoloStudio.titolo == ""){
+                        nonSoloStudio.titolo = title;
+                      }
+                      if(link.length != 0 && nonSoloStudio.diretto.length == 0){
+                        if(!link.includes('http')){
+                          link = 'www.unitn.it' + link;
+                        }
+                        nonSoloStudio.diretto = link;
+                      }
+
+                      if(nonSoloStudio.link.length == 0){
+                        node.siblings().children("li").children("a").each(function(){
+                          var ref = $(this).attr('href');
+                          if(!ref.includes('http')){
+                            ref = 'www.unitn.it' + ref;
+                          }
+                          nonSoloStudio.link.push(ref)
+                        });
+                      }
+
+                      break;
+  }
+}
+
+var futuroStudente = function(link, dir, resp, section, subsection, detail){
+  let options = {
+    urls: [link],
+    directory: dir
+  };
+
+  console.log("INSIDE WEB RINNOVI FUNCTION");
+  studentFolder(dir, options)
+    .then(file => {
+      console.log(" -> primo promise");
+      readStudentFiles(dir, file)
+      .then(() => {
+        console.log(" -> secondo promise");
+        /*rinnovoIscrizioniSaving(action)
+        .then((json) => {
+          console.log(" -> terzo promise");
+          resp.end(json);
+        })
+        .catch((err) => {console.log(err); });*/
+      })
+      .catch((err) => {console.log(err); });
+    })
+    .catch((err) => {console.log(err); });
 }
