@@ -974,17 +974,17 @@ function controlAssign(title, link, node, $){
                           }
 
                           if(desc.includes('presentazione'))
-                            agevolazioni.link.presentazione = ref;
+                            ateneo.link.presentazione = ref;
                           else if(desc.includes('strutture'))
-                            agevolazioni.link.strutture = ref;
+                            ateneo.link.strutture = ref;
                           else if(desc.includes('numeri'))
-                            agevolazioni.link.numeri = ref;
+                            ateneo.link.numeri = ref;
                           else if(desc.includes('rankings'))
-                            agevolazioni.link.rankings = ref;
+                            ateneo.link.rankings = ref;
                           else if(desc.includes('trentino'))
-                            agevolazioni.link.trentino = ref;
+                            ateneo.link.trentino = ref;
                           else if(desc.includes('raggiungerci'))
-                            agevolazioni.link.indicazioni = ref;
+                            ateneo.link.indicazioni = ref;
 
                         });
                       }
@@ -1120,7 +1120,7 @@ var futuroStudenteSaving = function(subsection, detail){
         break;
         case('iscrizioni'):
                             switch(detail){
-                              case('ammissioni'):
+                              case('ammissioni'): // non funziona
                                                   var json = JSON.stringify({
                                                     explain: "",
                                                     link: iscrizioni.link.amissioni
@@ -1198,7 +1198,7 @@ var futuroStudenteSaving = function(subsection, detail){
                                               });
                                               resolve(json);
                               break;
-                              case('collegio'):
+                              case('collegio'): //non funziona
                                             var json = JSON.stringify({
                                               explain: "",
                                               link: agevolazioni.link.clesio
@@ -1258,7 +1258,7 @@ var futuroStudenteSaving = function(subsection, detail){
                                                 });
                                                 resolve(json);
                               break;
-                              case('informatici'):
+                              case('informatici'): //non funziona
                                                 var json = JSON.stringify({
                                                   explain: "",
                                                   link: servizi.link.infomatici
@@ -1285,6 +1285,52 @@ var futuroStudenteSaving = function(subsection, detail){
                                                   link: servizi.link.tutorato
                                                 });
                                                 resolve(json);
+                              break;
+                            }
+        break;
+        case('ateneo'):
+                            switch(detail){
+                              case('presentazione'):
+                                                  var json = JSON.stringify({
+                                                    explain: "",
+                                                    link: ateneo.link.presentazione
+                                                  });
+                                                  resolve(json);
+                              break;
+                              case('strutture'):
+                                                  var json = JSON.stringify({
+                                                    explain: "",
+                                                    link: ateneo.link.strutture
+                                                  });
+                                                  resolve(json);
+                              break;
+                              case('numeri'):
+                                              var json = JSON.stringify({
+                                                explain: "",
+                                                link: ateneo.link.numeri
+                                              });
+                                              resolve(json);
+                              break;
+                              case('rankings'):
+                                            var json = JSON.stringify({
+                                              explain: "",
+                                              link: ateneo.link.rankings
+                                            });
+                                            resolve(json);
+                              break;
+                              case('trenito-e-trento'):
+                                              var json = JSON.stringify({
+                                                explain: "",
+                                                link: ateneo.link.trentino
+                                              });
+                                              resolve(json);
+                              break;
+                              case('come-raggiungerci'):
+                                            var json = JSON.stringify({
+                                              explain: "",
+                                              link: ateneo.link.indicazioni
+                                            });
+                                            resolve(json);
                               break;
                             }
         break;
