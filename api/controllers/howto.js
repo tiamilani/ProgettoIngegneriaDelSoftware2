@@ -950,7 +950,7 @@ var futuroStudenteSaving = function(subsection, detail){
   return new Promise({
     function(resolve, reject){
       var json = JSON.stringify({
-        explain: 'tutto arrivato'
+        explain: 'tutto arrivato',
         subsection: subsection,
         arg: detail
       });
