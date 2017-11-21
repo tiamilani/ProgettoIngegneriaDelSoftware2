@@ -645,7 +645,7 @@ function supportoSaving(section){
 
     var json = JSON.stringify({
       explain: link_supporto.explain_prenotazione,
-      link: link_supporto.prenotazione
+      link: link_supporto.prenotazione,
       section: section
     });
     resolve(json);
