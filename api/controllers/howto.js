@@ -947,8 +947,9 @@ var futuroStudente = function(link, dir, resp, subsection, detail){
 }
 
 var futuroStudenteSaving = function(subsection, detail){
-  return new Promise({
+  return new Promise(
     function(resolve, reject){
+
       var json = JSON.stringify({
         explain: 'tutto arrivato',
         subsection: subsection,
@@ -956,6 +957,5 @@ var futuroStudenteSaving = function(subsection, detail){
       });
 
       resolve(json);
-      }
-  });
+    });
 }
