@@ -991,7 +991,7 @@ function controlAssign(title, link, node, $){
 
                       break;
 
-    /*case 'prospective international student':
+    case 'prospective international student':
                       if(international.titolo == ""){
                         international.titolo = title;
                       }
@@ -1012,14 +1012,10 @@ function controlAssign(title, link, node, $){
                             ref = 'www.unitn.it' + ref;
                           }
 
-                          if(desc.includes('borse'))
-                            agevolazioni.link.borse = ref;
-                          else if(desc.includes('alloggi'))
-                            agevolazioni.link.alloggi = ref;
-                          else if(desc.includes('servizi'))
-                            agevolazioni.link.servizi = ref;
-                          else if(desc.includes('collegio'))
-                            agevolazioni.link.clesio = ref;
+                          if(desc.includes('students'))
+                            international.link.students = ref;
+                          else if(desc.includes('lavorare'))
+                            international.link.lavorare = ref;
 
                         });
                       }
@@ -1047,14 +1043,22 @@ function controlAssign(title, link, node, $){
                             ref = 'www.unitn.it' + ref;
                           }
 
-                          if(desc.includes('borse'))
-                            agevolazioni.link.borse = ref;
-                          else if(desc.includes('alloggi'))
-                            agevolazioni.link.alloggi = ref;
-                          else if(desc.includes('servizi'))
-                            agevolazioni.link.servizi = ref;
-                          else if(desc.includes('collegio'))
-                            agevolazioni.link.clesio = ref;
+                          if(desc.includes('apple'))
+                            nonSoloStudio.link.apple = ref;
+                          else if(desc.includes('associazioni studentesche'))
+                            nonSoloStudio.link.studenti = ref;
+                          else if(desc.includes('opera'))
+                            nonSoloStudio.link.opera = ref;
+                          else if(desc.includes('prestabici'))
+                            nonSoloStudio.link.prestabici = ref;
+                          else if(desc.includes('rappresentanti'))
+                            nonSoloStudio.link.rappresentanti = ref;
+                          else if(desc.includes('associazioni universitarie'))
+                            nonSoloStudio.link.associazioni = ref;
+                          else if(desc.includes('uni.sport'))
+                            nonSoloStudio.link.sport = ref;
+                          else if(desc.includes('giovani'))
+                            nonSoloStudio.link.giovani = ref;
 
                         });
                       }
@@ -1318,7 +1322,7 @@ var futuroStudenteSaving = function(subsection, detail){
                                             });
                                             resolve(json);
                               break;
-                              case('trenito-e-trento'):
+                              case('trentino-e-trento'):
                                               var json = JSON.stringify({
                                                 explain: "",
                                                 link: ateneo.link.trentino
@@ -1334,6 +1338,85 @@ var futuroStudenteSaving = function(subsection, detail){
                               break;
                             }
         break;
+        case('pis'):
+                            switch(detail){
+                              case('international-in-trento'):
+                                                  var json = JSON.stringify({
+                                                    explain: "",
+                                                    link: international.link.students
+                                                  });
+                                                  resolve(json);
+                              break;
+                              case('studiare-lavorare'):
+                                                  var json = JSON.stringify({
+                                                    explain: "",
+                                                    link: international.link.lavorare
+                                                  });
+                                                  resolve(json);
+                              break;
+                            }
+        break;
+        case('non-solo-studio'):
+                            switch(detail){
+                              case('apple'):
+                                                  var json = JSON.stringify({
+                                                    explain: "",
+                                                    link: ateneo.link.apple
+                                                  });
+                                                  resolve(json);
+                              break;
+                              case('associazioni-studentesche'):
+                                                  var json = JSON.stringify({
+                                                    explain: "",
+                                                    link: ateneo.link.studenti
+                                                  });
+                                                  resolve(json);
+                              break;
+                              case('opera'):
+                                              var json = JSON.stringify({
+                                                explain: "",
+                                                link: ateneo.link.opera
+                                              });
+                                              resolve(json);
+                              break;
+                              case('prestabici'):
+                                            var json = JSON.stringify({
+                                              explain: "",
+                                              link: ateneo.link.prestabici
+                                            });
+                                            resolve(json);
+                              break;
+                              case('rappresentanti'):
+                                              var json = JSON.stringify({
+                                                explain: "",
+                                                link: ateneo.link.rappresentanti
+                                              });
+                                              resolve(json);
+                              break;
+                              case('associazioni-universitarie'):
+                                            var json = JSON.stringify({
+                                              explain: "",
+                                              link: ateneo.link.associazioni
+                                            });
+                                            resolve(json);
+                              break;
+                              case('unisport'):
+                                              var json = JSON.stringify({
+                                                explain: "",
+                                                link: ateneo.link.sport
+                                              });
+                                              resolve(json);
+                              break;
+                              case('link-giovani'):
+                                            var json = JSON.stringify({
+                                              explain: "",
+                                              link: ateneo.link.giovani
+                                            });
+                                            resolve(json);
+                              break;
+                            }
+        break;
+        default: break;
       }
   });
 }
