@@ -939,7 +939,7 @@ var futuroStudente = function(link, dir, resp, subsection, detail){
           console.log(" -> terzo promise");
           resp.end(json);
         })
-        .catch((err) => {console.log(err); });*/
+        .catch((err) => {console.log(err); });
       })
       .catch((err) => {console.log(err); });
     })
