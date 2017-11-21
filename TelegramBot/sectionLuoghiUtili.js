@@ -43,65 +43,67 @@ function placesNearby(bot, chatId, map, city, range, type, nome, con) {
 			type: type,
 			name: nome
 		}, function(err, response){
-			/*db.initiateConnection(connection)
-				.then((con) => { */
-					console.log("Funzione di callback");
-					if (!err) {
-						//console.log(response.json.results);
-						var messageArray = [];
-						for (var i = 0; i < response.json.results.length; i++) {
+			console.log("Funzione di callback");
+			if (!err) {
+				//console.log(response.json.results);
+                if(response.json.results.length > 0) {
+					var messageArray = [];
+					for (var i = 0; i < response.json.results.length; i++) {
 
-							var rate = Math.round(response.json.results[i].rating);
-							var star = "";
-							var iterator = 0;
-							if(isNaN(rate)){
-								star = "Nessuna Valutazione";
-							}
-							else {
-								for(iterator = 0; iterator < rate; iterator++){
-									star += emoji.star;
-								}
-							}
-
-							if(response.json.results[i].name != "Malga"){
-								var uno = response.json.results[i].name;
-								var due = response.json.results[i].vicinity;
-								console.log("uno: " + uno + " due " + due);
-								uno = uno.replace(/'/g, "\\'");
-								due = due.replace(/'/g, "\\'");
-								uno = uno.replace(/"/g, "\\"+ "\"" +"");
-								due = due.replace(/"/g, "\\"+ "\"" +"");
-								console.log("uno: " + uno + " due " + due);
-								messageArray.push({name: uno,rateGoogle: response.json.results[i].rating, rate: star, indirizzo: due, lat: response.json.results[i].geometry.location.lat, lng: response.json.results[i].geometry.location.lng});
-
+						var rate = Math.round(response.json.results[i].rating);
+						var star = "";
+						var iterator = 0;
+						if(isNaN(rate)){
+							star = "Nessuna Valutazione";
+						}
+						else {
+							for(iterator = 0; iterator < rate; iterator++){
+								star += emoji.star;
 							}
 						}
-						// tutto in -------->>>>> messageArray
-						console.log("Ho creato l'array con le posizioni! Elementi presenti: "+ messageArray.length);
 
-						var testo = JSON.stringify(messageArray);
-						testo = testo.replace(/\\\\'/g,"\\'");
-						testo = testo.replace(/\\\\\\"/g,"\\\\"+"\""+"");
-
-						var query = "UPDATE users SET lastResult='" + testo + "' WHERE ChatID='" + chatId + "'";
-						console.log(query);
-						con.query(query, function (err, result) {
-							console.log("query inviata, eseguo la funzione");
-							if (err) throw err;
-							checkID(chatId, 'Luoghi_F3', con)
-								.then((result) => {
-									console.log("Invio il messaggio all'utente");
-									bot.sendMessage(chatId,responseLuogo(messageArray[0]), getPaginationFull(1,messageArray.length));
-								})
-								.catch(err => {
-									console.error(err);
-								});
-						});
+						var uno = response.json.results[i].name;
+						var due = response.json.results[i].vicinity;
+						console.log("uno: " + uno + " due " + due);
+						uno = uno.replace(/'/g, "\\'");
+						due = due.replace(/'/g, "\\'");
+						uno = uno.replace(/"/g, "\\"+ "\"" +"");
+						due = due.replace(/"/g, "\\"+ "\"" +"");
+						console.log("uno: " + uno + " due " + due);
+						messageArray.push({name: uno,rateGoogle: response.json.results[i].rating, rate: star, indirizzo: due, lat: response.json.results[i].geometry.location.lat, lng: response.json.results[i].geometry.location.lng});
 					}
-				/*})
-				.catch(err => {
-					bot.sendMessage(chatId, err);
-				});*/
+					// tutto in -------->>>>> messageArray
+					console.log("Ho creato l'array con le posizioni! Elementi presenti: "+ messageArray.length);
+
+					var testo = JSON.stringify(messageArray);
+					testo = testo.replace(/\\\\'/g,"\\'");
+					testo = testo.replace(/\\\\\\"/g,"\\\\"+"\""+"");
+
+					var query = "UPDATE users SET lastResult='" + testo + "' WHERE ChatID='" + chatId + "'";
+					console.log(query);
+					con.query(query, function (err, result) {
+						console.log("query inviata, eseguo la funzione");
+						if (err) throw err;
+						checkID(chatId, 'Luoghi_F3', con)
+							.then((result) => {
+								console.log("Invio il messaggio all'utente");
+								bot.sendMessage(chatId,responseLuogo(messageArray[0]), getPaginationFull(1,messageArray.length));
+							})
+							.catch(err => {
+								console.error(err);
+							});
+					});
+                } else {
+                    checkID(chatId, '/start', con)
+                        .then((result) => {
+                            console.log("Nessun risultato!");
+                            bot.sendMessage(chatId, "Non sono stati trovati luoghi corrispondenti alla ricerca!");
+                        })
+                        .catch(err => {
+                            console.error(err);
+                        });
+                }
+			}
 		}
 	);
 }

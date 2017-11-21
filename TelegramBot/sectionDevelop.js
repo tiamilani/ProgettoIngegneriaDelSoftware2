@@ -6,7 +6,7 @@ const unzip = require('adm-zip');
 const csv = require('fast-csv');
 
 function connectToDatabaseInit (connection) {
-	//console.log("IN CONNESSIONE");
+	console.log("IN CONNESSIONE");
 	return new Promise((resolve, reject) => {
 		if(connection == undefined || connection.state === 'disconnected') {
 			console.log("Connetto");
@@ -20,7 +20,7 @@ function connectToDatabaseInit (connection) {
 
 			con.connect(function(err) {
 		        if (err) return reject(err);
-
+				console.log("ok");
 				return resolve(con);
 			});
 		} else {

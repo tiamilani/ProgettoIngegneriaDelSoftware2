@@ -756,8 +756,8 @@ function BackHome (msg) {
     				}
     			});
     		})
-    		.catch(err => {
-    			bot.sendMessage(id, err);
+    		.catch((err) => {
+    			bot.sendMessage(msg.chat.id, err);
     		});
     });
 }
@@ -824,7 +824,7 @@ bot.on('text', function(msg) {
                     else
                         routeCommands(msg, msg.chat.id, con);
                 })
-                .catch(err => {
+                .catch((err) => {
                     bot.sendMessage(msg.chat.id, err);
                 });
         } else {
@@ -832,12 +832,14 @@ bot.on('text', function(msg) {
         	bot.sendMessage(msg.chat.id, text);
 
             text = "Benvenuto " + msg.from.first_name + "!\nUniTN Help Center è un bot sviluppato per aiutare attuali e/o futuri studenti dell'Università degli Studi di Trento in vari ambiti della propria vita quotidiana!";
-
+            console.log(text);
             db.initConnectionLess(databaseConnection)
                 .then((con) => {
+                    console.log("connessione ok");
                     databaseConnection = con;
                     BackHome(msg)
                         .then((result) => {
+                            console.log("back home ok");
                             var query = "UPDATE users SET nome='" + msg.from.first_name + "',is_bot=" + msg.from.is_bot;
 
                             if(msg.from.last_name != undefined)
@@ -847,17 +849,19 @@ bot.on('text', function(msg) {
                                 query += ",nickname='" + msg.from.username + "'";
 
                             query +=" WHERE ChatID='" + msg.chat.id + "'";
+                            console.log(query);
 							con.query(query, function (err, result) {
 								if (err) return reject(err);
-
+                                console.log("query ok, invio");
 								bot.sendMessage(msg.chat.id, text, createHome());
 							});
                         })
-                        .catch(err => {
+                        .catch((err) => {
                             console.error(err);
                         });
                 })
-                .catch(err => {
+                .catch((err) => {
+                    console.log("errore: " + err);
                     bot.sendMessage(msg.chat.id, err);
                 });
         }

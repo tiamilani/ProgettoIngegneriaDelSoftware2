@@ -977,7 +977,7 @@ function Next_F2_Location_F2 (bot, msg, connection) {
 							var res = result;
 
 	                        if(result.length > 0) {
-								var query = "UPDATE users SET lastResult='" + JSON.stringify(res) + "' WHERE ChatID='" + msg.message.chat.id + "'";
+								var query = "UPDATE users SET prevChoice='1',lastResult='" + JSON.stringify(res) + "' WHERE ChatID='" + msg.message.chat.id + "'";
 								con.query(query, function (err, result) {
 									if (err) throw err;
 
@@ -1003,9 +1003,10 @@ function Next_F2_Location_F2 (bot, msg, connection) {
 						});
 					});
 				} else {
+					console.log("Check: " + prevChoice + " - " + parseInt(msg.data));
 					if(prevChoice != parseInt(msg.data)) {
 						prevChoice = parseInt(msg.data);
-
+						console.log("In: " + prevChoice + " - " + parseInt(msg.data));
 						var options = getPagination(prevChoice, res.length);
 						options['chat_id'] = msg.message.chat.id;
 						options['message_id'] = msg.message.message_id;
