@@ -824,6 +824,7 @@ function controlAssign(title, link, node, $){
                           if(desc.includes('ammissione')){
                             console.log("Ho trovato ammissioni");
                             iscrizioni.link.ammissioni = ref;
+                            console.log(desc);
                             console.log("Associazione creata -> " + iscrizioni.link.ammissioni);
                           }
                           else if(desc.includes('infostudenti'))
