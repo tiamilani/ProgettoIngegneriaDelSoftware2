@@ -60,7 +60,7 @@ exports.base = function(req, resp){
     case 'supporto':
                     supporto('https://infostudenti.unitn.it/it/supporto-studenti', './Supporto_Home', 'supporto', link_supporto, resp, section);
       break;
-    case 'liberaCircolazione': //non funziona
+    case 'liberaCircolazione':
                               borseDiStudio('https://infostudenti.unitn.it/it/borse-di-studio-e-agevolazioni', './Borse_Home', 'borse', link_borse, resp, section, 'libera-circolazione');
       break;
     case 'openDay':
@@ -822,8 +822,9 @@ function controlAssign(title, link, node, $){
                           }
 
                           if(desc.includes('ammissione')){
-                          console.log("Ho trovato ammissioni")
+                            console.log("Ho trovato ammissioni");
                             iscrizioni.link.ammissioni = ref;
+                            console.log("Associazione creata -> " + iscrizioni.link.ammissioni);
                           }
                           else if(desc.includes('infostudenti'))
                             iscrizioni.link.info = ref;
