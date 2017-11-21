@@ -60,8 +60,8 @@ exports.base = function(req, resp){
     case 'supporto':
                     supporto('https://infostudenti.unitn.it/it/supporto-studenti', './Supporto_Home', 'supporto', link_supporto, resp, section);
       break;
-    case 'liberaCircolazione':
-                              borseDiStudio('https://infostudenti.unitn.it/it/borse-di-studio-e-agevolazioni', './Borse_Home', 'borse', link_borse, resp, 'libera-circolazione');
+    case 'liberaCircolazione': //non funziona
+                              borseDiStudio('https://infostudenti.unitn.it/it/borse-di-studio-e-agevolazioni', './Borse_Home', 'borse', link_borse, resp, section, 'libera-circolazione');
       break;
     case 'openDay':
                     openDay('http://events.unitn.it/porteaperte-2017', './OpenDay_Home', resp);
