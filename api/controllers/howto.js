@@ -794,7 +794,7 @@ function controlAssign(title, link, node, $){
 
                       break;
 
-    case 'orientamento':
+    /*case 'orientamento':
                       if(orientamento.titolo == ""){
                         orientamento.titolo = title;
                       }
