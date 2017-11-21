@@ -977,4 +977,5 @@ var futuroStudenteSaving = function(subsection, detail){
                           }
                           break;
       }
+  });
 }
