@@ -52,13 +52,13 @@ exports.base = function(req, resp){
                               tasseUniversitarie('https://infostudenti.unitn.it/it/tasse-universitarie', './Tasse_Home', 'tasse', link_tasse, resp, section, subsection, detail);
       break;
     case 'borse':
-                          borseDiStudio('https://infostudenti.unitn.it/it/borse-di-studio-e-agevolazioni', './Borse_Home', 'borse', link_borse, resp, subsection);
+                          borseDiStudio('https://infostudenti.unitn.it/it/borse-di-studio-e-agevolazioni', './Borse_Home', 'borse', link_borse, resp, section, subsection);
       break;
     case 'trasferimenti':
-                          trasferimenti('https://infostudenti.unitn.it/it/trasferirsi-e-cambiare-corso', './Trasferimenti_Home', 'trasferimenti', link_trasferimenti, resp, subsection);
+                          trasferimenti('https://infostudenti.unitn.it/it/trasferirsi-e-cambiare-corso', './Trasferimenti_Home', 'trasferimenti', link_trasferimenti, resp, section, subsection);
       break;
     case 'supporto':
-                    supporto('https://infostudenti.unitn.it/it/supporto-studenti', './Supporto_Home', 'supporto', link_supporto, resp);
+                    supporto('https://infostudenti.unitn.it/it/supporto-studenti', './Supporto_Home', 'supporto', link_supporto, resp, section);
       break;
     case 'liberaCircolazione':
                               borseDiStudio('https://infostudenti.unitn.it/it/borse-di-studio-e-agevolazioni', './Borse_Home', 'borse', link_borse, resp, 'libera-circolazione');
@@ -67,7 +67,7 @@ exports.base = function(req, resp){
                     openDay('http://events.unitn.it/porteaperte-2017', './OpenDay_Home', resp);
       break;
     case 'rinnovi':
-                              rinnovoIscrizioni('https://infostudenti.unitn.it/it/rinnovo-iscrizioni', './Rinnovi_Home', 'rinnovi', link_rinnovi, resp, subsection);
+                              rinnovoIscrizioni('https://infostudenti.unitn.it/it/rinnovo-iscrizioni', './Rinnovi_Home', 'rinnovi', link_rinnovi, resp, section, subsection);
       break;
     case 'futuroStudente':
                           futuroStudente('http://www.unitn.it/futuro-studente', './Futuro_Studente', resp, subsection, detail);
@@ -325,7 +325,7 @@ function ammissioniSaving(section, subsection){
       case('ammissioni-triennali'):
                                     var json = JSON.stringify({
                                       explain: link_ammissioni.explain_triennale,
-                                      link: link_ammissioni.triennale
+                                      link: link_ammissioni.triennale,
                                       section: section,
                                       subsection: subsection
                                     });
@@ -334,7 +334,7 @@ function ammissioniSaving(section, subsection){
       case('ammissioni-magistrali'):
                                     var json = JSON.stringify({
                                       explain: link_ammissioni.explain_magistrale,
-                                      link: link_ammissioni.magistrale
+                                      link: link_ammissioni.magistrale,
                                       section: section,
                                       subsection: subsection
                                     });
@@ -374,7 +374,7 @@ function immatricolazioniSaving(section, subsection){
       case('immatricolazioni-triennali'):
                                     var json = JSON.stringify({
                                       explain: link_immatricolazioni.explain_triennale,
-                                      link: link_immatricolazioni.triennale
+                                      link: link_immatricolazioni.triennale,
                                       section: section,
                                       subsection: subsection
                                     });
@@ -384,7 +384,7 @@ function immatricolazioniSaving(section, subsection){
       case('immatricolazioni-magistrali'):
                                     var json = JSON.stringify({
                                       explain: link_immatricolazioni.explain_magistrale,
-                                      link: link_immatricolazioni.magistrale
+                                      link: link_immatricolazioni.magistrale,
                                       section: section,
                                       subsection: subsection
                                     });
@@ -427,7 +427,7 @@ function tasseUniversitarieSaving(section, subsection, detail){
       case('rimborsi'):
                         var json = JSON.stringify({
                           explain: link_tasse.explain_rimborsi,
-                          link: link_tasse.rimborsi
+                          link: link_tasse.rimborsi,
                           section: section,
                           subsection: subsection,
                         });
@@ -437,7 +437,7 @@ function tasseUniversitarieSaving(section, subsection, detail){
       case('pagamenti'):
                         var json = JSON.stringify({
                           explain: link_tasse.explain_pagamenti,
-                          link: link_tasse.pagamenti
+                          link: link_tasse.pagamenti,
                           section: section,
                           subsection: subsection,
                         });
@@ -447,7 +447,7 @@ function tasseUniversitarieSaving(section, subsection, detail){
       case('tasse'):
                     var json = JSON.stringify({
                       explain: link_tasse.explain_tasse,
-                      link: link_tasse.tasse
+                      link: link_tasse.tasse,
                       section: section,
                       subsection: subsection,
                     });
@@ -459,7 +459,7 @@ function tasseUniversitarieSaving(section, subsection, detail){
                       case('residenti'):
                                         var json = JSON.stringify({
                                           explain: link_tasse.explain_iseeIT,
-                                          link: link_tasse.iseeIT
+                                          link: link_tasse.iseeIT,
                                           section: section,
                                           subsection: subsection,
                                           detail: detail
@@ -470,7 +470,7 @@ function tasseUniversitarieSaving(section, subsection, detail){
                       case('non-residenti'):
                                               var json = JSON.stringify({
                                                 explain: link_tasse.explain_iseeEX,
-                                                link: link_tasse.iseeEX
+                                                link: link_tasse.iseeEX,
                                                 section: section,
                                                 subsection: subsection,
                                                 detail: detail
@@ -515,7 +515,9 @@ function borseDiStudioSaving(section, subsection){
       case('bisogni-speciali'):
                         var json = JSON.stringify({
                           explain: link_borse.explain_invalidita,
-                          link: link_borse.invalidita
+                          link: link_borse.invalidita,
+                          section: section,
+                          subsection: subsection
                         });
                         resolve(json);
       break;
@@ -523,7 +525,9 @@ function borseDiStudioSaving(section, subsection){
       case('attesa-di-laurea'):
                         var json = JSON.stringify({
                           explain: link_borse.explain_attesa,
-                          link: link_borse.attesa
+                          link: link_borse.attesa,
+                          section: section,
+                          subsection: subsection
                         });
                         resolve(json);
       break;
@@ -531,7 +535,9 @@ function borseDiStudioSaving(section, subsection){
       case('libera-circolazione'):
                     var json = JSON.stringify({
                       explain: link_borse.explain_circolazione,
-                      link: link_borse.circolazione
+                      link: link_borse.circolazione,
+                      section: section,
+                      subsection: subsection
                     });
                     resolve(json);
       break;
@@ -539,7 +545,9 @@ function borseDiStudioSaving(section, subsection){
       case('borsa-e-alloggio'):
                     var json = JSON.stringify({
                       explain: link_borse.explain_agevolazioni,
-                      link: link_borse.agevolazioni
+                      link: link_borse.agevolazioni,
+                      section: section,
+                      subsection: subsection
                     });
                     resolve(json);
       break;
@@ -547,7 +555,7 @@ function borseDiStudioSaving(section, subsection){
   });
 }
 
-var trasferimenti = function(link, dir, page, oggetto, resp, action){
+var trasferimenti = function(link, dir, page, oggetto, resp, section, subsection){
   let options = {
     urls: [link],
     directory: dir
@@ -558,7 +566,7 @@ var trasferimenti = function(link, dir, page, oggetto, resp, action){
     .then(file => {
       readInfoFiles(dir, file, page, oggetto)
       .then(() => {
-        trasferimentiSaving(action)
+        trasferimentiSaving(section, subsection)
         .then((json) => {
           console.log("terzo promise");
           resp.end(json);
@@ -570,15 +578,17 @@ var trasferimenti = function(link, dir, page, oggetto, resp, action){
     .catch((err) => {console.log(err); });
 }
 
-function trasferimentiSaving(action){
+function trasferimentiSaving(section, subsection){
   return new Promise(
     function(resolve, reject){
 
-    switch(action){
+    switch(subsection){
       case('trasferimenti-verso'):
                         var json = JSON.stringify({
                           explain: link_trasferimenti.explain_verso,
-                          link: link_trasferimenti.verso
+                          link: link_trasferimenti.verso,
+                          section: section,
+                          subsection: subsection
                         });
                         resolve(json);
       break;
@@ -586,7 +596,9 @@ function trasferimentiSaving(action){
       case('trasferimenti-da'):
                         var json = JSON.stringify({
                           explain: 'In progress',
-                          link: 'Nothing'
+                          link: 'Nothing',
+                          section: section,
+                          subsection: subsection
                         });
                         resolve(json);
       break;
@@ -595,6 +607,8 @@ function trasferimentiSaving(action){
                     var json = JSON.stringify({
                       explain: link_trasferimenti.explain_da_magistrale,
                       link: link_trasferimenti.da_magistrale
+                      section: section,
+                      subsection: subsection
                     });
                     resolve(json);
       break;
@@ -602,7 +616,7 @@ function trasferimentiSaving(action){
   });
 }
 
-var supporto = function(link, dir, page, oggetto, resp){
+var supporto = function(link, dir, page, oggetto, resp, section){
   let options = {
     urls: [link],
     directory: dir
@@ -613,7 +627,7 @@ var supporto = function(link, dir, page, oggetto, resp){
     .then(file => {
       readInfoFiles(dir, file, page, oggetto)
       .then(() => {
-        supportoSaving()
+        supportoSaving(section)
         .then((json) => {
           console.log("terzo promise");
           resp.end(json);
@@ -625,19 +639,20 @@ var supporto = function(link, dir, page, oggetto, resp){
     .catch((err) => {console.log(err); });
 }
 
-function supportoSaving(){
+function supportoSaving(section){
   return new Promise(
     function(resolve, reject){
 
     var json = JSON.stringify({
       explain: link_supporto.explain_prenotazione,
       link: link_supporto.prenotazione
+      section: section
     });
     resolve(json);
   });
 }
 
-var rinnovoIscrizioni = function(link, dir, page, oggetto, resp, action){
+var rinnovoIscrizioni = function(link, dir, page, oggetto, resp, section, subsection){
   let options = {
     urls: [link],
     directory: dir
@@ -650,7 +665,7 @@ var rinnovoIscrizioni = function(link, dir, page, oggetto, resp, action){
       readInfoFiles(dir, file, page, oggetto)
       .then(() => {
         console.log(" -> secondo promise");
-        rinnovoIscrizioniSaving(action)
+        rinnovoIscrizioniSaving(section, subsection)
         .then((json) => {
           console.log(" -> terzo promise");
           resp.end(json);
@@ -662,15 +677,17 @@ var rinnovoIscrizioni = function(link, dir, page, oggetto, resp, action){
     .catch((err) => {console.log(err); });
 }
 
-function rinnovoIscrizioniSaving(action){
+function rinnovoIscrizioniSaving(section, subsection){
   return new Promise(
     function(resolve, reject){
 
-    switch(action){
+    switch(subsection){
       case('rinnovo-e-tasse'):
                         var json = JSON.stringify({
                           explain: link_rinnovi.explain_tasse,
-                          link: link_rinnovi.tasse
+                          link: link_rinnovi.tasse,
+                          section: section,
+                          subsection: subsection
                         });
                         resolve(json);
       break;
@@ -678,7 +695,9 @@ function rinnovoIscrizioniSaving(action){
       case('rinnovo-e-borse'):
                         var json = JSON.stringify({
                           explain: link_rinnovi.explain_borsa,
-                          link: link_rinnovi.borsa
+                          link: link_rinnovi.borsa,
+                          section: section,
+                          subsection: subsection
                         });
                         resolve(json);
       break;
@@ -686,7 +705,9 @@ function rinnovoIscrizioniSaving(action){
       case('rinnovo-bisogni-particolari'):
                     var json = JSON.stringify({
                       explain: link_rinnovi.explain_particolari,
-                      link: link_rinnovi.particolari
+                      link: link_rinnovi.particolari,
+                      section: section,
+                      subsection: subsection
                     });
                     resolve(json);
       break;
