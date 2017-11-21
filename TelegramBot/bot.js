@@ -18,7 +18,7 @@ const TOKEN = process.env.TELEGRAM_TOKEN || '466491462:AAF8RxkhGR00Mylr0LGZfFWUM
 };
 const bot = new TelegramBot(TOKEN, options);
 bot.setWebHook(`${url}/bot${TOKEN}`);*/
-const url = process.env.APP_URL || 'https://botingse2.herokuapp.com:443';
+const url = process.env.APP_URL || 'https://unitnhelpbot.herokuapp.com:443';
 
 const bot = new TelegramBot(TOKEN);
 
