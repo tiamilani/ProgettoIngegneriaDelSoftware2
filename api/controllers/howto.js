@@ -760,7 +760,7 @@ function controlAssign(title, link, node, $){
 
                       break;
 
-    case 'iscrizioni':
+    /*case 'iscrizioni':
                       if(iscrizioni.titolo == ""){
                         iscrizioni.titolo = title;
                       }
@@ -917,7 +917,7 @@ function controlAssign(title, link, node, $){
                         });
                       }
 
-                      break;
+                      break;*/
   }
 }
 
