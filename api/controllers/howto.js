@@ -780,7 +780,7 @@ function controlAssign(title, link, node, $){
                             ref = 'www.unitn.it' + ref;
                           }
 
-                          if(desc.includes('ammissioni'))
+                          if(desc.includes('ammissione'))
                             iscrizioni.link.ammissioni = ref;
                           else if(desc.includes('infostudenti'))
                             iscrizioni.link.info = ref;
@@ -820,7 +820,7 @@ function controlAssign(title, link, node, $){
                           else if(desc.includes('sito orienta'))
                             orientamento.link.orienta = ref;
                           else if(desc.includes('unitrento'))
-                            orientamento.link.unirento = ref;
+                            orientamento.link.unitrento = ref;
 
                         });
                       }
@@ -950,7 +950,7 @@ var futuroStudente = function(link, dir, resp, subsection, detail){
     directory: dir
   };
 
-  console.log("INSIDE WEB RINNOVI FUNCTION");
+  console.log("INSIDE WEB FUTURO STUDENTE FUNCTION");
   studentFolder(dir, options)
     .then(file => {
       console.log(" -> primo promise");
@@ -1015,7 +1015,7 @@ var futuroStudenteSaving = function(subsection, detail){
                                                   });
                                                   resolve(json);
                               break;
-                              case('titoli'):
+                              case('riconoscimento-titoli'):
                                               var json = JSON.stringify({
                                                 explain: "",
                                                 link: iscrizioni.link.titoli
