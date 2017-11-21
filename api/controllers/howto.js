@@ -746,15 +746,14 @@ function controlAssign(title, link, node, $){
                             ref = 'www.unitn.it' + ref;
                           }
 
-                          if(isEmptyObj(didattica.link)){
-                            console.log('didattica.link è vuoto, lo riempio');
-                            if(ref.includes('corsi'))
-                              didattica.link.corsi = ref;
-                            else if(ref.includes('dottorati'))
-                              didattica.link.dottorati = ref;
-                            else if(ref.includes('master'))
-                              didattica.link.master = ref;
-                          }
+                          console.log('costruendo didattica.link');
+                          if(ref.includes('corsi'))
+                            didattica.link.corsi = ref;
+                          else if(ref.includes('dottorati'))
+                            didattica.link.dottorati = ref;
+                          else if(ref.includes('master'))
+                            didattica.link.master = ref;
+
                         });
                       }
 
