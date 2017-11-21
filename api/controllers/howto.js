@@ -524,7 +524,7 @@ function borseDiStudioSaving(section, subsection){
 
       case('attesa-di-laurea'):
                         var json = JSON.stringify({
-                          explain: link_borse.explain_attesa,
+                          explain: link_borse.explain_attesa + "Attesa di laurea",
                           link: link_borse.attesa,
                           section: section,
                           subsection: subsection
@@ -821,8 +821,10 @@ function controlAssign(title, link, node, $){
                             ref = 'www.unitn.it' + ref;
                           }
 
-                          if(desc.includes('ammissione'))
+                          if(desc.includes('ammissione')){
+                          console.log("Ho trovato ammissioni")
                             iscrizioni.link.ammissioni = ref;
+                          }
                           else if(desc.includes('infostudenti'))
                             iscrizioni.link.info = ref;
                           else if(desc.includes('titoli'))
@@ -938,8 +940,10 @@ function controlAssign(title, link, node, $){
                             servizi.link.consulenza = ref;
                           else if(desc.includes('matlab'))
                             servizi.link.matlab = ref;
-                          else if(desc.includes('informatici'))
+                          else if(desc.includes('informatici')){
+                            console.log('Ho trovato informatici');
                             servizi.link.informatici = ref;
+                          }
                           else if(desc.includes('civile'))
                             servizi.link.civile = ref;
                           else if(desc.includes('speciali'))
@@ -1045,8 +1049,10 @@ function controlAssign(title, link, node, $){
 
                           if(desc.includes('apple'))
                             nonSoloStudio.link.apple = ref;
-                          else if(desc.includes('associazioni studentesche'))
+                          else if(desc.includes('associazione studentesche')){
                             nonSoloStudio.link.studenti = ref;
+                            console.log('Ho trovato associazione studentesche');
+                          }
                           else if(desc.includes('opera'))
                             nonSoloStudio.link.opera = ref;
                           else if(desc.includes('prestabici'))
@@ -1202,7 +1208,7 @@ var futuroStudenteSaving = function(subsection, detail){
                                                     });
                                                     resolve(json);
                               break;
-                              case('collegio'): //non funziona
+                              case('collegio'):
                                                 var json = JSON.stringify({
                                                   explain: "",
                                                   link: agevolazioni.link.clesio
@@ -1365,7 +1371,7 @@ var futuroStudenteSaving = function(subsection, detail){
                                             });
                                             resolve(json);
                               break;
-                              case('associazioni-studentesche'):
+                              case('associazioni-studentesche'):  // non funziona
                                                                 var json = JSON.stringify({
                                                                   explain: "",
                                                                   link: nonSoloStudio.link.studenti
