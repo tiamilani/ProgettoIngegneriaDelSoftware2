@@ -950,12 +950,31 @@ var futuroStudenteSaving = function(subsection, detail){
   return new Promise(
     function(resolve, reject){
 
-      var json = JSON.stringify({
-        explain: 'tutto arrivato',
-        subsection: subsection,
-        arg: detail
-      });
-
-      resolve(json);
-    });
+      switch(subsection){
+        case('didattica'):
+                          switch(detail){
+                          case('corsi'):
+                                        var json = JSON.stringify({
+                                          explain: "",
+                                          link: didattica.link.corsi
+                                        });
+                                        resolve(json);
+                          break;
+                          case('dottorati'):
+                                            var json = JSON.stringify({
+                                              explain: "",
+                                              link: didattica.link.dottorati
+                                            });
+                                            resolve(json);
+                          break;
+                          case('master'):
+                                          var json = JSON.stringify({
+                                            explain: "",
+                                            link: didattica.link.master
+                                          });
+                                          resolve(json);
+                          break;
+                          }
+                          break;
+      }
 }
