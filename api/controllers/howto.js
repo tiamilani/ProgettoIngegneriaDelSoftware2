@@ -770,7 +770,7 @@ function controlAssign(title, link, node, $){
                         iscrizioni.diretto = link;
                       }
 
-                      if(isEmptyObj(inscrizioni.link)){
+                      if(isEmptyObj(iscrizioni.link)){
                         node.siblings().children("li").children("a").each(function(){
                           var ref = $(this).attr('href');
                           var desc = $(this).text().trim().toLowerCase();
