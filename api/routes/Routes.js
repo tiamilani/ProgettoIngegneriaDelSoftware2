@@ -4,6 +4,7 @@ module.exports = function(app) {
 	var place = require ('../controllers/places');
 	var telegramController = require ('../controllers/telegramController');
 	const TOKEN = process.env.TELEGRAM_TOKEN || '466491462:AAF8RxkhGR00Mylr0LGZfFWUMvPVWSHqUPE';
+	var avvisi = require ('../controllers/avvisi');
 
 	// todoList Routes
 	app.route('/example')
@@ -15,8 +16,8 @@ module.exports = function(app) {
 		.post(place.luoghiUtili);
 
 	app.route('/avvisi')
-		.get(controller.dwAvvisi)
-		.post(controller.dwAvvisi);
+		.get(avvisi.dwAvvisi)
+		.post(avvisi.dwAvvisi);
 
 	// We are receiving updates at the route below!
 	app.route(`/bot${TOKEN}`)
