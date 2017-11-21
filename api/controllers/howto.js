@@ -703,14 +703,14 @@ function readStudentFile(dir, file){
           var title = $(this).text().trim();
           var link = $(this).attr('href');
 
-          controlAssign(title, link, bot, msg, $(this), $);
+          controlAssign(title, link, $(this), $);
 
         });
 
         $("#section-content ul.menu li.expanded > span").each(function() {
           var title1 = $(this).text().trim();
 
-          controlAssign(title1, "", bot, msg, $(this), $);
+          controlAssign(title1, "", $(this), $);
         });
 
         saved = true;
@@ -722,7 +722,7 @@ function readStudentFile(dir, file){
 }
 
 
-function controlAssign(title, link, bot, msg, node, $){
+function controlAssign(title, link, node, $){
 
   console.log(title.toLowerCase());
   switch(title.toLowerCase()){
@@ -931,7 +931,7 @@ var futuroStudente = function(link, dir, resp, section, subsection, detail){
   studentFolder(dir, options)
     .then(file => {
       console.log(" -> primo promise");
-      readStudentFiles(dir, file)
+      readStudentFile(dir, file)
       .then(() => {
         console.log(" -> secondo promise");
         /*rinnovoIscrizioniSaving(action)
