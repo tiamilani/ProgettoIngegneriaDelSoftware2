@@ -228,7 +228,8 @@ function readInfoFiles(dir, file, bot, msg, page, oggetto){
 									}else if(oneLink.includes('ingegneria-industriale')){
 										link_trasferimenti.da_industriale = oneLink;
 										link_trasferimenti.explain_da_industriale = oneDescription;
-									}else if(oneLink.includes('vitivoltura-ed-enologia')){
+									}else if(oneLink.includes('viticoltura-ed-enologia')){
+										console.log(oneLink + " " + oneDescription);
 										link_trasferimenti.da_enologia = oneLink;
 										link_trasferimenti.explain_da_enologia = oneDescription;
 									}else if(oneLink.includes('civile-ambiente')){
