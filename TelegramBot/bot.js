@@ -34,6 +34,7 @@ const bot = new TelegramBot(token, {polling: true});
 console.log('BOT STARTED');
 
 var last_command;
+var last_index;
 
 // ---------- FEATURES ----------
 
