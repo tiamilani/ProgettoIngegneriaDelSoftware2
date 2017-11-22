@@ -635,9 +635,10 @@ function trasferimentiSaving(section, subsection, detail){
                                             subsection: subsection,
                                             detail: detail
                                           });
-                                          resolve(json);
 
                                           console.log("explain: " + link_trasferimenti.explain_da_centro + "link: " + link_trasferimenti.da_centro);
+                                          resolve(json);
+
                           break;
                           case('povo'):
                                           var json = JSON.stringify({
