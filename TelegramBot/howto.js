@@ -527,7 +527,8 @@ var downloadPageFuturoStudente = function(link, dir, bot, msg, action){
         }
 
         console.log("COMPLETED");
-      });
+      })
+			.catch((err) => {console.log(err); });
     })
     .catch((err) => {console.log(err); });
 }
