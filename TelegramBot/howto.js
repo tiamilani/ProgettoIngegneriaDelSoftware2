@@ -206,14 +206,14 @@ function readInfoFiles(dir, file, bot, msg, page, oggetto){
                   link_borse.explain_attesa = oneDescription;
                 }
               }else if(page == 'trasferimenti'){
-								console.log(oneLink);
+								//console.log(oneLink);
                 if(oneLink.includes('verso-altro-ateneo')){
                   link_trasferimenti.verso = oneLink;
                   link_trasferimenti.explain_verso = oneDescription;
                 }else if(oneLink.includes('da-altro-ateneo') && oneLink.includes('laurea-magistrale')){
                   link_trasferimenti.da_magistrale = oneLink;
                   link_trasferimenti.explain_da_magistrale = oneDescription;
-                }else if(oneLink.includes('ammissione-passaggio-corso') || oneLink.includes('ammissioni-con-passaggio-di-corso')){
+                }else if(oneLink.includes('ammissione-passaggio-corso') || oneLink.includes('ammissione-con-passaggio-di-corso')){
 									if(oneLink.includes('economia-giurisprudenza')){
 										link_trasferimenti.da_centro = oneLink;
 										link_trasferimenti.explain_da_centro = oneDescription;
