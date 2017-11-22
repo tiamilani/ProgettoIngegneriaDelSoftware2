@@ -769,7 +769,7 @@ function redirect(last, bot, msg, index){
 		case('didattica'):
 											var text = "Eccoti nella sezione " + didattica.titolo + "\n\n" + didattica.diretto + "\n" + didattica.link[index];
 
-											var options = getPaginationFull(index + 1, res.length);
+											var options = getPaginationFull(index + 1, didattica.link.length);
 											options['chat_id'] = msg.message.chat.id;
 											options['message_id'] = msg.message.message_id;
 
