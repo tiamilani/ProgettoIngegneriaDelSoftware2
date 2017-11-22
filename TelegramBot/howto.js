@@ -768,7 +768,7 @@ function redirect(last, bot, msg, index){
 	switch(last){
 		case('didattica'):
 											bot.editMessageText(didattica.link[index], {chat_id: msg.message.chat.id, message_id: msg.message.message_id, parse_mode: "Markdown"});
-											bot.sendMessage(msg.message.chat.id, didattica.link[index], getPaginationFull(index+1, didattica.link.length));
+											bot.sendMessage(msg.message.chat.id, getPaginationFull(index+1, didattica.link.length));
 		break;
 	}
 
