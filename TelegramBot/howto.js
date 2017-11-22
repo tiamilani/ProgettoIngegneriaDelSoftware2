@@ -387,6 +387,20 @@ var downloadPageTrasferimenti = function(link, dir, bot, msg, action){
             bot.sendMessage(msg.chat.id, link_trasferimenti.explain_da_magistrale + "\n\n" + link_trasferimenti.da_magistrale);
           }else if(action == 'centro'){
 						bot.sendMessage(msg.chat.id, link_trasferimenti.explain_da_centro + "\n\n" + link_trasferimenti.da_centro);
+          }else if(action == 'povo'){
+						bot.sendMessage(msg.chat.id, link_trasferimenti.explain_da_povo + "\n\n" + link_trasferimenti.da_povo);
+          }else if(action == 'rovereto'){
+						bot.sendMessage(msg.chat.id, link_trasferimenti.explain_da_rovereto + "\n\n" + link_trasferimenti.da_rovereto);
+          }else if(action == 'cibio'){
+						bot.sendMessage(msg.chat.id, link_trasferimenti.explain_da_cibio + "\n\n" + link_trasferimenti.da_cibio);
+          }else if(action == 'dii'){
+						bot.sendMessage(msg.chat.id, link_trasferimenti.explain_da_industriale + "\n\n" + link_trasferimenti.da_industriale);
+          }else if(action == 'enologia'){
+						bot.sendMessage(msg.chat.id, link_trasferimenti.explain_da_enologia + "\n\n" + link_trasferimenti.da_enologia);
+          }else if(action == 'dicam'){
+						bot.sendMessage(msg.chat.id, link_trasferimenti.explain_da_dicam + "\n\n" + link_trasferimenti.da_dicam);
+          }else if(action == 'edile'){
+						bot.sendMessage(msg.chat.id, link_trasferimenti.explain_da_edile + "\n\n" + link_trasferimenti.da_edile);
           }
         })
 				.catch((err) => {console.log(err); });

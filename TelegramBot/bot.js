@@ -423,19 +423,26 @@ bot.on('text', (msg) => {
     console.log(msg.text.toLowerCase());
     how.homeTrasferimenti('https://infostudenti.unitn.it/it/trasferirsi-e-cambiare-corso', './Trasferimenti_Home', bot, msg, 'centro');
   }else if(msg.text.toLowerCase() == 'fisica - matematica' || msg.text.toLowerCase() == 'ingegneria dell\'informazione'){
-
+    console.log(msg.text.toLowerCase());
+    how.homeTrasferimenti('https://infostudenti.unitn.it/it/trasferirsi-e-cambiare-corso', './Trasferimenti_Home', bot, msg, 'povo');
   }else if(msg.text.toLowerCase() == 'psicologia - scienze cognitive'){
-
+    console.log(msg.text.toLowerCase());
+    how.homeTrasferimenti('https://infostudenti.unitn.it/it/trasferirsi-e-cambiare-corso', './Trasferimenti_Home', bot, msg, 'rovereto');
   }else if(msg.text.toLowerCase() == 'scienze e tecnologie biomolecolari'){
-
+    console.log(msg.text.toLowerCase());
+    how.homeTrasferimenti('https://infostudenti.unitn.it/it/trasferirsi-e-cambiare-corso', './Trasferimenti_Home', bot, msg, 'cibio');
   }else if(msg.text.toLowerCase() == 'ingegneria industriale'){
-
+    console.log(msg.text.toLowerCase());
+    how.homeTrasferimenti('https://infostudenti.unitn.it/it/trasferirsi-e-cambiare-corso', './Trasferimenti_Home', bot, msg, 'dii');
   }else if(msg.text.toLowerCase() == 'viticooltura ed enologia'){
-
+    console.log(msg.text.toLowerCase());
+    how.homeTrasferimenti('https://infostudenti.unitn.it/it/trasferirsi-e-cambiare-corso', './Trasferimenti_Home', bot, msg, 'enologia');
   }else if(msg.text.toLowerCase() == 'ingegneria civile - Ingengeria ambientale'){
-
+    console.log(msg.text.toLowerCase());
+    how.homeTrasferimenti('https://infostudenti.unitn.it/it/trasferirsi-e-cambiare-corso', './Trasferimenti_Home', bot, msg, 'dicam');
   }else if(msg.text.toLowerCase() == 'ingegneria edile - architettura'){
-
+    console.log(msg.text.toLowerCase());
+    how.homeTrasferimenti('https://infostudenti.unitn.it/it/trasferirsi-e-cambiare-corso', './Trasferimenti_Home', bot, msg, 'edile');
   }else if(msg.text.toLowerCase() == 'supporto'){
     console.log("SUPPORTO");
     how.homeSupporto('https://infostudenti.unitn.it/it/supporto-studenti', './Supporto_Home', bot, msg, 'init');
