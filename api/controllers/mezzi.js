@@ -4,7 +4,7 @@ const db = require('../../TelegramBot/sectionDevelop.js');
 var databaseConnection = undefined;
 
 // ---------- FUNCTIONS ----------
-function createChoice (array, npr, argument, checkName) {
+function createChoice (array, argument, checkName) {
     let elements = [];
 
     if(checkName != undefined) {
@@ -17,22 +17,8 @@ function createChoice (array, npr, argument, checkName) {
     }
 
     if(array != undefined) {
-        let rest = array.length % npr;
-        for(let i = 0; i < (array.length - rest); i += npr) {
-            var item = [];
-            for(let j = 0; j < npr; j++)
-                item.push((array[i+j])[argument]);
-
-            elements.push(item);
-        }
-
-		if(rest != 0) {
-	        var item = [];
-	        for(let j = array.length - rest; j < array.length; j++)
-	            item.push((array[j])[argument]);
-
-	        elements.push(item);
-		}
+        for(let i = 0; i < array.length; i++)
+            elements.push((array[i])[argument]);
     }
 
     return elements;
@@ -51,7 +37,7 @@ function Fermata_F1 (request, response) {
 	        con.query(query, function (err, result) {
 	            if (err) throw err;
 
-				var keyboard = createChoice(result, 5, 'stop_name', undefined);
+				var keyboard = createChoice(result, 'stop_name', undefined);
 
 				var json = JSON.stringify ({
 					Ask: text,
@@ -86,7 +72,7 @@ function Fermata_F2 (request, response) {
 	                if (err) throw err;
 
 	                var text = "Seleziona la linea:";
-					var keyboard = createChoice(result, 5, 'route_short_name', undefined);
+					var keyboard = createChoice(result, 'route_short_name', undefined);
 
 					var json = JSON.stringify ({
 						nameT: nameT1,
@@ -165,7 +151,7 @@ function Linea_F1 (request, response) {
 	            if (err) throw err;
 
 	            var text = "Prima di tutto dimmi che linea ti interessa:";
-				var keyboard = createChoice(result, 5, 'route_short_name', undefined);
+				var keyboard = createChoice(result, 'route_short_name', undefined);
 
 				var json = JSON.stringify ({
 					Ask: text,
@@ -204,7 +190,7 @@ function Linea_F2 (request, response) {
 					if (err) throw err;
 
 					var text = "Seleziona la direzione:";
-					var keyboard = createChoice(result, 5, 'trip_headsign', undefined);
+					var keyboard = createChoice(result, 'trip_headsign', undefined);
 
 					var json = JSON.stringify ({
 						nameT: nameT1,
@@ -247,7 +233,7 @@ function Linea_F3 (request, response) {
 						if (err) throw err;
 
 						var text = "Seleziona una fermata specifica e ti saprò dire dove e quando prendere l'autobus!";
-						var keyboard = createChoice(result, 5, 'stop_name', undefined);
+						var keyboard = createChoice(result, 'stop_name', undefined);
 
 						var json = JSON.stringify ({
 							nameT: nameT2,
@@ -307,13 +293,13 @@ function Next_F1 (request, response) {
 	db.initiateConnection(databaseConnection)
 		.then((con) => {
 			databaseConnection = con;
-			var text = "Scegli la fermata dall'elenco:";
+			var text = "Scrivi il nome della fermata che ti interessa:";
 
 			var query = "SELECT DISTINCT stop_name FROM stops";
 	        con.query(query, function (err, result) {
 	            if (err) throw err;
 
-				var keyboard = createChoice(result, 5, 'stop_name', undefined);
+				var keyboard = createChoice(result, 'stop_name', undefined);
 
 				var json = JSON.stringify ({
 					Ask: text,
@@ -349,7 +335,7 @@ function Next_F2 (request, response) {
 				var weekday = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
 				var today = weekday[date.getDay()];
 
-				query = "SELECT MIN(arrival_time),stop_name,stop_lat,stop_lon,wheelchair_boarding,arrival_time,departure_time,trip_headsign,wheelchair_accessible,route_short_name,route_long_name,route_type FROM " + nameT1 + " where arrival_time>'" + clockNow + "' AND " + today + "='1' GROUP BY route_short_name,trip_headsign ORDER BY length(route_short_name) ASC, route_short_name ASC";
+				query = "SELECT MIN(arrival_time),stop_name,stop_lat,stop_lon,wheelchair_boarding,arrival_time,departure_time,trip_headsign,wheelchair_accessible,route_short_name,route_long_name,route_type FROM " + nameT1 + " where arrival_time>'" + clockNow + "' AND " + today + "='1' GROUP BY route_short_name,trip_headsign ORDER BY arrival_time ASC";
 				con.query(query, function (err, result, fields) {
 					if (err) throw err;
 
@@ -381,20 +367,16 @@ function Avvisi_Linee (request, response) {
 	        var dateNow = date.toISOString().split('T')[0];
 	        dateNow = dateNow.replace(/[-]/g, '');
 
-	        let query = "SELECT route_long_name, route_short_name FROM time_table NATURAL JOIN calendar_dates where exception_type='2' AND date='" + dateNow + "' GROUP BY route_short_name";
+	        var query = "SELECT route_long_name, route_short_name FROM time_table NATURAL JOIN calendar_dates where exception_type='2' AND date='" + dateNow + "' GROUP BY route_short_name";
 	        con.query(query, function (err, result, fields) {
 	            if (err) throw err;
 
 	            if(result.length > 0) {
 	                var text = "Ecco le linee che subiranno variazioni nella giornata odierna:";
-					var elenco = "";
-
-	                for(let i = 0; i < result.length; i++)
-	                    elenco += "\nLinea " + result[i].route_short_name + " (" + result[i].route_long_name + ")";
 
 					var json = JSON.stringify ({
 						Ask: text,
-						Choices: elenco
+						Choices: result
 					});
 
 					response.end(json);

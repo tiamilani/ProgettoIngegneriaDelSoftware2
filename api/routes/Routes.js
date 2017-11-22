@@ -33,7 +33,7 @@ module.exports = function(app) {
 		.get(urban.Next)
 		.post(urban.Next);
 
-	app.route('/avvisiLinee')
+	app.route('/avvisilinee')
 		.get(urban.Avvisi_Linee)
 		.post(urban.Avvisi_Linee);
 
