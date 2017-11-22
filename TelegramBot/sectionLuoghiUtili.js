@@ -34,8 +34,7 @@ function responseLuogo(result){
 }
 
 function placesNearby(bot, chatId, map, city, range, type, nome, con) {
-	console.log("Sono dentro la funzione");
-	console.log("dati ricevuti: chatId " + chatId + " city: " + city['lat'] + "city " + city);
+	console.log("placesNearby");
 	map.placesNearby({
 			location: JSON.parse(city),
 			radius: range,
@@ -43,7 +42,6 @@ function placesNearby(bot, chatId, map, city, range, type, nome, con) {
 			type: type,
 			name: nome
 		}, function(err, response){
-			console.log("Funzione di callback");
 			if (!err) {
 				//console.log(response.json.results);
                 if(response.json.results.length > 0) {
@@ -64,29 +62,22 @@ function placesNearby(bot, chatId, map, city, range, type, nome, con) {
 
 						var uno = response.json.results[i].name;
 						var due = response.json.results[i].vicinity;
-						console.log("uno: " + uno + " due " + due);
 						uno = uno.replace(/'/g, "\\'");
 						due = due.replace(/'/g, "\\'");
 						uno = uno.replace(/"/g, "\\"+ "\"" +"");
 						due = due.replace(/"/g, "\\"+ "\"" +"");
-						console.log("uno: " + uno + " due " + due);
 						messageArray.push({name: uno,rateGoogle: response.json.results[i].rating, rate: star, indirizzo: due, lat: response.json.results[i].geometry.location.lat, lng: response.json.results[i].geometry.location.lng});
 					}
 					// tutto in -------->>>>> messageArray
-					console.log("Ho creato l'array con le posizioni! Elementi presenti: "+ messageArray.length);
-
 					var testo = JSON.stringify(messageArray);
 					testo = testo.replace(/\\\\'/g,"\\'");
 					testo = testo.replace(/\\\\\\"/g,"\\\\"+"\""+"");
 
 					var query = "UPDATE users SET lastResult='" + testo + "' WHERE ChatID='" + chatId + "'";
-					console.log(query);
 					con.query(query, function (err, result) {
-						console.log("query inviata, eseguo la funzione");
 						if (err) throw err;
 						checkID(chatId, 'Luoghi_F3', con)
 							.then((result) => {
-								console.log("Invio il messaggio all'utente");
 								bot.sendMessage(chatId,responseLuogo(messageArray[0]), getPaginationFull(1,messageArray.length));
 							})
 							.catch(err => {
@@ -96,7 +87,6 @@ function placesNearby(bot, chatId, map, city, range, type, nome, con) {
                 } else {
                     checkID(chatId, '/start', con)
                         .then((result) => {
-                            console.log("Nessun risultato!");
                             bot.sendMessage(chatId, "Non sono stati trovati luoghi corrispondenti alla ricerca!");
                         })
                         .catch(err => {
@@ -110,53 +100,52 @@ function placesNearby(bot, chatId, map, city, range, type, nome, con) {
 
 function Luoghi_F4 (bot, msg, connection) {
 	console.log("Luoghi_F4");
-	db.initiateConnection(connection)
-		.then((con) => {
-			var query = "SELECT * FROM users WHERE ChatID='" + msg.message.chat.id + "'";
-			con.query(query, function (err, result) {
-				if (err) throw err;
+    if(msg.message != undefined) {
+    	db.initiateConnection(connection)
+    		.then((con) => {
+    			var query = "SELECT * FROM users WHERE ChatID='" + msg.message.chat.id + "'";
+    			con.query(query, function (err, result) {
+    				if (err) throw err;
 
-				var res = result[0];
-				var prevChoice = res.prevChoice;
-				console.log("prevChoice: " + prevChoice);
-				console.log("lastResult " + res.lastResult);
-				res = JSON.parse(res.lastResult);
-				console.log("RES AFTER: " + res)
+    				var res = result[0];
+    				var prevChoice = res.prevChoice;
+    				res = JSON.parse(res.lastResult);
 
-                if(msg.data == 'loc') {
-					console.log("Send");
-					checkID(msg.message.chat.id, '/start', con)
-						.then((result) => {
-							console.log("edit");
-							bot.editMessageText(responseLuogo(res[prevChoice-1]), {chat_id: msg.message.chat.id,message_id: msg.message.message_id});
-							console.log("send2");
-							bot.sendMessage(msg.message.chat.id, "Ecco la posizione selezionata!", createHome());
-				            bot.sendLocation(msg.message.chat.id, res[prevChoice-1].lat, res[prevChoice-1].lng);
-						})
-						.catch(err => {
-							console.error(err);
-						});
-                } else {
-					if(prevChoice != parseInt(msg.data)) {
-						prevChoice = parseInt(msg.data);
+                    if(msg.data == 'loc') {
+    					checkID(msg.message.chat.id, '/start', con)
+    						.then((result) => {
+    							bot.editMessageText(responseLuogo(res[prevChoice-1]), {chat_id: msg.message.chat.id,message_id: msg.message.message_id});
 
-						var options = getPaginationFull(prevChoice, res.length);
-						options['chat_id'] = msg.message.chat.id;
-						options['message_id'] = msg.message.message_id;
+    							bot.sendMessage(msg.message.chat.id, "Ecco la posizione selezionata!", createHome());
+    				            bot.sendLocation(msg.message.chat.id, res[prevChoice-1].lat, res[prevChoice-1].lng);
+    						})
+    						.catch(err => {
+    							console.error(err);
+    						});
+                    } else {
+                        if(prevChoice != parseInt(msg.data)) {
+    						prevChoice = parseInt(msg.data);
 
-						var query = "UPDATE users SET prevChoice='" + prevChoice + "' WHERE ChatID='" + msg.message.chat.id + "'";
-			            con.query(query, function (err, result) {
-			                if (err) throw err;
+    						var options = getPaginationFull(prevChoice, res.length);
+    						options['chat_id'] = msg.message.chat.id;
+    						options['message_id'] = msg.message.message_id;
 
-		                	bot.editMessageText(responseLuogo(res[prevChoice-1]), options);
-						});
-					}
-                }
-            });
-		})
-		.catch(err => {
-			bot.sendMessage(msg.message.chat.id, err);
-		});
+    						var query = "UPDATE users SET prevChoice='" + prevChoice + "' WHERE ChatID='" + msg.message.chat.id + "'";
+    			            con.query(query, function (err, result) {
+    			                if (err) throw err;
+
+    		                	bot.editMessageText(responseLuogo(res[prevChoice-1]), options);
+    						});
+    					}
+                    }
+                });
+    		})
+    		.catch(err => {
+    			bot.sendMessage(msg.message.chat.id, err);
+    		});
+    } else
+		bot.sendMessage(msg.chat.id, "Valore non consentito, prima di effettuare un'altra ricerca fatti inviare la posizione della ricerca precedente!");
+
 }
 
 

@@ -58,7 +58,7 @@ var databaseConnection = undefined;
 
 // ---------- FUNCTIONS ----------
 function routeCommands (msg, id, connection) {
-    console.log("in reoutes");
+    console.log("routeCommands");
 	db.initiateConnection(connection)
 		.then((con) => {
             databaseConnection = con;
@@ -699,7 +699,6 @@ function Avvisi (msg) {
                         ['Home'],
                         ['DICAM','DII','CISCA']
                     ],
-                    one_time_keyboard: true,
                     resize_keyboard: true
                 })
             };
