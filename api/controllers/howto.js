@@ -132,13 +132,13 @@ function readOpenDayFile(dir, file){
           link_openDay.date[indice] = {};
           var oneDate = $(this).text().trim();
           link_openDay.date[indice].data = oneDate;
-          indice++;
           var insert = $(this).children().attr('href');
           if(insert != undefined && insert.includes('http')){
             link_openDay.date[indice].link = insert;
           }else{
             link_openDay.date[indice].link = "";
           }
+          indice++;
         });
         $("#content-right a").each(function() {
           var prenota = $(this).attr('href');
