@@ -458,6 +458,10 @@ bot.on('text', (msg) => {
   }
 });
 
+bot.on('callback_query', function(msg) {
+  console.log(msg.data);
+});
+
 
 bot.on('location', (msg) => {
     console.log("IN");
@@ -1121,7 +1125,6 @@ bot.on('text', (msg) => {
 });
 
 bot.onText(/\/start/, (msg) => {
-	bot.removeListener('callback_query');
     var text = "Benvenuto " + msg.from.first_name + "!\nUniTN Help Center è un bot sviluppato per aiutare attuali e/o futuri studenti dell'Università degli Studi di Trento in vari ambiti della propria vita quotidiana!";
 
     var keyboard = {

@@ -478,7 +478,7 @@ var downloadPageFuturoStudente = function(link, dir, bot, msg, action){
 
         switch(action){
           case 'didattica':
-                            bot.sendMessage(msg.chat.id, "Eccoti nella sezione " + didattica.titolo + "\n " + didattica.diretto);
+                            bot.sendMessage(msg.chat.id, "Eccoti nella sezione " + didattica.titolo + "\n\n" + didattica.diretto + "\n");
                             /*for(var i = 0; i < didattica.link.length; i++)
                               bot.sendMessage(msg.chat.id, "Link " + i + ": " + didattica.link[i]);*/
 														bot.sendMessage(msg.chat.id, didattica.link[0], getPaginationFull(1, didattica.link.length));
@@ -763,6 +763,10 @@ function controlAssign(title, link, bot, msg, node, $){
                       break;
   }
 }
+
+
+
+
 
 exports.homeTasse = downloadPageTasse;
 exports.homeAmmissioni = downloadPageAmmissioni;
