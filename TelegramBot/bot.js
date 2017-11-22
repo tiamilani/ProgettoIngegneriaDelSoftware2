@@ -417,6 +417,7 @@ bot.on('text', (msg) => {
         resize_keyboard: true
       })
     };
+    bot.sendMessage(msg.chat.id, text, keyboard);
 
   }else if(msg.text.toLowerCase() == 'supporto'){
     console.log("SUPPORTO");
