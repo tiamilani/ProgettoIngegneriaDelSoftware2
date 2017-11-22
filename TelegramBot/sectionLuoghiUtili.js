@@ -116,7 +116,7 @@ function Luoghi_F4 (bot, msg, connection) {
     						.then((result) => {
     							bot.editMessageText(responseLuogo(res[prevChoice-1]), {chat_id: msg.message.chat.id,message_id: msg.message.message_id});
 
-    							bot.sendMessage(msg.message.chat.id, "Ecco la posizione selezionata!", createHome());
+    							bot.sendMessage(msg.message.chat.id, "Ecco la posizione selezionata!", db.createHome());
     				            bot.sendLocation(msg.message.chat.id, res[prevChoice-1].lat, res[prevChoice-1].lng);
     						})
     						.catch(err => {
@@ -190,25 +190,6 @@ function checkID (id, lastCommand, connection) {
 				bot.sendMessage(id, err);
 			});
 	});
-}
-
-function createHome () {
-	return {
-		parse_mode: "Markdown",
-        reply_markup: JSON.stringify({
-			keyboard: [
-                ['Mezzi'],
-				//['Mensa'],
-				//['OperaUniTN'],
-				['Luoghi'],
-				['Avvisi'],
-				['Scadenze'],
-                ['Nearest']
-			],
-            one_time_keyboard: true,
-            resize_keyboard: true
-        })
-    };
 }
 
 function createChoice (array, npr, requestPosition) {

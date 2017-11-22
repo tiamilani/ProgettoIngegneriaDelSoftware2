@@ -46,25 +46,6 @@ function checkID (id, lastCommand, connection) {
 	});
 }
 
-function createHome () {
-	return {
-		parse_mode: "Markdown",
-        reply_markup: JSON.stringify({
-			keyboard: [
-				['Mezzi'],
-				//['Mensa'],
-				//['OperaUniTN'],
-				['Luoghi'],
-				['Avvisi'],
-				['Scadenze'],
-                ['Nearest']
-			],
-            one_time_keyboard: true,
-            resize_keyboard: true
-        })
-    };
-}
-
 function createChoice (array, npr, argument, checkName, requestPosition) {
     let elements = [];
 
@@ -284,7 +265,7 @@ function Location_Init (bot, msg, con, stato, result) {
 			.then((result) => {
 				var text = "Sei troppo lontano, cerca di avvicinarti...";
 
-				bot.sendMessage(msg.chat.id, text, createHome());
+				bot.sendMessage(msg.chat.id, text, db.createHome());
 			})
 			.catch(err => {
 				console.error(err);
@@ -442,7 +423,7 @@ function Fermata_F2_Location_F3 (bot, msg, nameT1, connection) {
 									.then((result) => {
 										var text = "Mi dispiace ma la linea selezionata ha terminato le corse per oggi...";
 
-										bot.sendMessage(msg.chat.id, text, createHome());
+										bot.sendMessage(msg.chat.id, text, db.createHome());
 									})
 									.catch(err => {
 										console.error(err);
@@ -455,7 +436,7 @@ function Fermata_F2_Location_F3 (bot, msg, nameT1, connection) {
 						.then((result) => {
 							var text = "La linea inserita non è stata riconosciuta!";
 
-							bot.sendMessage(msg.chat.id, text, createHome());
+							bot.sendMessage(msg.chat.id, text, db.createHome());
 						})
 						.catch(err => {
 							console.error(err);
@@ -553,7 +534,7 @@ function Fermata_F2_Name_F2 (bot, msg, connection) {
 						.then((result) => {
 							var text = "La linea fermata non è stata riconosciuta!";
 
-							bot.sendMessage(msg.chat.id, text, createHome());
+							bot.sendMessage(msg.chat.id, text, db.createHome());
 						})
 						.catch(err => {
 							console.error(err);
@@ -621,7 +602,7 @@ function Fermata_F2_Name_F3 (bot, msg, nameT1, connection) {
 									.then((result) => {
 										var text = "Mi dispiace ma la linea selezionata ha terminato le corse per oggi...";
 
-										bot.sendMessage(msg.chat.id, text, createHome());
+										bot.sendMessage(msg.chat.id, text, db.createHome());
 									})
 									.catch(err => {
 										console.error(err);
@@ -634,7 +615,7 @@ function Fermata_F2_Name_F3 (bot, msg, nameT1, connection) {
 						.then((result) => {
 							var text = "La linea inserita non è stata riconosciuta!";
 
-							bot.sendMessage(msg.chat.id, text, createHome());
+							bot.sendMessage(msg.chat.id, text, db.createHome());
 						})
 						.catch(err => {
 							console.error(err);
@@ -730,7 +711,7 @@ function Linea_F2 (bot, msg, connection) {
 						.then((result) => {
 							var text = "La linea inserita non è stata riconosciuta!";
 
-							bot.sendMessage(msg.chat.id, text, createHome());
+							bot.sendMessage(msg.chat.id, text, db.createHome());
 						})
 						.catch(err => {
 							console.error(err);
@@ -795,7 +776,7 @@ function Linea_F3 (bot, msg, nameT1, connection) {
 						.then((result) => {
 							var text = "La direzione inserita non è stata riconosciuta!";
 
-							bot.sendMessage(msg.chat.id, text, createHome());
+							bot.sendMessage(msg.chat.id, text, db.createHome());
 						})
 						.catch(err => {
 							console.error(err);
@@ -830,7 +811,7 @@ function Linea_F4_Location_F1 (bot, msg, nameT2, connection) {
 						.then((result) => {
 							var text = "Mi dispiace ma la linea selezionata ha terminato le corse per oggi, oppure non lavora oggi...";
 
-							bot.sendMessage(msg.chat.id, text, createHome());
+							bot.sendMessage(msg.chat.id, text, db.createHome());
 						})
 						.catch(err => {
 							console.error(err);
@@ -883,7 +864,7 @@ function Linea_F4_Name_F1 (bot, msg, nameT2, connection) {
 								.then((result) => {
 									var text = "Mi dispiace ma la linea selezionata ha terminato le corse per oggi...";
 
-									bot.sendMessage(msg.chat.id, text, createHome());
+									bot.sendMessage(msg.chat.id, text, db.createHome());
 								})
 								.catch(err => {
 									console.error(err);
@@ -895,7 +876,7 @@ function Linea_F4_Name_F1 (bot, msg, nameT2, connection) {
 						.then((result) => {
 							var text = "La linea inserita non è stata riconosciuta!";
 
-							bot.sendMessage(msg.chat.id, text, createHome());
+							bot.sendMessage(msg.chat.id, text, db.createHome());
 						})
 						.catch(err => {
 							console.error(err);
@@ -998,7 +979,7 @@ function Next_F2_Location_F2 (bot, msg, connection) {
 										.then((result) => {
 											var text = "Mi dispiace ma per oggi sono terminate le corse in questa fermata, oppure non lavora oggi...";
 
-											bot.sendMessage(msg.message.chat.id, text, createHome());
+											bot.sendMessage(msg.message.chat.id, text, db.createHome());
 										})
 										.catch(err => {
 											console.error(err);
@@ -1113,7 +1094,7 @@ function Next_F2_Name_F2 (bot, msg, connection) {
 									.then((result) => {
 										var text = "Mi dispiace ma tutte le linee hanno terminato le corse per oggi...";
 
-										bot.sendMessage(msg.chat.id, text, createHome());
+										bot.sendMessage(msg.chat.id, text, db.createHome());
 									})
 									.catch(err => {
 										console.error(err);
@@ -1126,7 +1107,7 @@ function Next_F2_Name_F2 (bot, msg, connection) {
 						.then((result) => {
 							var text = "La fermata inserita non è stata riconosciuta!";
 
-							bot.sendMessage(msg.chat.id, text, createHome());
+							bot.sendMessage(msg.chat.id, text, db.createHome());
 						})
 						.catch(err => {
 							console.error(err);
@@ -1159,7 +1140,7 @@ function All_FF (bot, msg, connection) {
 								console.log("edit");
 								bot.editMessageText(printText(res[prevChoice-1]), {chat_id: msg.message.chat.id,message_id: msg.message.message_id,parse_mode: "Markdown"});
 								console.log("send2");
-								bot.sendMessage(msg.message.chat.id, "Ecco la posizione selezionata!", createHome());
+								bot.sendMessage(msg.message.chat.id, "Ecco la posizione selezionata!", db.createHome());
 					            bot.sendLocation(msg.message.chat.id, res[prevChoice-1].stop_lat, res[prevChoice-1].stop_lon);
 							})
 							.catch(err => {
@@ -1205,9 +1186,9 @@ function Avvisi_Linee (bot, msg, connection) {
 	            if(result.length > 0) {
 	                var text = "Ecco le linee che subiranno variazioni nella giornata odierna:";
 	                for(let i = 0; i < result.length; i++)
-	                    text += "\nLinea " + result[i].route_short_name + " (" + result[i].route_long_name + ")";
+	                    text += "\n*Linea " + result[i].route_short_name + "* (" + result[i].route_long_name + ")";
 
-	                bot.sendMessage(msg.chat.id, text);
+	                bot.sendMessage(msg.chat.id, text, {parse_mode: 'Markdown'});
 	            }
 	            else {
 	                bot.sendMessage(msg.chat.id, "Oggi non ci sono variazioni di orario in alcuna linea!");

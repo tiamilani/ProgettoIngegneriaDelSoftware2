@@ -36,24 +36,6 @@ function checkID (id, lastCommand, connection) {
 	});
 }
 
-function createHome () {
-	return {
-		reply_markup: JSON.stringify({
-			keyboard: [
-				['Mezzi'],
-				//['Mensa'],
-				//['OperaUniTN'],
-				['Luoghi'],
-				['Avvisi'],
-				['Scadenze'],
-                ['Nearest']
-			],
-            one_time_keyboard: true,
-            resize_keyboard: true
-        })
-    };
-}
-
 function Mensa_F1 (bot, msg, connection) {
     console.log("Mensa_F1");
 	db.initiateConnection(connection)
@@ -117,8 +99,8 @@ function Mensa_F2 (bot, msg, connection) {
             checkID(msg.chat.id, '/start', con)
                 .then((result) => {
                     bot.sendLocation(msg.chat.id, (mense[nM])[0], (mense[nM])[1]);
-					console.log(createHome());
-                    bot.sendMessage(msg.chat.id, text, createHome());
+					
+                    bot.sendMessage(msg.chat.id, text, db.createHome());
                 })
                 .catch((err) => {
                     console.error(err);
