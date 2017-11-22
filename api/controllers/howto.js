@@ -626,6 +626,7 @@ function trasferimentiSaving(section, subsection, detail){
       break;
 
       case('trasferimenti-da'):
+                        console.log("Entrato in trasferimenti da");
                         switch(detail){
                           case('centro'):
                                           var json = JSON.stringify({
