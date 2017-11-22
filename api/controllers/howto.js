@@ -127,9 +127,11 @@ function readOpenDayFile(dir, file){
       if(isEmptyObj(link_openDay)){
         var $ = ch.load(fs.readFileSync(dir + "/" + file));
         var indice = 0;
+        link_openDay.date = [];
         $("#content-left strong").each(function() {
           var oneDate = $(this).text().trim();
           link_openDay.date[indice] = oneDate;
+          indice++;
           var insert = $(this).children().attr('href');
           if(insert != undefined && insert.includes('http')){
             link_openDay.program = insert;
