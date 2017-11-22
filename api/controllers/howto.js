@@ -127,17 +127,16 @@ function readOpenDayFile(dir, file){
       if(isEmptyObj(link_openDay)){
         var $ = ch.load(fs.readFileSync(dir + "/" + file));
         var indice = 0;
-        link_openDay.program = {}
-        link_openDay.program.date = [];
+        link_openDay.date = [];
         $("#content-left strong").each(function() {
           var oneDate = $(this).text().trim();
-          link_openDay.program.date[indice] = oneDate;
+          link_openDay.date[indice].data = oneDate;
           indice++;
           var insert = $(this).children().attr('href');
           if(insert != undefined && insert.includes('http')){
-            link_openDay.program.link = insert;
+            link_openDay.date[indice].link = insert;
           }else{
-            link_openDay.program.link = "";
+            link_openDay.date[indice].link = "";
           }
         });
         $("#content-right a").each(function() {
