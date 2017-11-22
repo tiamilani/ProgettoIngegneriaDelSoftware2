@@ -428,16 +428,16 @@ bot.on('text', (msg) => {
   }else if(msg.text.toLowerCase() == 'psicologia - scienze cognitive'){
     console.log(msg.text.toLowerCase());
     how.homeTrasferimenti('https://infostudenti.unitn.it/it/trasferirsi-e-cambiare-corso', './Trasferimenti_Home', bot, msg, 'rovereto');
-  }else if(msg.text.toLowerCase() == 'scienze e tecnologie biomolecolari'){
+  }else if(msg.text.toLowerCase() == 'scienza e tecnologie biomolecolari'){
     console.log(msg.text.toLowerCase());
     how.homeTrasferimenti('https://infostudenti.unitn.it/it/trasferirsi-e-cambiare-corso', './Trasferimenti_Home', bot, msg, 'cibio');
   }else if(msg.text.toLowerCase() == 'ingegneria industriale'){
     console.log(msg.text.toLowerCase());
     how.homeTrasferimenti('https://infostudenti.unitn.it/it/trasferirsi-e-cambiare-corso', './Trasferimenti_Home', bot, msg, 'dii');
-  }else if(msg.text.toLowerCase() == 'viticooltura ed enologia'){
+  }else if(msg.text.toLowerCase() == 'viticoltura ed enologia'){
     console.log(msg.text.toLowerCase());
     how.homeTrasferimenti('https://infostudenti.unitn.it/it/trasferirsi-e-cambiare-corso', './Trasferimenti_Home', bot, msg, 'enologia');
-  }else if(msg.text.toLowerCase() == 'ingegneria civile - Ingengeria ambientale'){
+  }else if(msg.text.toLowerCase() == 'ingegneria civile - ingengeria ambientale'){
     console.log(msg.text.toLowerCase());
     how.homeTrasferimenti('https://infostudenti.unitn.it/it/trasferirsi-e-cambiare-corso', './Trasferimenti_Home', bot, msg, 'dicam');
   }else if(msg.text.toLowerCase() == 'ingegneria edile - architettura'){
