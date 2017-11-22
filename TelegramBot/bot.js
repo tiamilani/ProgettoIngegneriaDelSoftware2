@@ -402,7 +402,7 @@ bot.on('text', (msg) => {
     var keyboard = {
       reply_markup: JSON.stringify({
         keyboard: [
-            ['Economia - Giurisprudenza -  Lettere'],
+            ['Economia'/* - Giurisprudenza -  Lettere'*/],
             ['Sociologia - Filosofia'],
             ['Fisica - Matematica'],
             ['Ingegneria dell\'Informazione'],
@@ -419,7 +419,7 @@ bot.on('text', (msg) => {
     };
     bot.sendMessage(msg.chat.id, text, keyboard);
 
-  }else if(msg.text.toLowerCase() == 'economia - giurisprudenza - lettere' || msg.text.toLowerCase() == 'sociologia - filosofia'){
+  }else if(msg.text.toLowerCase() == 'economia'/* - giurisprudenza -  lettere'*/ || msg.text.toLowerCase() == 'sociologia - filosofia'){
     console.log(msg.text.toLowerCase());
     how.homeTrasferimenti('https://infostudenti.unitn.it/it/trasferirsi-e-cambiare-corso', './Trasferimenti_Home', bot, msg, 'centro');
   }else if(msg.text.toLowerCase() == 'fisica - matematica' || msg.text.toLowerCase() == 'ingegneria dell\'informazione'){
