@@ -14,14 +14,14 @@ var link_openDay = [];
 var programs = [];
 var registrazione = [];
 
-var didattica = {titolo: "", diretto: "", link: {} };
-var iscrizioni = {titolo: "", diretto: "", link: {} };
-var orientamento = {titolo: "", diretto: "", link: {} };
-var agevolazioni = {titolo: "", diretto: "", link: {} };
-var servizi = {titolo: "", diretto: "", link: {} };
-var ateneo = {titolo: "", diretto: "", link: {} };
-var international = {titolo: "", diretto: "", link: {} };
-var nonSoloStudio = {titolo: "", diretto: "", link: {} };
+var didattica = {titolo: "", diretto: "", link: [] };
+var iscrizioni = {titolo: "", diretto: "", link: [] };
+var orientamento = {titolo: "", diretto: "", link: [] };
+var agevolazioni = {titolo: "", diretto: "", link: [] };
+var servizi = {titolo: "", diretto: "", link: [] };
+var ateneo = {titolo: "", diretto: "", link: [] };
+var international = {titolo: "", diretto: "", link: [] };
+var nonSoloStudio = {titolo: "", diretto: "", link: [] };
 var saved = false;
 
 function getPagination( current, maxpage ) {
@@ -547,22 +547,15 @@ function controlAssign(title, link, bot, msg, node, $){
                         didattica.diretto = link;
                       }
 
-                      if(isEmptyObj(didattica.link)){
+                      if(didattica.link.length == 0){
                         node.siblings().children("li").children("a").each(function(){
                           var ref = $(this).attr('href');
-                          var desc = $(this).text().trim().toLowerCase();
-                          console.log(desc);
 
                           if(!ref.includes('http')){
                             ref = 'www.unitn.it' + ref;
                           }
 
-                          if(desc.includes('corsi'))
-                            didattica.link.corsi = ref;
-                          else if(desc.includes('dottorati'))
-                            didattica.link.dottorati = ref;
-                          else if(desc.includes('master'))
-                            didattica.link.master = ref;
+                          didattica.link.push(ref);
 
                         });
                       }
@@ -580,7 +573,7 @@ function controlAssign(title, link, bot, msg, node, $){
                         iscrizioni.diretto = link;
                       }
 
-                      if(isEmptyObj(iscrizioni.link)){
+                      if(iscrizioni.link.length == 0){
                         node.siblings().children("li").children("a").each(function(){
                           var ref = $(this).attr('href');
                           var desc = $(this).text().trim().toLowerCase();
@@ -590,14 +583,7 @@ function controlAssign(title, link, bot, msg, node, $){
                             ref = 'www.unitn.it' + ref;
                           }
 
-                          if(desc.includes('ammissione'))
-                            iscrizioni.link.ammissioni = ref;
-                          else if(desc.includes('infostudenti'))
-                            iscrizioni.link.info = ref;
-                          else if(desc.includes('titoli'))
-                            iscrizioni.link.titoli = ref;
-                          else if(desc.includes('tasse'))
-                            iscrizioni.link.tasse = ref;
+                          iscrizioni.link.push(ref);
 
                         });
                       }
@@ -615,7 +601,7 @@ function controlAssign(title, link, bot, msg, node, $){
                         orientamento.diretto = link;
                       }
 
-                      if(isEmptyObj(orientamento.link)){
+                      if(orientamento.link.length == 0){
                         node.siblings().children("li").children("a").each(function(){
                           var ref = $(this).attr('href');
                           var desc = $(this).text().trim().toLowerCase();
@@ -625,12 +611,7 @@ function controlAssign(title, link, bot, msg, node, $){
                             ref = 'www.unitn.it' + ref;
                           }
 
-                          if(desc.includes('costo'))
-                            orientamento.link.costo = ref;
-                          else if(desc.includes('sito orienta'))
-                            orientamento.link.orienta = ref;
-                          else if(desc.includes('unitrento'))
-                            orientamento.link.unitrento = ref;
+                          orientamento.link.push(ref);
 
                         });
                       }
@@ -648,7 +629,7 @@ function controlAssign(title, link, bot, msg, node, $){
                         agevolazioni.diretto = link;
                       }
 
-                      if(isEmptyObj(agevolazioni.link)){
+                      if(agevolazioni.link.length == 0){
                         node.siblings().children("li").children("a").each(function(){
                           var ref = $(this).attr('href');
                           var desc = $(this).text().trim().toLowerCase();
@@ -658,14 +639,7 @@ function controlAssign(title, link, bot, msg, node, $){
                             ref = 'www.unitn.it' + ref;
                           }
 
-                          if(desc.includes('borse'))
-                            agevolazioni.link.borse = ref;
-                          else if(desc.includes('alloggi'))
-                            agevolazioni.link.alloggi = ref;
-                          else if(desc.includes('servizi'))
-                            agevolazioni.link.servizi = ref;
-                          else if(desc.includes('collegio'))
-                            agevolazioni.link.clesio = ref;
+                          agevolazioni.link.push(ref);
 
                         });
                       }

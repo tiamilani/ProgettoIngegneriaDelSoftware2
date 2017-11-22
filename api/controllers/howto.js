@@ -13,7 +13,7 @@ var link_borse = {};
 var link_trasferimenti = {};
 var link_supporto = {};
 var link_openDay = [];
-var programs = [];
+var programs = {};
 var registrazione = [];
 
 var didattica = {titolo: "", diretto: "", link:{} };
@@ -131,8 +131,10 @@ function readOpenDayFile(dir, file){
           var oneDate = $(this).text().trim();
           link_openDay.push(oneDate);
           var insert = $(this).children().attr('href');
+          var desc = $(this).children().text().trim();
           if(insert != undefined && insert.includes('http')){
-            programs.push(insert);
+            programs.link = insert;
+            programs.date = desc;
           }
         });
         $("#content-right a").each(function() {
