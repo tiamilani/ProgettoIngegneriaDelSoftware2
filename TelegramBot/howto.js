@@ -768,7 +768,7 @@ function redirect(last, bot, msg, index){
 	switch(last){
 		case('didattica'):
 											var text = "Eccoti nella sezione " + didattica.titolo + "\n\n" + didattica.diretto + "\n" + didattica.link[index];
-											bot.editMessageText(text, getPaginationFull(index+1, didattica.link.length), {chat_id: msg.message.chat.id, message_id: msg.message.message_id, parse_mode: "Markdown"});
+											bot.editMessageText(msg.message.chat.id, text, getPaginationFull(index+1, didattica.link.length));
 											//bot.sendMessage(msg.message.chat.id, text, getPaginationFull(index+1, didattica.link.length));
 		break;
 	}
