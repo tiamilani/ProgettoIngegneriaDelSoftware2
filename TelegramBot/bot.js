@@ -419,6 +419,22 @@ bot.on('text', (msg) => {
     };
     bot.sendMessage(msg.chat.id, text, keyboard);
 
+  }else if(msg.text.toLowerCase() == 'economia - giurisprudenza - lettere' || msg.text.toLowerCase() == 'sociologia - filosofia'){
+    how.homeTrasferimenti('https://infostudenti.unitn.it/it/trasferirsi-e-cambiare-corso', './Trasferimenti_Home', bot, msg, 'centro');
+  }else if(msg.text.toLowerCase() == 'fisica - matematica' || msg.text.toLowerCase() == 'ingegneria dell\'informazione'){
+
+  }else if(msg.text.toLowerCase() == 'psicologia - scienze cognitive'){
+
+  }else if(msg.text.toLowerCase() == 'scienze e tecnologie biomolecolari'){
+
+  }else if(msg.text.toLowerCase() == 'ingegneria industriale'){
+
+  }else if(msg.text.toLowerCase() == 'viticooltura ed enologia'){
+
+  }else if(msg.text.toLowerCase() == 'ingegneria civile - Ingengeria ambientale'){
+
+  }else if(msg.text.toLowerCase() == 'ingegneria edile - architettura'){
+
   }else if(msg.text.toLowerCase() == 'supporto'){
     console.log("SUPPORTO");
     how.homeSupporto('https://infostudenti.unitn.it/it/supporto-studenti', './Supporto_Home', bot, msg, 'init');

@@ -385,8 +385,8 @@ var downloadPageTrasferimenti = function(link, dir, bot, msg, action){
             bot.sendMessage(msg.chat.id, link_trasferimenti.explain_verso + "\n\n" + link_trasferimenti.verso);
           }else if(action == 'trasferimenti_da_magistrale'){
             bot.sendMessage(msg.chat.id, link_trasferimenti.explain_da_magistrale + "\n\n" + link_trasferimenti.da_magistrale);
-          }else if(action == 'trasferimenti_da_triennale'){
-            
+          }else if(action == 'centro'){
+						bot.sendMessage(msg.chat.id, link_trasferimenti.explain_da_centro + "\n\n" + link_trasferimenti.da_centro);
           }
         });
     })
