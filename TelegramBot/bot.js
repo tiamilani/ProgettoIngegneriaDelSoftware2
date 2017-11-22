@@ -463,6 +463,7 @@ bot.on('text', (msg) => {
 
 bot.on('callback_query', function(msg) {
   console.log(last_command + " " + msg.data);
+  how.redirect(last_command, bot, msg, msg.data - 1);
 });
 
 

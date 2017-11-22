@@ -764,6 +764,15 @@ function controlAssign(title, link, bot, msg, node, $){
   }
 }
 
+function redirect(last, bot, msg, index){
+	switch(last){
+		case('didattica'):
+											bot.editMessageText(didattica.link[index], {chat_id: msg.message.chat.id, message_id: msg.message.message_id, parse_mode: "Markdown"});
+		break;
+	}
+
+}
+
 exports.homeTasse = downloadPageTasse;
 exports.homeAmmissioni = downloadPageAmmissioni;
 exports.homeImmatricolazioni = downloadPageImmatricolazioni;
@@ -773,3 +782,4 @@ exports.homeTrasferimenti = downloadPageTrasferimenti;
 exports.homeSupporto = downloadPageSupporto;
 exports.homeOpenDay = downloadPageOpenDay;
 exports.homeFuturoStudente = downloadPageFuturoStudente;
+exports.redirect = redirect;
