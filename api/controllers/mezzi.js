@@ -1,7 +1,7 @@
 // ---------- REQUIRE ----------
 const db = require('../../TelegramBot/sectionDevelop.js');
 
-var databaseConnection = null;
+var databaseConnection = undefined;
 
 // ---------- FUNCTIONS ----------
 function createChoice (array, npr, argument, checkName) {
