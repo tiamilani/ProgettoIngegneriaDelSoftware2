@@ -44,7 +44,7 @@ function getPaginationFull( current, maxpage ) {
     return {
         parse_mode: 'Markdown',
         reply_markup: JSON.stringify({
-            inline_keyboard: [ buttons, [{ text:'Invia Posizione Selezionata', callback_data: 'loc' }] ]
+            inline_keyboard: [ buttons ]
         })
     };
 }
