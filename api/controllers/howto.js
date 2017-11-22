@@ -129,6 +129,7 @@ function readOpenDayFile(dir, file){
         var indice = 0;
         link_openDay.date = [];
         $("#content-left strong").each(function() {
+          link_openDay.date[indice] = {};
           var oneDate = $(this).text().trim();
           link_openDay.date[indice].data = oneDate;
           indice++;
