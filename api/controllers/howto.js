@@ -12,8 +12,7 @@ var link_rinnovi = {};
 var link_borse = {};
 var link_trasferimenti = {};
 var link_supporto = {};
-var link_openDay = [];
-var programs = {};
+var link_openDay = {};
 var registrazione = [];
 
 var didattica = {titolo: "", diretto: "", link:{} };
@@ -127,14 +126,15 @@ function readOpenDayFile(dir, file){
     function(resolve, reject){
       if(isEmptyObj(link_openDay)){
         var $ = ch.load(fs.readFileSync(dir + "/" + file));
+        var indice = 0;
         $("#content-left strong").each(function() {
           var oneDate = $(this).text().trim();
-          link_openDay.push(oneDate);
+          link_openDay.date[indice] = oneDate;
           var insert = $(this).children().attr('href');
-          var desc = $(this).children().text().trim();
           if(insert != undefined && insert.includes('http')){
-            programs.link = insert;
-            programs.date = desc;
+            link_openDay.program = insert;
+          }else{
+            link_openDay.program = "";
           }
         });
         $("#content-right a").each(function() {
@@ -176,8 +176,7 @@ function openDaySaving(dates){
     function(resolve, reject){
 
     var json = JSON.stringify({
-      days: dates,
-      programs: programs,
+      programs: dates,
       registration: registrazione
     });
 
