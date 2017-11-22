@@ -598,7 +598,7 @@ var trasferimenti = function(link, dir, page, oggetto, resp, section, subsection
     .then(file => {
       readInfoFiles(dir, file, page, oggetto)
       .then(() => {
-        trasferimentiSaving(section, subsection)
+        trasferimentiSaving(section, subsection, detail)
         .then((json) => {
           console.log("terzo promise");
           resp.end(json);
@@ -610,7 +610,7 @@ var trasferimenti = function(link, dir, page, oggetto, resp, section, subsection
     .catch((err) => {console.log(err); });
 }
 
-function trasferimentiSaving(section, subsection){
+function trasferimentiSaving(section, subsection, detail){
   return new Promise(
     function(resolve, reject){
 
