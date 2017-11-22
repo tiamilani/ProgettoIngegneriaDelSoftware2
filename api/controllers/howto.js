@@ -54,7 +54,7 @@ exports.base = function(req, resp){
                           borseDiStudio('https://infostudenti.unitn.it/it/borse-di-studio-e-agevolazioni', './Borse_Home', 'borse', link_borse, resp, section, subsection);
       break;
     case 'trasferimenti':
-                          trasferimenti('https://infostudenti.unitn.it/it/trasferirsi-e-cambiare-corso', './Trasferimenti_Home', 'trasferimenti', link_trasferimenti, resp, section, subsection);
+                          trasferimenti('https://infostudenti.unitn.it/it/trasferirsi-e-cambiare-corso', './Trasferimenti_Home', 'trasferimenti', link_trasferimenti, resp, section, subsection, detail);
       break;
     case 'supporto':
                     supporto('https://infostudenti.unitn.it/it/supporto-studenti', './Supporto_Home', 'supporto', link_supporto, resp, section);
@@ -209,7 +209,7 @@ function infoFolder(dir, options){
   );
 }
 
-function readInfoFiles(dir, file, page, oggetto){
+function readInfoFiles(dir, file, bot, msg, page, oggetto){
   return new Promise(
     function(resolve, reject){
       if(isEmptyObj(oggetto)){
@@ -285,7 +285,33 @@ function readInfoFiles(dir, file, page, oggetto){
                 }else if(oneLink.includes('da-altro-ateneo') && oneLink.includes('laurea-magistrale')){
                   link_trasferimenti.da_magistrale = oneLink;
                   link_trasferimenti.explain_da_magistrale = oneDescription;
-                }
+                }else if(oneLink.includes('ammissione-passaggio-corso') || oneLink.includes('ammissione-con-passaggio-di-corso')){
+									if(oneLink.includes('economia-giurisprudenza')){
+										link_trasferimenti.da_centro = oneLink;
+										link_trasferimenti.explain_da_centro = oneDescription;
+									}else if(oneLink.includes('fisica-matematica')){
+										link_trasferimenti.da_povo = oneLink;
+										link_trasferimenti.explain_da_povo = oneDescription;
+									}else if(oneLink.includes('psicologia')){
+										link_trasferimenti.da_rovereto = oneLink;
+										link_trasferimenti.explain_da_rovereto = oneDescription;
+									}else if(oneLink.includes('scienze-tecnologie')){
+										link_trasferimenti.da_cibio = oneLink;
+										link_trasferimenti.explain_da_cibio = oneDescription;
+									}else if(oneLink.includes('ingegneria-industriale')){
+										link_trasferimenti.da_industriale = oneLink;
+										link_trasferimenti.explain_da_industriale = oneDescription;
+									}else if(oneLink.includes('viticoltura-ed-enologia')){
+										link_trasferimenti.da_enologia = oneLink;
+										link_trasferimenti.explain_da_enologia = oneDescription;
+									}else if(oneLink.includes('civile-ambiente')){
+										link_trasferimenti.da_dicam = oneLink;
+										link_trasferimenti.explain_da_dicam = oneDescription;
+									}else if(oneLink.includes('edile-architettura')){
+										link_trasferimenti.da_edile = oneLink;
+										link_trasferimenti.explain_da_edile = oneDescription;
+									}
+								}
               }else if(page == 'supporto'){
                 if(oneLink.includes('prenotazione')){
                   link_supporto.prenotazione = oneLink;
@@ -561,7 +587,7 @@ function borseDiStudioSaving(section, subsection){
   });
 }
 
-var trasferimenti = function(link, dir, page, oggetto, resp, section, subsection){
+var trasferimenti = function(link, dir, page, oggetto, resp, section, subsection, detail){
   let options = {
     urls: [link],
     directory: dir
@@ -600,13 +626,88 @@ function trasferimentiSaving(section, subsection){
       break;
 
       case('trasferimenti-da'):
-                        var json = JSON.stringify({
-                          explain: 'In progress',
-                          link: 'Nothing',
-                          section: section,
-                          subsection: subsection
-                        });
-                        resolve(json);
+                        switch(detail){
+                          case('centro'):
+                                          var json = JSON.stringify({
+                                            explain: link_trasferimenti.explain_da_centro,
+                                            link: link_trasferimenti.da_centro,
+                                            section: section,
+                                            subsection: subsection,
+                                            detail: detail
+                                          });
+                                          resolve(json);
+                          break;
+                          case('povo'):
+                                          var json = JSON.stringify({
+                                            explain: link_trasferimenti.explain_da_povo,
+                                            link: link_trasferimenti.da_povo,
+                                            section: section,
+                                            subsection: subsection,
+                                            detail: detail
+                                          });
+                                          resolve(json);
+                          break;
+                          case('rovereto'):
+                                          var json = JSON.stringify({
+                                            explain: link_trasferimenti.explain_da_rovereto,
+                                            link: link_trasferimenti.da_rovereto,
+                                            section: section,
+                                            subsection: subsection,
+                                            detail: detail
+                                          });
+                                          resolve(json);
+                          break;
+                          case('cibio'):
+                                          var json = JSON.stringify({
+                                            explain: link_trasferimenti.explain_da_cibio,
+                                            link: link_trasferimenti.da_cibio,
+                                            section: section,
+                                            subsection: subsection,
+                                            detail: detail
+                                          });
+                                          resolve(json);
+                          break;
+                          case('dii'):
+                                          var json = JSON.stringify({
+                                            explain: link_trasferimenti.explain_da_industriale,
+                                            link: link_trasferimenti.da_industriale,
+                                            section: section,
+                                            subsection: subsection,
+                                            detail: detail
+                                          });
+                                          resolve(json);
+                          break;
+                          case('enologia'):
+                                          var json = JSON.stringify({
+                                            explain: link_trasferimenti.explain_da_enologia,
+                                            link: link_trasferimenti.da_enologia,
+                                            section: section,
+                                            subsection: subsection,
+                                            detail: detail
+                                          });
+                                          resolve(json);
+                          break;
+                          case('dicam'):
+                                          var json = JSON.stringify({
+                                            explain: link_trasferimenti.explain_da_dicam,
+                                            link: link_trasferimenti.da_dicam,
+                                            section: section,
+                                            subsection: subsection,
+                                            detail: detail
+                                          });
+                                          resolve(json);
+                          break;
+                          case('edile'):
+                                          var json = JSON.stringify({
+                                            explain: link_trasferimenti.explain_da_edile,
+                                            link: link_trasferimenti.da_edile,
+                                            section: section,
+                                            subsection: subsection,
+                                            detail: detail
+                                          });
+                                          resolve(json);
+                          break;
+                        }
       break;
 
       case('trasferimenti-da-magistrale'):

@@ -13,7 +13,6 @@ const Join = require('mongo-join');
 const how = require('./howto.js');
 const similar = require('string-similarity');
 
-
 const keywords = ['home', 'howto', 'ammissioni', 'immatricolazioni', 'Borse di studio', 'tasse universitarie', 'supporto', 'libera circolazione', 'trasferimenti',
                   'open day', 'rinnovo iscrizioni', 'futuro studente', 'didattica', 'orientamento', 'iscrizioni', 'agevolazioni', 'ateneo', 'servizi',
                   'non solo studio', 'prospective international student', 'ammissioni lauree e lauree magistrali a ciclo unico', 'ammissioni lauree magistrali',
@@ -22,7 +21,6 @@ const keywords = ['home', 'howto', 'ammissioni', 'immatricolazioni', 'Borse di s
                   'trasferimento da un altro ateneo', 'trasferimento da un altro ateneo laurea magistrale', 'rinnovo iscrizione con pagamento tasse',
                   'rinnovo iscrizione con richiesta di borsa di studio', 'rinnovo iscrizione studenti con bisogni particolari', '/start', 'Avvisi',
                   'dicam', 'dii', 'cisca', 'luoghi utili'];
-
 
 console.log('REQUIRE FATTI');
 // ---------- BOT CONFIG ----------
@@ -507,12 +505,6 @@ bot.on('text', (msg) => {
     bot.sendMessage(msg.chat.id, "Hai scritto " + msg.text + "\nNon ho trovato il comando desiderato. Forse intendevi " + matches.bestMatch.target + "?");
   }
 });
-
-bot.on('callback_query', function(msg) {
-  console.log(last_command + " " + msg.data);
-  how.redirect(last_command, bot, msg, msg.data - 1);
-});
-
 
 bot.on('location', (msg) => {
     console.log("IN");

@@ -206,7 +206,6 @@ function readInfoFiles(dir, file, bot, msg, page, oggetto){
                   link_borse.explain_attesa = oneDescription;
                 }
               }else if(page == 'trasferimenti'){
-								//console.log(oneLink);
                 if(oneLink.includes('verso-altro-ateneo')){
                   link_trasferimenti.verso = oneLink;
                   link_trasferimenti.explain_verso = oneDescription;
@@ -230,7 +229,6 @@ function readInfoFiles(dir, file, bot, msg, page, oggetto){
 										link_trasferimenti.da_industriale = oneLink;
 										link_trasferimenti.explain_da_industriale = oneDescription;
 									}else if(oneLink.includes('viticoltura-ed-enologia')){
-										//console.log(oneLink + " " + oneDescription + " -> viticoltura-ed-enologia" );
 										link_trasferimenti.da_enologia = oneLink;
 										link_trasferimenti.explain_da_enologia = oneDescription;
 									}else if(oneLink.includes('civile-ambiente')){
@@ -255,7 +253,7 @@ function readInfoFiles(dir, file, bot, msg, page, oggetto){
       }
     }
   );
-}
+
 
 var downloadPageTasse = function (link, dir, bot, msg, action){
   let options = {
