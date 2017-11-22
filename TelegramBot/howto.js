@@ -24,6 +24,8 @@ var international = {titolo: "", diretto: "", link: [] };
 var nonSoloStudio = {titolo: "", diretto: "", link: [] };
 var saved = false;
 
+var last_command;
+
 function getPaginationFull( current, maxpage ) {
     var buttons = [];
 
@@ -481,6 +483,7 @@ var downloadPageFuturoStudente = function(link, dir, bot, msg, action){
                             bot.sendMessage(msg.chat.id, "Eccoti nella sezione " + didattica.titolo + "\n\n" + didattica.diretto + "\n");
                             /*for(var i = 0; i < didattica.link.length; i++)
                               bot.sendMessage(msg.chat.id, "Link " + i + ": " + didattica.link[i]);*/
+														last_command = 'didattica';
 														bot.sendMessage(msg.chat.id, didattica.link[0], getPaginationFull(1, didattica.link.length));
 
                             break;
@@ -765,9 +768,7 @@ function controlAssign(title, link, bot, msg, node, $){
 }
 
 
-
-
-
+exports.last_command = last_command;
 exports.homeTasse = downloadPageTasse;
 exports.homeAmmissioni = downloadPageAmmissioni;
 exports.homeImmatricolazioni = downloadPageImmatricolazioni;

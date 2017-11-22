@@ -459,7 +459,7 @@ bot.on('text', (msg) => {
 });
 
 bot.on('callback_query', function(msg) {
-  console.log(msg.data);
+  console.log(how.last_command + " " + msg.data);
 });
 
 
