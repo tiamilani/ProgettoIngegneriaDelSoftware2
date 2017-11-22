@@ -199,206 +199,8 @@ function createHome () {
     };
 }
 
-function OperaUniTN (msg) {
-    switch (msg.text) {
-        case 'OperaUniTN':
-            var text = "In questa sezione puoi ottenere i vari documenti:\nBdS -> Borse di Studio\n150O -> Servizio 150 Ore";
-            var keyboard = {
-                reply_markup: JSON.stringify({
-                    keyboard: [
-                        ['Home'],
-                        ['Bandi_BdS', 'Graduatorie_BdS'],
-                        ['Bandi_150O', 'Graduatorie_15O']
-                    ],
-                    one_time_keyboard: true,
-                    resize_keyboard: true
-                })
-            };
-
-            bot.sendMessage(msg.chat.id, text, keyboard);
-            break;
-        case 'Bandi_BdS':
-            fun.richiestaFile('http://www.operauni.tn.it/servizi/borse-di-studio', './Bandi_BdS', bot, msg);
-            break;
-        case 'Graduatorie_BdS':
-        	fun.richiestaFile('http://www.operauni.tn.it/servizi/borse-di-studio/graduatorie', './Graduatorie_BdS', bot, msg);
-            break;
-        case 'Bandi_150O':
-        	fun.richiestaFile('http://www.operauni.tn.it/servizi/150-ore/bandi', './Bandi_150O', bot, msg);
-            break;
-        case 'Graduatorie_15O':
-        	fun.richiestaFile('http://www.operauni.tn.it/servizi/150-ore/graduatorie', './Graduatorie_15O', bot, msg);
-    }
-}
-
 function Mensa (msg) {
     switch (msg.text) {
-        case 'Mensa':
-            db.initiateConnection(databaseConnection)
-                .then((con) => {
-                    databaseConnection = con;
-                    db.isAdmin(bot, msg, databaseConnection)
-                        .then((result) => {
-                            if(result) {
-                                var text = "In questa sezione puoi ottenere il menu e visualizzare le telecamere delle mense";
-                                var keyboard = {
-                                    reply_markup: JSON.stringify({
-                                        keyboard: [
-                                            ['Home'],
-                                            ['Povo1_PastoLesto', 'Povo1_PastoCompleto'],
-                                            ['Mesiano_1', 'Mesiano_2'],
-                                            ['Tommaso_Gar', 'Menu_Mensa'],
-                                            ['Nearest']
-                                        ],
-                                        one_time_keyboard: true,
-                                        resize_keyboard: true
-                                    })
-                                };
-
-                                bot.sendMessage(msg.chat.id, text, keyboard);
-                            } else {
-                                var text = "In questa sezione puoi ottenere il menu la mensa più vicina";
-                                var keyboard = {
-                                    reply_markup: JSON.stringify({
-                                        keyboard: [
-                                            ['Home'],
-                                            ['Menu_Mensa','Nearest']
-                                        ],
-                                        one_time_keyboard: true,
-                                        resize_keyboard: true
-                                    })
-                                };
-
-                                bot.sendMessage(msg.chat.id, text, keyboard);
-                            }
-                        })
-                        .catch((err) => {
-                            bot.sendMessage(msg.chat.id, err);
-                        });
-                })
-                .catch(err => {
-                    bot.sendMessage(msg.chat.id, err);
-                });
-            break;
-        case 'Povo1_PastoLesto':
-            db.initiateConnection(databaseConnection)
-                .then((con) => {
-                    databaseConnection = con;
-                    db.isAdmin(bot, msg, databaseConnection)
-                    .then((result) => {
-                        if(result) {
-                            if (fs.existsSync("./WebcamMense/Povo01.jpg"))
-                                bot.sendPhoto(msg.chat.id, "./WebcamMense/Povo01.jpg", {caption : "Mensa Pasto Completo di Povo1"} );
-                            else
-                                bot.sendMessage(msg.chat.id, "Le videocamere funzionano unicamente dalle 11:45 alle 14:30");
-                        }
-                        else
-                            bot.sendMessage(msg.chat.id, "Non sei autorizzato ad accedere!\nSei stato segnalato agli amministratori!");
-                    })
-                    .catch(err => {
-                        bot.sendMessage(msg.chat.id, err);
-                    });
-                })
-                .catch(err => {
-                    bot.sendMessage(msg.chat.id, err);
-                });
-            break;
-        case 'Povo1_PastoCompleto':
-            db.initiateConnection(databaseConnection)
-                .then((con) => {
-                    databaseConnection = con;
-                    db.isAdmin(bot, msg, databaseConnection)
-                    .then((result) => {
-                        if(result) {
-                            if (fs.existsSync("./WebcamMense/Povo02.jpg"))
-                                bot.sendPhoto(msg.chat.id, "./WebcamMense/Povo02.jpg", {caption : "Mensa Pasto Lesto di Povo1"} );
-                            else
-                                bot.sendMessage(msg.chat.id, "Le videocamere funzionano unicamente dalle 11:45 alle 14:30");
-                        }
-                        else
-                            bot.sendMessage(msg.chat.id, "Non sei autorizzato ad accedere!\nSei stato segnalato agli amministratori!");
-                    })
-                    .catch(err => {
-                        bot.sendMessage(msg.chat.id, err);
-                    });
-                })
-                .catch(err => {
-                    bot.sendMessage(msg.chat.id, err);
-                });
-            break;
-        case 'Mesiano_1':
-            db.initiateConnection(databaseConnection)
-                .then((con) => {
-                    databaseConnection = con;
-                    db.isAdmin(bot, msg, databaseConnection)
-                    .then((result) => {
-                        if(result) {
-                            if (fs.existsSync("./WebcamMense/mesiano01.jpg"))
-                                bot.sendPhoto(msg.chat.id, "./WebcamMense/mesiano01.jpg", {caption : "Mensa di Mesiano"} );
-                            else
-                                bot.sendMessage(msg.chat.id, "Le videocamere funzionano unicamente dalle 11:45 alle 14:30");
-                        }
-                        else
-                            bot.sendMessage(msg.chat.id, "Non sei autorizzato ad accedere!\nSei stato segnalato agli amministratori!");
-                    })
-                    .catch(err => {
-                        bot.sendMessage(msg.chat.id, err);
-                    });
-                })
-                .catch(err => {
-                    bot.sendMessage(msg.chat.id, err);
-                });
-            break;
-        case 'Mesiano_2':
-            db.initiateConnection(databaseConnection)
-                .then((con) => {
-                    databaseConnection = con;
-                    db.isAdmin(bot, msg, databaseConnection)
-                    .then((result) => {
-                        if(result) {
-                            if (fs.existsSync("./WebcamMense/mesiano02.jpg"))
-                                bot.sendPhoto(msg.chat.id, "./WebcamMense/mesiano02.jpg", {caption : "Mensa di Mesiano"} );
-                            else
-                                bot.sendMessage(msg.chat.id, "Le videocamere funzionano unicamente dalle 11:45 alle 14:30");
-                        }
-                        else
-                            bot.sendMessage(msg.chat.id, "Non sei autorizzato ad accedere!\nSei stato segnalato agli amministratori!");
-                    })
-                    .catch(err => {
-                        bot.sendMessage(msg.chat.id, err);
-                    });
-                })
-                .catch(err => {
-                    bot.sendMessage(msg.chat.id, err);
-                });
-            break;
-        case 'Tommaso_Gar':
-            db.initiateConnection(databaseConnection)
-                .then((con) => {
-                    databaseConnection = con;
-                    db.isAdmin(bot, msg, databaseConnection)
-                    .then((result) => {
-                        if(result) {
-                            if (fs.existsSync("./WebcamMense/tgar.jpg"))
-                                bot.sendPhoto(msg.chat.id, "./WebcamMense/tgar.jpg", {caption : "Mensa di Tommaso Gar"} );
-                            else
-                                bot.sendMessage(msg.chat.id, "Le videocamere funzionano unicamente dalle 11:45 alle 14:30");
-                        }
-                        else
-                            bot.sendMessage(msg.chat.id, "Non sei autorizzato ad accedere!\nSei stato segnalato agli amministratori!");
-                    })
-                    .catch(err => {
-                        bot.sendMessage(msg.chat.id, err);
-                    });
-                })
-                .catch(err => {
-                    bot.sendMessage(msg.chat.id, err);
-                });
-            break;
-        case 'Menu_Mensa':
-        console.log("inoltro");
-            fun.richiestaFile('http://www.operauni.tn.it/servizi/ristorazione/menu', './Menu_Mensa', bot, msg);
-            break;
         case 'Nearest':
             eat.Mensa_F1 (bot, msg, databaseConnection);
     }
@@ -768,7 +570,6 @@ function BackHome (msg) {
 }
 
 // ---------- EVENTS ----------
-bot.on('funzioniOpera', OperaUniTN);
 bot.on('funzioniMensa', Mensa);
 bot.on('funzioniMezzi', Mezzi);
 bot.on('funzioniDevelop', Develop);
@@ -795,9 +596,7 @@ bot.on('text', function(msg) {
                         bot.emit('funzioniMezzi', msg);
                     else if(['Scadenze','Inserisci_Scadenza','Modifica_Scadenza','Elimina_Scadenza'].includes(msg.text))
                         bot.emit('funzioniScadenze', msg);
-                    else if(['OperaUniTN','Bandi_BdS','Graduatorie_BdS','Bandi_150O','Graduatorie_15O'].includes(msg.text))
-                        bot.emit('funzioniOpera', msg);
-                    else if(['Mensa','Povo1_PastoLesto','Povo1_PastoCompleto','Mesiano_1','Mesiano_2','Tommaso_Gar','Menu_Mensa','Nearest'].includes(msg.text))
+                    else if(['Nearest'].includes(msg.text))
                         bot.emit('funzioniMensa', msg);
                     else if(['Develop','Elimina_Tabelle','Inserisci_Tabelle','Reset_Users','Crea_Indici','Crea_Join','Info_DB'].includes(msg.text))
                         bot.emit('funzioniDevelop', msg);
