@@ -206,6 +206,7 @@ function readInfoFiles(dir, file, bot, msg, page, oggetto){
                   link_borse.explain_attesa = oneDescription;
                 }
               }else if(page == 'trasferimenti'){
+								console.log(oneLink);
                 if(oneLink.includes('verso-altro-ateneo')){
                   link_trasferimenti.verso = oneLink;
                   link_trasferimenti.explain_verso = oneDescription;
