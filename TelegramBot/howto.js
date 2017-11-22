@@ -212,7 +212,7 @@ function readInfoFiles(dir, file, bot, msg, page, oggetto){
                 }else if(oneLink.includes('da-altro-ateneo') && oneLink.includes('laurea-magistrale')){
                   link_trasferimenti.da_magistrale = oneLink;
                   link_trasferimenti.explain_da_magistrale = oneDescription;
-                }else if(oneLink.includes('ammissione-passaggio-corso')){
+                }else if(oneLink.includes('ammissione-passaggio-corso') || oneLink.includes('ammissioni-con-passaggio-di-corso')){
 									if(oneLink.includes('economia-giurisprudenza')){
 										link_trasferimenti.da_centro = oneLink;
 										link_trasferimenti.explain_da_centro = oneDescription;
@@ -229,7 +229,7 @@ function readInfoFiles(dir, file, bot, msg, page, oggetto){
 										link_trasferimenti.da_industriale = oneLink;
 										link_trasferimenti.explain_da_industriale = oneDescription;
 									}else if(oneLink.includes('viticoltura-ed-enologia')){
-										console.log(oneLink + " " + oneDescription + " -> viticoltura-ed-enologia" );
+										//console.log(oneLink + " " + oneDescription + " -> viticoltura-ed-enologia" );
 										link_trasferimenti.da_enologia = oneLink;
 										link_trasferimenti.explain_da_enologia = oneDescription;
 									}else if(oneLink.includes('civile-ambiente')){
