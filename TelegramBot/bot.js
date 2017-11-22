@@ -397,6 +397,27 @@ bot.on('text', (msg) => {
     how.homeTrasferimenti('https://infostudenti.unitn.it/it/trasferirsi-e-cambiare-corso', './Trasferimenti_Home', bot, msg, 'trasferimenti_da_magistrale');
   }else if(msg.text.toLowerCase() == 'trasferimento da un altro ateno'){
     how.homeTrasferimenti('https://infostudenti.unitn.it/it/trasferirsi-e-cambiare-corso', './Trasferimenti_Home', bot, msg, 'trasferimenti_da_triennale');
+
+    var text = "Qui puoi trovare tutte le informazioni riguardanti i trasferimenti da un altro ateneo in qualsiasi laurea di UniTrento";
+    var keyboard = {
+      reply_markup: JSON.stringify({
+        keyboard: [
+            ['Economia - Giurisprudenza -  Lettere'],
+            ['Sociologia - Filosofia'],
+            ['Fisica - Matematica'],
+            ['Ingegneria dell\'Informazione'],
+            ['Psicologia - Scienze Cognitive'],
+            ['Scienza e Tecnologie Biomolecolari'],
+            ['Ingegneria Industriale'],
+            ['Viticoltura ed Enologia'],
+            ['Ingegneria Civile - Ingengeria Ambientale'],
+            ['Ingegneria Edile - Architettura']
+        ],
+        one_time_keyboard: true,
+        resize_keyboard: true
+      })
+    };
+
   }else if(msg.text.toLowerCase() == 'supporto'){
     console.log("SUPPORTO");
     how.homeSupporto('https://infostudenti.unitn.it/it/supporto-studenti', './Supporto_Home', bot, msg, 'init');
