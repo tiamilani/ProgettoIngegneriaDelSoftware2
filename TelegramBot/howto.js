@@ -478,10 +478,10 @@ var downloadPageFuturoStudente = function(link, dir, bot, msg, action){
 
         switch(action){
           case 'didattica':
-                            bot.sendMessage(msg.chat.id, "Eccoti nella sezione " + didattica.titolo + "\n\n" + didattica.diretto + "\n");
+														var text = "Eccoti nella sezione " + didattica.titolo + "\n\n" + didattica.diretto + "\n" + didattica.link[0];
                             /*for(var i = 0; i < didattica.link.length; i++)
                               bot.sendMessage(msg.chat.id, "Link " + i + ": " + didattica.link[i]);*/
-														bot.sendMessage(msg.chat.id, didattica.link[0], getPaginationFull(1, didattica.link.length));
+														bot.sendMessage(msg.chat.id, text, getPaginationFull(1, didattica.link.length));
 
                             break;
           case 'iscrizioni':
