@@ -388,7 +388,8 @@ var downloadPageTrasferimenti = function(link, dir, bot, msg, action){
           }else if(action == 'centro'){
 						bot.sendMessage(msg.chat.id, link_trasferimenti.explain_da_centro + "\n\n" + link_trasferimenti.da_centro);
           }
-        });
+        })
+				.catch((err) => {console.log(err); });
     })
     .catch((err) => {console.log(err); });
 
