@@ -180,6 +180,25 @@ function routeCommands (msg, id, connection) {
 		});
 }
 
+function createHome () {
+	return {
+		parse_mode: "Markdown",
+        reply_markup: JSON.stringify({
+			keyboard: [
+				['Mezzi'],
+				//['Mensa'],
+				//['OperaUniTN'],
+				['Luoghi'],
+				['Avvisi'],
+				['Scadenze'],
+                ['Nearest']
+			],
+            one_time_keyboard: true,
+            resize_keyboard: true
+        })
+    };
+}
+
 function OperaUniTN (msg) {
     switch (msg.text) {
         case 'OperaUniTN':
@@ -418,21 +437,8 @@ function Mezzi (msg) {
             break;
         case 'Tariffe':
             var text = "*TARIFFE URBANE DI TRENTO*\n\t*Cartaceo*\n\t\t`€1,20 ->` 70 minuti\n\t\t`€1,50 ->` 120 minuti\n\t\t`€3,00 ->` Giornaliero\n\t*OpenMove*\n\t\t`€1,10 ->` 70 minuti\n\t\t`€1,40 ->` 120 minuti\n\t\t`€2,80 ->` Giornaliero\n\t*A Bordo*\n\t\t`€2,00 ->` Corsa Singola";
-            var keyboard = {
-                parse_mode: "Markdown",
-                reply_markup: JSON.stringify({
-                    keyboard: [
-                        ['Mezzi'],
-                        ['Mensa'],
-                        ['OperaUniTN'],
-                        ['Scadenze']
-                    ],
-                    one_time_keyboard: true,
-                    resize_keyboard: true
-                })
-            };
 
-            bot.sendMessage(msg.chat.id, text, keyboard).then(() => {
+            bot.sendMessage(msg.chat.id, text, createHome()).then(() => {
                 bot.sendDocument(msg.chat.id, 'http://www.ttesercizio.it/Public/Documenti/tariffario.pdf', {caption: 'Tariffario Biglietti Cartacei 2017/2018'});
                 bot.sendDocument(msg.chat.id, 'http://www.ttesercizio.it/Public/INTROITI/OpenMove_vademecum.pdf', {caption: 'Tariffario Biglietti Elettronici 2017/2018'});
             });
@@ -759,25 +765,6 @@ function BackHome (msg) {
     			bot.sendMessage(msg.chat.id, err);
     		});
     });
-}
-
-function createHome () {
-	return {
-		parse_mode: "Markdown",
-        reply_markup: JSON.stringify({
-			keyboard: [
-				['Mezzi'],
-				//['Mensa'],
-				//['OperaUniTN'],
-				['Luoghi'],
-				['Avvisi'],
-				['Scadenze'],
-                ['Nearest']
-			],
-            one_time_keyboard: true,
-            resize_keyboard: true
-        })
-    };
 }
 
 // ---------- EVENTS ----------
