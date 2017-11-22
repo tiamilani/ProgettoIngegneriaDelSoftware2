@@ -24,20 +24,22 @@ var international = {titolo: "", diretto: "", link: [] };
 var nonSoloStudio = {titolo: "", diretto: "", link: [] };
 var saved = false;
 
-function getPagination( current, maxpage ) {
+function getPaginationFull( current, maxpage ) {
     var buttons = [];
 
-    if (current > 1) {
-        for(let i = 1; i < current; i++)
-            buttons.push( { text: `${i}`, callback_data: (i).toString() } );
-    }
+    if (current > 1)
+        buttons.push( { text: '«1', callback_data: '1' } );
+
+    if (current > 2)
+        buttons.push( { text: `‹${current-1}`, callback_data: (current - 1).toString() } );
 
     buttons.push( { text: `-${current}-`, callback_data: current.toString() } );
 
-    if (current < maxpage) {
-        for(let i = current; i < maxpage; i++)
-            buttons.push( { text: `${i+1}`, callback_data: (i+1).toString() } );
-    }
+    if (current < maxpage-1)
+        buttons.push( { text: `${current+1}›`, callback_data: (current + 1).toString() } );
+
+    if (current < maxpage)
+        buttons.push( { text: `${maxpage}»`, callback_data: maxpage.toString() } );
 
     return {
         parse_mode: 'Markdown',
@@ -476,9 +478,10 @@ var downloadPageFuturoStudente = function(link, dir, bot, msg, action){
 
         switch(action){
           case 'didattica':
-                            bot.sendMessage(msg.chat.id, "Titolo: " + didattica.titolo + " e link diretto: " + didattica.diretto);
-                            for(var i = 0; i < didattica.link.length; i++)
-                              bot.sendMessage(msg.chat.id, "Link " + i + ": " + didattica.link[i]);
+                            bot.sendMessage(msg.chat.id, "Eccoti nella sezione " + didattica.titolo + "\n " + didattica.diretto);
+                            /*for(var i = 0; i < didattica.link.length; i++)
+                              bot.sendMessage(msg.chat.id, "Link " + i + ": " + didattica.link[i]);*/
+														bot.sendMessage(msg.chat.id, didattica.link[0], getPaginationFull(1, didattica.link.length));
 
                             break;
           case 'iscrizioni':
