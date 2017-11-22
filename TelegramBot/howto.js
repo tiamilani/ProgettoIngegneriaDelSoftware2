@@ -657,7 +657,7 @@ function controlAssign(title, link, bot, msg, node, $){
                         servizi.diretto = link;
                       }
 
-                      if(isEmptyObj(servizi.link)){
+                      if(servizi.link.length == 0){
                         node.siblings().children("li").children("a").each(function(){
                           var ref = $(this).attr('href');
                           var desc = $(this).text().trim().toLowerCase();
@@ -667,28 +667,7 @@ function controlAssign(title, link, bot, msg, node, $){
                             ref = 'www.unitn.it' + ref;
                           }
 
-                          if(desc.includes('biblioteca'))
-                            servizi.link.biblioteca = ref;
-                          else if(desc.includes('mense'))
-                            servizi.link.mense = ref;
-                          else if(desc.includes('alloggi'))
-                            servizi.link.alloggi = ref;
-                          else if(desc.includes('job guidance'))
-                            servizi.link.job = ref;
-                          else if(desc.includes('cla'))
-                            servizi.link.cla = ref;
-                          else if(desc.includes('consulenza'))
-                            servizi.link.consulenza = ref;
-                          else if(desc.includes('matlab'))
-                            servizi.link.matlab = ref;
-                          else if(desc.includes('informatici'))
-                            servizi.link.informatici = ref;
-                          else if(desc.includes('civile'))
-                            servizi.link.civile = ref;
-                          else if(desc.includes('speciali'))
-                            servizi.link.speciali = ref;
-                          else if(desc.includes('tutorato'))
-                            servizi.link.tutorato = ref;
+                          servizi.link.push(ref);
 
                         });
                       }
@@ -706,7 +685,7 @@ function controlAssign(title, link, bot, msg, node, $){
                         ateneo.diretto = link;
                       }
 
-                      if(isEmptyObj(ateneo.link)){
+                      if(ateneo.link.length == 0){
                         node.siblings().children("li").children("a").each(function(){
                           var ref = $(this).attr('href');
                           var desc = $(this).text().trim().toLowerCase();
@@ -716,18 +695,7 @@ function controlAssign(title, link, bot, msg, node, $){
                             ref = 'www.unitn.it' + ref;
                           }
 
-                          if(desc.includes('presentazione'))
-                            ateneo.link.presentazione = ref;
-                          else if(desc.includes('strutture'))
-                            ateneo.link.strutture = ref;
-                          else if(desc.includes('numeri'))
-                            ateneo.link.numeri = ref;
-                          else if(desc.includes('rankings'))
-                            ateneo.link.rankings = ref;
-                          else if(desc.includes('trentino'))
-                            ateneo.link.trentino = ref;
-                          else if(desc.includes('raggiungerci'))
-                            ateneo.link.indicazioni = ref;
+                          ateneo.link.push(ref);
 
                         });
                       }
@@ -745,7 +713,7 @@ function controlAssign(title, link, bot, msg, node, $){
                         international.diretto = link;
                       }
 
-                      if(isEmptyObj(international.link)){
+                      if(international.link.length == 0){
                         node.siblings().children("li").children("a").each(function(){
                           var ref = $(this).attr('href');
                           var desc = $(this).text().trim().toLowerCase();
@@ -755,10 +723,7 @@ function controlAssign(title, link, bot, msg, node, $){
                             ref = 'www.unitn.it' + ref;
                           }
 
-                          if(desc.includes('students'))
-                            international.link.students = ref;
-                          else if(desc.includes('lavorare'))
-                            international.link.lavorare = ref;
+                          international.link.push(ref);
 
                         });
                       }
@@ -776,7 +741,7 @@ function controlAssign(title, link, bot, msg, node, $){
                         nonSoloStudio.diretto = link;
                       }
 
-                      if(isEmptyObj(nonSoloStudio.link)){
+                      if(nonSoloStudio.link.length == 0){
                         node.siblings().children("li").children("a").each(function(){
                           var ref = $(this).attr('href');
                           var desc = $(this).text().trim().toLowerCase();
@@ -786,22 +751,7 @@ function controlAssign(title, link, bot, msg, node, $){
                             ref = 'www.unitn.it' + ref;
                           }
 
-                          if(desc.includes('apple'))
-                            nonSoloStudio.link.apple = ref;
-                          else if(desc.includes('associazione studentesche'))
-                            nonSoloStudio.link.studenti = ref;
-                          else if(desc.includes('opera'))
-                            nonSoloStudio.link.opera = ref;
-                          else if(desc.includes('prestabici'))
-                            nonSoloStudio.link.prestabici = ref;
-                          else if(desc.includes('rappresentanti'))
-                            nonSoloStudio.link.rappresentanti = ref;
-                          else if(desc.includes('associazioni universitarie'))
-                            nonSoloStudio.link.associazioni = ref;
-                          else if(desc.includes('uni.sport'))
-                            nonSoloStudio.link.sport = ref;
-                          else if(desc.includes('giovani'))
-                            nonSoloStudio.link.giovani = ref;
+                          nonSoloStudio.link.push(ref);
 
                         });
                       }
