@@ -250,7 +250,7 @@ bot.on('text', (msg) => {
                 ['Tasse Universitarie', 'Borse di studio'],
                 ['Trasferimenti', 'Supporto'],
                 ['Libera Circolazione', 'Open Day'],
-                ['Rinnovo Iscrizioni'/*, 'Futuro Studente'*/],
+                ['Rinnovo Iscrizioni', 'Futuro Studente'],
               ],
               one_time_keyboard: true,
               resize_keyboard: true
