@@ -805,21 +805,6 @@ function controlAssign(title, link, bot, msg, node, $){
   }
 }
 
-function redirect(last, bot, msg, index){
-	switch(last){
-		case('didattica'):
-											var text = "Eccoti nella sezione " + didattica.titolo + "\n\n" + didattica.diretto + "\n" + didattica.link[index];
-
-											var options = getPaginationFull(index + 1, didattica.link.length);
-											options['chat_id'] = msg.message.chat.id;
-											options['message_id'] = msg.message.message_id;
-
-											bot.editMessageText(text, options);
-											//bot.sendMessage(msg.message.chat.id, text, getPaginationFull(index+1, didattica.link.length));
-		break;
-	}
-}
-
 exports.homeTasse = downloadPageTasse;
 exports.homeAmmissioni = downloadPageAmmissioni;
 exports.homeImmatricolazioni = downloadPageImmatricolazioni;
@@ -829,4 +814,3 @@ exports.homeTrasferimenti = downloadPageTrasferimenti;
 exports.homeSupporto = downloadPageSupporto;
 exports.homeOpenDay = downloadPageOpenDay;
 exports.homeFuturoStudente = downloadPageFuturoStudente;
-exports.redirect = redirect;
