@@ -8,21 +8,6 @@
 		<link rel="stylesheet" type="text/css" href="../css/jquery.convform.css">
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 		<link rel="stylesheet" type="text/css" href="../css/demo.css">
-
-		<style>
-			#parent{
-				height: 100%;
-				width: 100%;
-				overflow: hidden;
-			}
-
-			#child{
-				width: 100%;
-				height: 100%;
-				overflow-y: scroll;
-				padding-right: 17px; /* Increase/decrease this value for cross-browser compatibility */
-			}
-		</style>
 	</head>
 	<body>
 		<section id="demo">
@@ -118,15 +103,90 @@
 											</div>
 											<div conv-case="futuro">
 												<select name="sezioneHowToFuturo" conv-question="Le informazioni che cerchi cosa riguardano? | cosa stai cercando? | Dimmi come posso aiutarti :)">
-				                                    <option value="didattica" callback="HowToFuturodidattica">Didattica</option>
-													<option value="iscrizioni" callback="HowToFuturoiscrizioni">Iscrizioni</option>
-													<option value="orientamento" callback="HowToFuturoorientamento">Orientamento</option>
-				                                    <option value="agevolazioni" callback="HowToFuturoagevolazioni">Agevolazioni</option>
-													<option value="servizi" callback="HowToFuturoservizi">Serivizi</option>
-				                                    <option value="ateneo" callback="HowToFuturoateneo">Ateneo</option>
-													<option value="international" callback="HowToFuturointernational">Prospective International Student</option>
-													<option value="nonsolo" callback="HowToFuturononsolo">Non solo studio</option>
+				                                    <option value="didattica">Didattica</option>
+													<option value="iscrizioni">Iscrizioni</option>
+													<option value="orientamento">Orientamento</option>
+				                                    <option value="agevolazioni">Agevolazioni</option>
+													<option value="servizi">Serivizi</option>
+				                                    <option value="ateneo">Ateneo</option>
+													<option value="international">Prospective International Student</option>
+													<option value="nonsolo">Non solo studio</option>
 				                                </select>
+												<div conv-fork="sezioneHowToFuturo">
+													<div conv-case="didattica">
+														<select name="sezioneHowToFuturodidattica" conv-question="Le informazioni che cerchi cosa riguardano? | cosa stai cercando? | Dimmi come posso aiutarti :)">
+						                                    <option value="corsi" callback="HowToFuturodidatticacorsi">Corsi</option>
+															<option value="dottorati" callback="HowToFuturodidatticadottorati">Dottorati</option>
+															<option value="master" callback="HowToFuturodidatticamaster">Master</option>
+						                                </select>
+													</div>
+													<div conv-case="iscrizioni">
+														<select name="sezioneHowToFuturoiscrizioni" conv-question="Le informazioni che cerchi cosa riguardano? | cosa stai cercando? | Dimmi come posso aiutarti :)">
+						                                    <option value="ammissioni" callback="HowToFuturoiscrizioniammissioni">Ammissioni</option>
+															<option value="infostudenti" callback="HowToFuturoiscrizioniinfostudenti">Infostudenti</option>
+															<option value="riconoscimentotitolo" callback="HowToFuturoiscrizioniriconoscimentotitolo">Riconoscimento titolo</option>
+															<option value="tasse" callback="HowToFuturoiscrizionitasse">Tasse</option>
+						                                </select>
+													</div>
+													<div conv-case="orientamento">
+														<select name="sezioneHowToFuturoorientamento" conv-question="Le informazioni che cerchi cosa riguardano? | cosa stai cercando? | Dimmi come posso aiutarti :)">
+						                                    <option value="costo" callback="HowToFuturoorientamentocosto">Costo</option>
+															<option value="sitoorienta" callback="HowToFuturoorientamentositoorienta">Sito orientamento</option>
+															<option value="unitrentoorienta" callback="HowToFuturoorientamentounitrentoorienta">UniTrento orienta</option>
+						                                </select>
+													</div>
+													<div conv-case="agevolazioni">
+														<select name="sezioneHowToFuturoagevolazioni" conv-question="Le informazioni che cerchi cosa riguardano? | cosa stai cercando? | Dimmi come posso aiutarti :)">
+						                                    <option value="borse" callback="HowToFuturoagevolazioniborse">Borse di studio</option>
+															<option value="alloggi" callback="HowToFuturoagevolazioniallogi">Alloggi</option>
+															<option value="serviziopera" callback="HowToFuturoagevolazioniserviziopera">Servizi opera</option>
+															<option value="collegio" callback="HowToFuturoagevolazionicollegio">Collegio</option>
+						                                </select>
+													</div>
+													<div conv-case="servizi">
+														<select name="sezioneHowToFuturoservizi" conv-question="Le informazioni che cerchi cosa riguardano? | cosa stai cercando? | Dimmi come posso aiutarti :)">
+															<option value="biblioteca" callback="HowToFuturoservizibiblioteca">Biblioteca</option>
+															<option value="mense" callback="HowToFuturoservizimense">Mense</option>
+															<option value="alloggi" callback="HowToFuturoservizialloggi">Alloggi</option>
+															<option value="tutorato" callback="HowToFuturoservizitutorato">Tutorato</option>
+														    <option value="jobguidance" callback="HowToFuturoservizijobguidance">Job-guidance</option>
+														    <option value="cla" callback="HowToFuturoservizicla">Cla</option>
+															<option value="consulenza" callback="HowToFuturoserviziconsulenza">consulenza</option>
+															<option value="matlab" callback="HowToFuturoservizimatlab">matlab</option>
+															<option value="informatici" callback="HowToFuturoserviziinformatici">informatici</option>
+															<option value="civile" callback="HowToFuturoservizicivile">civile</option>
+														    <option value="bisognispeciali" callback="HowToFuturoservizibisognispeciali">Bisogni speciali</option>
+						                                </select>
+													</div>
+													<div conv-case="ateneo">
+														<select name="sezioneHowToFuturoateneo" conv-question="Le informazioni che cerchi cosa riguardano? | cosa stai cercando? | Dimmi come posso aiutarti :)">
+															<option value="presentazione" callback="HowToFuturoateneopresentazione">Presentazione</option>
+															<option value="strutture" callback="HowToFuturoateneostrutture">Strutture</option>
+															<option value="numeri" callback="HowToFuturoateneonumeri">Numeri</option>
+															<option value="rankings" callback="HowToFuturoateneorankings">Rankings</option>
+															<option value="trentinoetrento" callback="HowToFuturoateneotrentinoetrento">Trentino e Trento</option>
+															<option value="comeraggiungerci" callback="HowToFuturoateneocomeraggiungerci">Come raggiungerci</option>
+						                                </select>
+													</div>
+													<div conv-case="international">
+														<select name="sezioneHowToFuturointernational" conv-question="Le informazioni che cerchi cosa riguardano? | cosa stai cercando? | Dimmi come posso aiutarti :)">
+						                                    <option value="internationalintrento" callback="HowToFuturointernationalinternationalintrento">International in Trento</option>
+															<option value="studiarelavorare" callback="HowToFuturointernationalstudiarelavorare">Studiare e lavorare</option>
+						                                </select>
+													</div>
+													<div conv-case="nonsolo">
+														<select name="sezioneHowToFuturononsolo" conv-question="Le informazioni che cerchi cosa riguardano? | cosa stai cercando? | Dimmi come posso aiutarti :)">
+															<option value="apple" callback="HowToFuturononsoloapple">Apple</option>
+														    <option value="asociazionistudentesche" callback="HowToFuturononsoloasociazionistudentesche">Asociazioni studentesche</option>
+														    <option value="opera" callback="HowToFuturononsoloopera">Opera</option>
+															<option value="prestabici" callback="HowToFuturononsoloprestabici">Prestabici</option>
+															<option value="rappresentanti" callback="HowToFuturononsolorappresentanti">Rappresentanti</option>
+															<option value="associazioniuniversitarie" callback="HowToFuturononsoloassociazioniuniversitarie">Associazioni universitarie</option>
+															<option value="unisport" callback="HowToFuturononsolounisport">UniSport</option>
+														    <option value="linkgiovani" callback="HowToFuturononsololinkgiovani">Link giovani</option>
+						                                </select>
+													</div>
+												</div>
 											</div>
 										</div>
 									</div>
@@ -322,7 +382,7 @@
 			}
 
 			function howToopenDay() {
-				howToopenDay("openDay");
+				howToOpenDay("openDay");
 			}
 
 			function HowToRinnovotasse() {
@@ -335,29 +395,128 @@
 				howTo("rinnovi","rinnovo-bisogni-particolari","");
 			}
 
-			function HowToFuturodidattica() {
-				howTo("futuroStudente")
+			function HowToFuturodidatticacorsi() {
+				howTo("futuroStudente","didattica","corsi");
 			}
-			function HowToFuturoiscrizioni() {
-				howTo("futuroStudente")
+			function HowToFuturodidatticadottorati() {
+				howTo("futuroStudente","didattica","dottorati");
 			}
-			function HowToFuturoorientamento() {
-				howTo("futuroStudente")
+			function HowToFuturodidatticamaster() {
+				howTo("futuroStudente","didattica","master");
 			}
-			function HowToFuturoagevolazioni() {
-				howTo("futuroStudente")
+			function HowToFuturoiscrizioniammissioni() {
+				howTo("futuroStudente","iscrizioni","ammissioni");
 			}
-			function HowToFuturoservizi() {
-				howTo("futuroStudente")
+			function HowToFuturoiscrizioniinfostudenti() {
+				howTo("futuroStudente","iscrizioni","infostudenti");
 			}
-			function HowToFuturoateneo() {
-				howTo("futuroStudente")
+			function HowToFuturoiscrizioniriconoscimentotitolo() {
+				howTo("futuroStudente","iscrizioni","riconoscimento-titolo");
 			}
-			function HowToFuturointernational() {
-				howTo("futuroStudente")
+			function HowToFuturoiscrizionitasse() {
+				howTo("futuroStudente","iscrizioni","tasse");
 			}
-			function HowToFuturononsolo() {
-				howTo("futuroStudente")
+			function HowToFuturoorientamentocost() {
+				howTo("futuroStudente","orientamento","costo");
+			}
+			function HowToFuturoorientamentositoorienta() {
+				howTo("futuroStudente","orientamento","sito-orienta");
+			}
+			function HowToFuturoorientamentounitrentoorienta() {
+				howTo("futuroStudente","orientamento","unitrento-orienta");
+			}
+			function HowToFuturoagevolazioniborse() {
+				howTo("futuroStudente","agevolazioni","borse");
+			}
+			function HowToFuturoagevolazioniallogi() {
+				howTo("futuroStudente","agevolazioni","alloggi");
+			}
+			function HowToFuturoagevolazioniserviziopera() {
+				howTo("futuroStudente","agevolazioni","servizi-opera");
+			}
+			function HowToFuturoagevolazionicollegio() {
+				howTo("futuroStudente","agevolazioni","collegio");
+			}
+			function HowToFuturoservizibiblioteca() {
+				howTo("futuroStudente","servizi","biblioteca");
+			}
+			function HowToFuturoservizimense() {
+				howTo("futuroStudente","servizi","mense");
+			}
+			function HowToFuturoservizialloggi() {
+				howTo("futuroStudente","servizi","alloggi");
+			}
+			function HowToFuturoservizitutorato() {
+				howTo("futuroStudente","servizi","tutorato");
+			}
+			function HowToFuturoservizijobguidance() {
+				howTo("futuroStudente","servizi","job-guidance");
+			}
+			function HowToFuturoservizicla() {
+				howTo("futuroStudente","servizi","cla");
+			}
+			function HowToFuturoserviziconsulenza() {
+				howTo("futuroStudente","servizi","consulenza");
+			}
+			function HowToFuturoservizimatlab() {
+				howTo("futuroStudente","servizi","matlab");
+			}
+			function HowToFuturoserviziinformatici() {
+				howTo("futuroStudente","servizi","informatici");
+			}
+			function HowToFuturoservizicivile() {
+				howTo("futuroStudente","servizi","civile");
+			}
+			function HowToFuturoservizibisognispeciali() {
+				howTo("futuroStudente","servizi","bisogni-speciali");
+			}
+			function HowToFuturoateneopresentazione() {
+				howTo("futuroStudente","ateneo","presentazione");
+			}
+			function HowToFuturoateneostrutture() {
+				howTo("futuroStudente","ateneo","strutture");
+			}
+			function HowToFuturoateneonumeri() {
+				howTo("futuroStudente","ateneo","numeri");
+			}
+			function HowToFuturoateneorankings() {
+				howTo("futuroStudente","ateneo","rankings");
+			}
+			function HowToFuturoateneotrentinoetrento() {
+				howTo("futuroStudente","ateneo","trentino-e-trento");
+			}
+			function HowToFuturoateneocomeraggiungerci() {
+				howTo("futuroStudente","ateneo","come-raggiungerci");
+			}
+			function HowToFuturointernationalinternationalintrento() {
+				howTo("futuroStudente","pis","international-in-trento");
+			}
+			function HowToFuturointernationalstudiarelavorare() {
+				howTo("futuroStudente","pis","studiare-lavorare");
+			}
+			function HowToFuturononsoloapple() {
+				howTo("futuroStudente","non-solo-studio","apple");
+			}
+			function HowToFuturononsoloasociazionistudentesche() {
+				howTo("futuroStudente","non-solo-studio","asociazioni-studentesche");
+			}
+			function HowToFuturononsoloopera() {
+				howTo("futuroStudente","non-solo-studio","opera");
+			}
+			function HowToFuturononsoloprestabici() {
+				howTo("futuroStudente","non-solo-studio","prestabici");
+			}
+			function HowToFuturononsolorappresentanti() {
+				howTo("futuroStudente","non-solo-studio","rappresentanti");
+			}
+			function HowToFuturononsoloassociazioniuniversitarie() {
+				howTo("futuroStudente","non-solo-studio","associazioni-universitarie");
+			}
+			function HowToFuturononsolounisport() {
+				howTo("futuroStudente","non-solo-studio","unisport");
+			}
+			function HowToFuturononsololinkgiovani() {
+				howTo("futuroStudente","non-solo-studio","link-giovani");
 			}
 
 			function avvisiDicam() {

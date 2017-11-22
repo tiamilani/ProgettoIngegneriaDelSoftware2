@@ -1,7 +1,8 @@
 var links = [
     'page/luoghiUtili.html',
 	'page/avvisi.html',
-    'page/howTo.html'
+    'page/howTo.html',
+    'page/howToOpenDay.html'
 ];
 
 var one, two;

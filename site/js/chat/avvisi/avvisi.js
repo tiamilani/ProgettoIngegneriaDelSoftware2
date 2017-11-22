@@ -7,6 +7,6 @@ avvisi = function(dipartimento)
 
 	$.getJSON(url, function(data) {
 		var myJSON = JSON.stringify(data);
-		parent.twonav(2,data);
+		parent.twonav(1,data);
 	});
 }
