@@ -127,6 +127,7 @@ function readOpenDayFile(dir, file){
       if(isEmptyObj(link_openDay)){
         var $ = ch.load(fs.readFileSync(dir + "/" + file));
         var indice = 0;
+        link_openDay.program = {}
         link_openDay.program.date = [];
         $("#content-left strong").each(function() {
           var oneDate = $(this).text().trim();
