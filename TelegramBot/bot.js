@@ -33,6 +33,8 @@ const token = process.env.TELEGRAM_TOKEN || '417759810:AAFHuTH4figL2WqKsEGem0ZIg
 const bot = new TelegramBot(token, {polling: true});
 console.log('BOT STARTED');
 
+var last_command;
+
 // ---------- FEATURES ----------
 
 var importCsv = function (dirFile, file, nameFile, con) {
@@ -423,6 +425,7 @@ bot.on('text', (msg) => {
     bot.sendMessage(msg.chat.id, text, keyboard);
   }else if(msg.text.toLowerCase() == 'didattica'){
     how.homeFuturoStudente('http://www.unitn.it/futuro-studente', './Futuro_Studente', bot, msg, 'didattica');
+    last_command = 'didattica';
   }else if(msg.text.toLowerCase() == 'iscrizioni'){
     how.homeFuturoStudente('http://www.unitn.it/futuro-studente', './Futuro_Studente', bot, msg, 'iscrizioni');
   }else if(msg.text.toLowerCase() == 'orientamento'){
@@ -459,7 +462,7 @@ bot.on('text', (msg) => {
 });
 
 bot.on('callback_query', function(msg) {
-  console.log(how.last_command + " " + msg.data);
+  console.log(last_command + " " + msg.data);
 });
 
 
