@@ -212,7 +212,33 @@ function readInfoFiles(dir, file, bot, msg, page, oggetto){
                 }else if(oneLink.includes('da-altro-ateneo') && oneLink.includes('laurea-magistrale')){
                   link_trasferimenti.da_magistrale = oneLink;
                   link_trasferimenti.explain_da_magistrale = oneDescription;
-                }
+                }else if(oneLink.includes('ammissione-passaggio-corso')){
+									if(oneLink.includes('economia-giurisprudenza')){
+										link_trasferimenti.da_centro = oneLink;
+										link_trasferimenti.explain_da_centro = oneDescription;
+									}else if(oneLink.includes('fisica-matematica')){
+										link_trasferimenti.da_povo = oneLink;
+										link_trasferimenti.explain_da_povo = oneDescription;
+									}else if(oneLink.includes('psicologia')){
+										link_trasferimenti.da_rovereto = oneLink;
+										link_trasferimenti.explain_da_rovereto = oneDescription;
+									}else if(oneLink.includes('scienze-tecnologie')){
+										link_trasferimenti.da_cibio = oneLink;
+										link_trasferimenti.explain_da_cibio = oneDescription;
+									}else if(oneLink.includes('ingegneria-industriale')){
+										link_trasferimenti.da_industriale = oneLink;
+										link_trasferimenti.explain_da_industriale = oneDescription;
+									}else if(oneLink.includes('enologia')){
+										link_trasferimenti.da_enologia = oneLink;
+										link_trasferimenti.explain_da_enologia = oneDescription;
+									}else if(oneLink.includes('civile-ambiente')){
+										link_trasferimenti.da_dicam = oneLink;
+										link_trasferimenti.explain_da_dicam = oneDescription;
+									}else if(oneLink.includes('edile-architettura')){
+										link_trasferimenti.da_edile = oneLink;
+										link_trasferimenti.explain_da_edile = oneDescription;
+									}
+								}
               }else if(page == 'supporto'){
                 if(oneLink.includes('prenotazione')){
                   link_supporto.prenotazione = oneLink;
