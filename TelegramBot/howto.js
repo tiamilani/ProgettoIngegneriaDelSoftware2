@@ -253,7 +253,7 @@ function readInfoFiles(dir, file, bot, msg, page, oggetto){
       }
     }
   );
-
+}
 
 var downloadPageTasse = function (link, dir, bot, msg, action){
   let options = {
