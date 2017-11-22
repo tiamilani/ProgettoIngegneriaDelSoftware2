@@ -209,7 +209,7 @@ function infoFolder(dir, options){
   );
 }
 
-function readInfoFiles(dir, file, bot, msg, page, oggetto){
+function readInfoFiles(dir, file, page, oggetto){
   return new Promise(
     function(resolve, reject){
       if(isEmptyObj(oggetto)){
