@@ -14,15 +14,38 @@ var link_openDay = [];
 var programs = [];
 var registrazione = [];
 
-var didattica = {titolo: "", diretto: "", link: {} ;
-var iscrizioni = {titolo: "", diretto: "", link: {} ;
-var orientamento = {titolo: "", diretto: "", link: {} ;
-var agevolazioni = {titolo: "", diretto: "", link: {} ;
-var servizi = {titolo: "", diretto: "", link: {} ;
-var ateneo = {titolo: "", diretto: "", link: {} ;
-var international = {titolo: "", diretto: "", link: {} ;
-var nonSoloStudio = {titolo: "", diretto: "", link: {} ;
+var didattica = {titolo: "", diretto: "", link: {} };
+var iscrizioni = {titolo: "", diretto: "", link: {} };
+var orientamento = {titolo: "", diretto: "", link: {} };
+var agevolazioni = {titolo: "", diretto: "", link: {} };
+var servizi = {titolo: "", diretto: "", link: {} };
+var ateneo = {titolo: "", diretto: "", link: {} };
+var international = {titolo: "", diretto: "", link: {} };
+var nonSoloStudio = {titolo: "", diretto: "", link: {} };
 var saved = false;
+
+function getPagination( current, maxpage ) {
+    var buttons = [];
+
+    if (current > 1) {
+        for(let i = 1; i < current; i++)
+            buttons.push( { text: `${i}`, callback_data: (i).toString() } );
+    }
+
+    buttons.push( { text: `-${current}-`, callback_data: current.toString() } );
+
+    if (current < maxpage) {
+        for(let i = current; i < maxpage; i++)
+            buttons.push( { text: `${i+1}`, callback_data: (i+1).toString() } );
+    }
+
+    return {
+        parse_mode: 'Markdown',
+        reply_markup: JSON.stringify({
+            inline_keyboard: [ buttons, [{ text:'Invia Posizione Selezionata', callback_data: 'loc' }] ]
+        })
+    };
+}
 
 var deleteFolderAndFile = function (path, estensione) {
 	if (fs.existsSync(path)) {
