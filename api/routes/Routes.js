@@ -16,6 +16,10 @@ module.exports = function(app) {
 		.get(place.luoghiUtili)
 		.post(place.luoghiUtili);
 
+	app.route('/howto')
+		.get(howto.base)
+		.post(howto.base);
+
 	app.route('/avvisi')
 		.get(avvisi.dwAvvisi)
 		.post(avvisi.dwAvvisi);
