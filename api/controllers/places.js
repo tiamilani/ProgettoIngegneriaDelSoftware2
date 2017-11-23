@@ -57,7 +57,6 @@ exports.luoghiUtili = function(req, resp) {
 
 	var name = req.query.name;
 	var place = req.query.place;
-
 	var type;
 	var citta;
 
@@ -106,22 +105,16 @@ exports.luoghiUtili = function(req, resp) {
 			break;
 	}
 
-	var json;
-
 	switch (name) {
 		case "biblioteca":
 			console.log("Name biblioteca");
 			type="library";
-
 			placesNearby(resp,map,citta,1000,type,name,latlngKnown,geocoder);
-
 			break;
 		case "copisteria":
 			console.log("Name copisteria");
 			type="store";
-
 			placesNearby(resp,map,citta,1000,type,name,latlngKnown,geocoder);
-
 			break;
 		case "mensa":
 			console.log("Name mensa");
@@ -146,7 +139,6 @@ exports.luoghiUtili = function(req, resp) {
 
 			if(place == "povo" || place == "mesiano"){
 				name="dipartimento";
-
 				placesNearby(resp,map,citta,400,"",name,latlngKnown,geocoder);
 			}
 			else{

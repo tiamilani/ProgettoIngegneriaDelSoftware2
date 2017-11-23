@@ -5,6 +5,7 @@ module.exports = function(app) {
 	const avvisi = require ('../controllers/avvisi');
 	const urban = require ('../controllers/mezzi.js');
 	const dead = require ('../controllers/scadenze.js');
+	const howto = require ('../controllers/howto.js');
 	const telegramController = require ('../controllers/telegramController');
 	const TOKEN = process.env.TELEGRAM_TOKEN || '466491462:AAF8RxkhGR00Mylr0LGZfFWUMvPVWSHqUPE';
 
@@ -16,6 +17,10 @@ module.exports = function(app) {
 	app.route("/localizza")
 		.get(place.luoghiUtili)
 		.post(place.luoghiUtili);
+
+	app.route('/howto')
+		.get(howto.base)
+		.post(howto.base);
 
 	app.route('/avvisi')
 		.get(avvisi.dwAvvisi)

@@ -5,6 +5,7 @@ const ext = require('path');
 const rmrf = require('rimraf');
 const rc = require('read-chunk');
 const ft = require('file-type');
+const ch = require('cheerio');
 const htmlparser = require('htmlparser2');
 const systemSleep = require('system-sleep');
 
