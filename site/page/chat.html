@@ -8,6 +8,21 @@
 		<link rel="stylesheet" type="text/css" href="../css/jquery.convform.css">
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 		<link rel="stylesheet" type="text/css" href="../css/demo.css">
+
+		<style>
+			#parent{
+				height: 100%;
+				width: 100%;
+				overflow: hidden;
+			}
+
+			#child{
+				width: 100%;
+				height: 100%;
+				overflow-y: scroll;
+				padding-right: 17px; /* Increase/decrease this value for cross-browser compatibility */
+			}
+		</style>
 	</head>
 	<body>
 		<section id="demo">
@@ -29,6 +44,91 @@
 									</div>
 									<div conv-case="howto">
 										<input type="text" conv-question="Hai selezionato la sezione How to" no-answer="true">
+										<select name="sezioneHowTo" conv-question="Le informazioni che cerchi cosa riguardano? | cosa stai cercando? | Dimmi come posso aiutarti :)">
+		                                    <option value="ammissioni">Ammissioni</option>
+		                                    <option value="immatricolazioni">Immatricolazioni</option>
+											<option value="tasse">Tasse Universitarie</option>
+											<option value="borse">Borse di studio</option>
+		                                    <option value="trasferimenti">Trasferimenti</option>
+											<option value="supporto" callback="howTosupporto">Supporto</option>
+											<option value="libera" callback="howTolibera">Libera circolazione</option>
+		                                    <option value="openDay" callback="howToopenDay">Open day</option>
+											<option value="rinnovo">Rinnovo iscrizioni</option>
+											<option value="futuro">Futuro studente</option>
+		                                </select>
+										<div conv-fork="sezioneHowTo">
+											<div conv-case="ammissioni">
+												<select name="sezioneHowToAmmissioni" conv-question="Le informazioni che cerchi cosa riguardano? | cosa stai cercando? | Dimmi come posso aiutarti :)">
+				                                    <option value="ciclo" callback="HowToAmmissioniciclo">Triennali e a ciclo unico</option>
+				                                    <option value="magistrali" callback="HowToAmmissioniMagistrali">Magistrali</option>
+				                                </select>
+											</div>
+											<div conv-case="immatricolazioni">
+												<select name="sezioneHowToImmatricolazioni" conv-question="Le informazioni che cerchi cosa riguardano? | cosa stai cercando? | Dimmi come posso aiutarti :)">
+													<option value="ciclo" callback="HowToImmatricolazioniciclo">Triennali e a ciclo unico</option>
+				                                    <option value="magistrali" callback="HowToImmatricolazioniMagistrali">Magistrali</option>
+				                                </select>
+											</div>
+											<div conv-case="tasse">
+												<select name="sezioneHowToTasse" conv-question="Le informazioni che cerchi cosa riguardano? | cosa stai cercando? | Dimmi come posso aiutarti :)">
+				                                    <option value="tasse" callback="HowToTassetasse">Tasse A.A. 17-18</option>
+				                                    <option value="isee" callback="HowToTasseisee">Isee A.A 17-18</option>
+													<option value="pagamenti" callback="HowToTassepagamenti">Pagamenti</option>
+				                                    <option value="rimborsi" callback="HowToTasserimborsi">Rimborsi</option>
+				                                </select>
+												<div conv-fork="sezioneHowToTasse">
+													<div conv-case="isee">
+														<select name="sezioneHowToTasseIsee" conv-question="Le informazioni che cerchi cosa riguardano? | cosa stai cercando? | Dimmi come posso aiutarti :)">
+						                                    <option value="residenti" callback="HowToTasseiseeresidenti">Residenti</option>
+						                                    <option value="nonResidenti" callback="HowToTasseiseenonResidenti">Non residenti</option>
+						                                </select>
+													</div>
+												</div>
+											</div>
+											<div conv-case="borse">
+												<select name="sezioneHowToBorse" conv-question="Le informazioni che cerchi cosa riguardano? | cosa stai cercando? | Dimmi come posso aiutarti :)">
+				                                    <option value="borse" callback="HowToBorseborse">Borse di studio e Posto alloggio</option>
+				                                    <option value="invalidita" callback="HowToBorseinvalidita">Dichiarazione di invalidit&agrave; o disabilit&agrave;</option>
+													<option value="attesa" callback="HowToBorseattesa">Attesa di laurea</option>
+													<option value="libera" callback="howTolibera">Libera circolazione</option>
+				                                </select>
+											</div>
+											<div conv-case="trasferimenti">
+												<select name="sezioneHowToTrasferimenti" conv-question="Le informazioni che cerchi cosa riguardano? | cosa stai cercando? | Dimmi come posso aiutarti :)">
+				                                    <option value="verso" callback="howTotrasferimentiverso">Trasferimento verso un altro ateneo</option>
+				                                    <option value="da" callback="howTotrasferimentida">Trasferimento da un altro ateneo</option>
+				                                    <option value="daMagistrali" callback="howTotrasferimentidaMagistrali">Trasferimento da un altro ateneo magistrale</option>
+				                                </select>
+											</div>
+											<div conv-case="supporto">
+												<input type="text" conv-question="Qui a destra troverai le informazioni che cerchi :)" no-answer="true">
+											</div>
+											<div conv-case="libera">
+												<input type="text" conv-question="Ecco a te come ottenere la libera circolazione ;)" no-answer="true">
+											</div>
+											<div conv-case="openDay">
+												<input type="text" conv-question="Qui a destra troverai le informazioni che cerchi :)" no-answer="true">
+											</div>
+											<div conv-case="rinnovo">
+												<select name="sezioneHowToRinnovo" conv-question="Le informazioni che cerchi cosa riguardano? | cosa stai cercando? | Dimmi come posso aiutarti :)">
+				                                    <option value="tasse" callback="HowToRinnovotasse">Rinnovo iscrizione con pagamento tasse</option>
+				                                    <option value="borsa" callback="HowToRinnovoborsa">Rinnovo iscrizione con richiesta borsa di studio</option>
+													<option value="speciali" callback="HowToRinnovospeciali">Rinnovo iscrizione per studenti con bisogni particolari</option>
+				                                </select>
+											</div>
+											<div conv-case="futuro">
+												<select name="sezioneHowToFuturo" conv-question="Le informazioni che cerchi cosa riguardano? | cosa stai cercando? | Dimmi come posso aiutarti :)">
+				                                    <option value="didattica" callback="HowToFuturodidattica">Didattica</option>
+													<option value="iscrizioni" callback="HowToFuturoiscrizioni">Iscrizioni</option>
+													<option value="orientamento" callback="HowToFuturoorientamento">Orientamento</option>
+				                                    <option value="agevolazioni" callback="HowToFuturoagevolazioni">Agevolazioni</option>
+													<option value="servizi" callback="HowToFuturoservizi">Serivizi</option>
+				                                    <option value="ateneo" callback="HowToFuturoateneo">Ateneo</option>
+													<option value="international" callback="HowToFuturointernational">Prospective International Student</option>
+													<option value="nonsolo" callback="HowToFuturononsolo">Non solo studio</option>
+				                                </select>
+											</div>
+										</div>
 									</div>
 									<div conv-case="luoghiutili">
 										<select name="luogoDiInteresse" conv-question="Dove ti interessa cercare?">
@@ -119,14 +219,25 @@
 									</div>
 									<div conv-case="avvisi">
 										<input type="text" conv-question="Gli avvisi che riusciamo ad ottenre sono solo quelli dei seguenti dipartimenti:" no-answer="true">
-										<input type="text" conv-question="Gli avvisi che riusciamo ad ottenre sono solo quelli dei seguenti dipartimenti:" no-answer="true">
-										<input type="text" conv-question="Gli avvisi che riusciamo ad ottenre sono solo quelli dei seguenti dipartimenti:" no-answer="true">
-										<input type="text" conv-question="Gli avvisi che riusciamo ad ottenre sono solo quelli dei seguenti dipartimenti:" no-answer="true">
-										<select name="luogoDiInteresse" conv-question="Dove ti interessa cercare?">
-		                                    <option value="trento">Trento</option>
-		                                    <option value="mesiano">Mesiano</option>
-											<option value="povo">Povo</option>
+										<input type="text" conv-question="DICAM, Dipartimento Ingegneria Civile Ambietale Meccanica" no-answer="true">
+										<input type="text" conv-question="DII, Dipartimento Ingegneria Industriale" no-answer="true">
+										<input type="text" conv-question="CISCA, Comprende i dipartimenti di Ingegneria Scienze dell'Informazione, Fisica e Matematica" no-answer="true">
+										<select name="sezioneAvvisi" conv-question="Dove ti interessa cercare?">
+		                                    <option value="DICAM" callback="avvisiDicam">DICAM</option>
+		                                    <option value="DII" callback="avvisiDii">DII</option>
+											<option value="CISCA" callback="avvisiCisca">CISCA</option>
 		                                </select>
+										<div conv-fork="sezioneAvvisi">
+		                                    <div conv-case="DICAM">
+		                                        <input type="text" conv-question="Ecco a te gli avvisi del giorno al DICAM :)" no-answer="true">
+											</div>
+											<div conv-case="DII">
+		                                        <input type="text" conv-question="Ecco a te gli avvisi del giorno al DII :)" no-answer="true">
+											</div>
+											<div conv-case="CISCA">
+		                                        <input type="text" conv-question="Ecco a te gli avvisi del giorno all CISCA :)" no-answer="true">
+											</div>
+										</div>
 									</div>
 								</div>
 								<select conv-question="Mi spiace ma in questa sezione non ho altro da mostrarti, torniamo al menu principale, ok? :)">
@@ -144,10 +255,121 @@
 
 		<script type="text/javascript" src="../js/chat/chatFunction.js"></script>
 		<script type="text/javascript" src="../js/chat/luoghiUtili/places.js"></script>
+		<script type="text/javascript" src="../js/chat/avvisi/avvisi.js"></script>
+		<script type="text/javascript" src="../js/chat/howTo/howTo.js"></script>
 
 		<script>
 			function ricarica() {
 				reload();
+			}
+
+			function HowToAmmissioniciclo() {
+				howTo("ammissioni","ammissioni-triennali","");
+			}
+			function HowToAmmissioniMagistrali() {
+				howTo("ammissioni","ammissioni-magistrali","");
+			}
+
+			function HowToImmatricolazioniciclo() {
+				howTo("immatricolazioni","immatricolazioni-triennali","");
+			}
+			function HowToImmatricolazioniMagistrali() {
+				howTo("immatricolazioni","immatricolazioni-magistrali","");
+			}
+
+			function HowToTassetasse() {
+				howTo("tasseUniversitarie","tasse","");
+			}
+			function HowToTasseiseeresidenti() {
+				howTo("tasseUniversitarie","isee","residenti");
+			}
+			function HowToTasseiseenonResidenti() {
+				howTo("tasseUniversitarie","isee","non-residenti");
+			}
+			function HowToTassepagamenti() {
+				howTo("tasseUniversitarie","pagamenti","");
+			}
+			function HowToTasserimborsi() {
+				howTo("tasseUniversitarie","rimborsi","");
+			}
+
+			function HowToBorseborse() {
+				howTo("borse","borsa-e-alloggio","");
+			}
+			function HowToBorseinvalidita() {
+				howTo("borse","bisogni-speciali","");
+			}
+			function HowToBorseattesa() {
+				howTo("borse","attesa-di-laurea","");
+			}
+
+			function howTotrasferimentiverso() {
+				howTo("trasferimenti","trasferimenti-verso","");
+			}
+			function howTotrasferimentida() {
+				howTo("trasferimenti","trasferimenti-da","");
+			}
+			function howTotrasferimentidaMagistrali() {
+				howTo("trasferimenti","trasferimenti-da-magistrale","");
+			}
+
+			function howTosupporto() {
+				howTo("supporto","","");
+			}
+
+			function howTolibera() {
+				howTo("liberaCircolazione","","");
+			}
+
+			function howToopenDay() {
+				howToopenDay("openDay");
+			}
+
+			function HowToRinnovotasse() {
+				howTo("rinnovi","rinnovo-e-tasse","");
+			}
+			function HowToRinnovoborsa() {
+				howTo("rinnovi","rinnovo-e-borse","");
+			}
+			function HowToRinnovospeciali() {
+				howTo("rinnovi","rinnovo-bisogni-particolari","");
+			}
+
+			function HowToFuturodidattica() {
+				howTo("futuroStudente")
+			}
+			function HowToFuturoiscrizioni() {
+				howTo("futuroStudente")
+			}
+			function HowToFuturoorientamento() {
+				howTo("futuroStudente")
+			}
+			function HowToFuturoagevolazioni() {
+				howTo("futuroStudente")
+			}
+			function HowToFuturoservizi() {
+				howTo("futuroStudente")
+			}
+			function HowToFuturoateneo() {
+				howTo("futuroStudente")
+			}
+			function HowToFuturointernational() {
+				howTo("futuroStudente")
+			}
+			function HowToFuturononsolo() {
+				howTo("futuroStudente")
+			}
+
+			function avvisiDicam() {
+				avvisi("DICAM");
+			}
+
+			function avvisiDii() {
+				avvisi("DII");
+			}
+
+			function avvisiCisca() {
+				avvisi("CISCA");
 			}
 
 			function luoghiUtiliBibliotecaTrento(){

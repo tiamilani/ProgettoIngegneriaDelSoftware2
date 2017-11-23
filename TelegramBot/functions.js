@@ -10,18 +10,20 @@ const htmlparser = require('htmlparser2');
 const systemSleep = require('system-sleep');
 
 // ---------- FUNCTIONS ----------
-var deleteAll = function (path) {
-    if (fs.existsSync(path)) {  //Controlla se la cartella esiste
-        fs.readdirSync(path).forEach(function(file) { //Legge nella cartella i file
-            var curPath = path + "/" + file;
-			if (!fs.lstatSync(curPath).isDirectory())  //lstatSync -> Se il file è una cartella
-				fs.unlinkSync(curPath); //Elimina il file
-			else {
-				deleteAll(curPath);
-				try { fs.rmdirSync(curPath); } catch(e) { }
-			}
-        });
-    }
+function deleteAll (path) {
+    return new Promise((resolve, reject) => {
+        if (fs.existsSync(path)) {
+            fs.readdirSync(path).forEach(function(file) {
+                var curPath = path + "/" + file;
+    			if (!fs.lstatSync(curPath).isDirectory())
+    				fs.unlinkSync(curPath);
+    			else {
+    				deleteAll(curPath);
+    				try { fs.rmdirSync(curPath); console.log(true); return resolve(true); } catch(e) { console.log(false); return reject(false); }
+    			}
+            });
+        } else { console.log(true); return resolve(true); }
+    });
 }
 
 var deleteFolderRecursive = function (path) {
@@ -41,6 +43,7 @@ var deleteFolderRecursive = function (path) {
 }
 
 var downloadFiles = function (link, dir, bot, msg) {
+    console.log("in");
     let options = {
         urls: [link],
         directory: dir,
@@ -48,18 +51,9 @@ var downloadFiles = function (link, dir, bot, msg) {
         maxDepth: 1
     };
 
-	/*try {
-		var stats = fs.statSync(dir);
-		var now = new Date().getTime();
-		var endTime = new Date(stats.birthtime).getTime() + 5; // 1 Month = 2592000
-
-		if (now > endTime) { deleteAll(dir); }
-	}
-	catch(err) { }*/
-
     if (!fs.existsSync(dir)) {
         dw(options).then((result) => {
-
+            
 			deleteFolderRecursive(dir);
 			Promise.all([deleteFolderRecursive]).then(values => {
 				var tmpFiles = fs.readdirSync(dir);
@@ -87,7 +81,7 @@ var downloadFiles = function (link, dir, bot, msg) {
 				else
 					bot.sendMessage(msg.chat.id, "Purtroppo non ci sono file da visualizzare...");
 			});
-		}).catch((err) => { console.log("Errore nel download dei file richiesti"); });
+		}).catch((err) => { console.error(err); });
 	}
 	else {
 		var tmpFiles = fs.readdirSync(dir);
@@ -116,210 +110,78 @@ var getDistance = function(p1, p2) {
     return d; // returns the distance in meter
 };
 
-var deleteFilesWebcam = function (path, filesNotRemove) {
-	if (fs.existsSync(path)) {
-		fs.readdirSync(path).forEach(function(file, index){
-			var curPath = path + "/" + file;
-			if (!fs.lstatSync(curPath).isDirectory()) {
-                let i;
-                let b;
-                for(i = 0, b = 0; i < filesNotRemove.length; i++)
-                {
-                    if(file == filesNotRemove[i])
-                        b = 1;
-                }
+function deleteFilesWebcam (path, filesNotRemove) {
+    return new Promise((resolve, reject) => {
+    	if (fs.existsSync(path)) {
+    		fs.readdirSync(path).forEach(function(file, index){
+    			var curPath = path + "/" + file;
+    			if (!fs.lstatSync(curPath).isDirectory()) {
+                    let i;
+                    let b;
+                    for(i = 0, b = 0; i < filesNotRemove.length; i++)
+                    {
+                        if(file == filesNotRemove[i])
+                            b = 1;
+                    }
 
-                if(b == 0)
-                    fs.unlinkSync(curPath);
-			}
-			else {
-				deleteFilesWebcam(curPath, filesNotRemove);
-				try { fs.rmdirSync(curPath); } catch(e) { }
-			}
-		});
-	}
+                    if(b == 0)
+                        fs.unlinkSync(curPath);
+    			}
+    			else {
+    				deleteFilesWebcam(curPath, filesNotRemove);
+    				try { fs.rmdirSync(curPath); return resolve(true); } catch(e) { return reject(false); }
+    			}
+    		});
+    	} else { return resolve(true); }
+    });
 }
 
 var downloadPhoto = function (link, dir, filesNotRemove) {
-    let options = {
-        urls: [link],
-        directory: dir
-    };
+    return new Promise((resolve, reject) => {
+        let options = {
+            urls: [link],
+            directory: dir
+        };
 
-    dw(options).then((result) => {
-		deleteFilesWebcam(dir, filesNotRemove);
+        dw(options).then((result) => {
+    		deleteFilesWebcam(dir, filesNotRemove)
+                .then((result) => {
+                    if(result) {
+                        var tmpFiles = fs.readdirSync(dir + '/images');
 
-		Promise.all([deleteFilesWebcam]).then(values => {
-            var tmpFiles = fs.readdirSync(dir + '/images');
+            	        let i;
+            			let buffer;
+            			let type;
+            	        for(i = 0; i < tmpFiles.length; i++)
+            				fs.renameSync(dir + '/images/' + tmpFiles[i], dir + '/' + tmpFiles[i]);
 
-	        let i;
-			let buffer;
-			let type;
-	        for(i = 0; i < tmpFiles.length; i++)
-				fs.renameSync(dir + '/images/' + tmpFiles[i], dir + '/' + tmpFiles[i]);
-
-            rmrf(dir + '/images', function () {});
-		});
-	}).catch((err) => { console.log("Errore nel download dei file richiesti"); });
-}
-
-function parseHTMLFile(fileToParse, stringaDaConfrontare)
-{
-  return new Promise(
-    function (resolve, reject)
-    {
-      var waitingText = "";
-      var insideTag = 0;
-      var elements = [];
-      var parser = new htmlparser.Parser(
-        {
-          onopentag: function(tagNameStart)
-          {
-            if(tagNameStart == "font")
-              insideTag = 1;
-          },
-          ontext: function(tagText)
-          {
-            if(insideTag == 1)
-            {
-                console.log("AVVISO -> " + tagText);
-              if(waitingText == "")
-                waitingText = tagText;
-              else if(tagText.indexOf(stringaDaConfrontare) != -1)
-              {
-                elements.push(waitingText.replace(/(\r\n|\n|\r)/gm, " "));
-                waitingText = "";
-              }
-              else
-                waitingText = "";
-            }
-          },
-          onclosetag: function(tagNameEnd)
-          {
-            if(tagNameEnd == "font")
-              insideTag = 0;
-          }
-        }, {decodeEntities: true});
-
-      parser.write(fileToParse);
-      parser.end();
-
-      resolve(elements);
-    });
-}
-
-function readHTMLFile(path, bot, msg)
-{
-  return new Promise(
-    function (resolve, reject)
-    {
-      try
-      {
-        var currentDate = new Date();
-        var currentDate_string = currentDate.getDate() + "/" + (currentDate.getMonth() + 1) + "/" + currentDate.getFullYear();
-        if(currentDate.getDate() < 10)
-            currentDate_string = "0" + currentDate_string;
-        var stringaDaConfrontare = "inserito il " + currentDate_string + " da";
-
-        var avvisi = [];
-        var fileText = fs.readFileSync(path, 'latin1'); //Lettura file index.html
-        fileText = fileText.replace("&#8203;", "");
-        parseHTMLFile(fileText, stringaDaConfrontare)
-          .then(avvisi =>
-              {
-                //Se non ci sono avvisi
-                if(avvisi.length == 0)
-                {
-                  if(bot != null)
-                    bot.sendMessage(msg.chat.id, "Nessun avviso per oggi");
-                  else
-                    resolve(["Nessun avviso per oggi"]);
-                }
-                else //Stampo gli avvisi del giorno
-                {
-                  if(bot != null)
-                    for(i = 0; i < avvisi.length; i++)
-                    {
-                      bot.sendMessage(msg.chat.id, avvisi[i]);
-                      systemSleep(200);
+                        rmrf(dir + '/images', function () {});console.log(result);
+                        return resolve(true);
                     }
-                  else
-                  {
-                    resolve(avvisi);
-                  }
-                }
-              })
-          .catch(error => { console.log(error); } );
-      }
-      catch (e) { console.log(e.message); }
-    });
-
-}
-
-
-function setURL(dipartimento)
-{
-  var options;
-
-  switch (dipartimento)
-  {
-    case "DICAM":
-      options = { urls: ['http://www.science.unitn.it/avvisiesami/dicam/avvisi.php'], directory: './Avvisi/DICAM' };
-      break;
-
-    case "DII":
-      options = { urls: ['http://www.science.unitn.it/avvisiesami/dii-cibio/visualizzare_avvisi.php'], directory: './Avvisi/DII' };
-      break;
-
-    case "CISCA":
-      options = { urls: ['http://www.science.unitn.it/cisca/avvisi/avvisi.php'], directory: './Avvisi/CISCA' };
-      break;
-
-    default:
-      options = "ERROR";
-      break;
-  }
-
-  return options;
-}
-
-function downloadAvvisi(dipartimento, bot, msg)
-{
-  return new Promise(
-    function (resolve, reject)
-    {
-      //URL e directory utilizzati per scaricare e salvare i file
-      let options = setURL(dipartimento);
-      var jsonResult = "dentroDownload";
-
-      if(options === "ERROR")
-      {
-        if(bot != null)
-          bot.sendMessage(msg.chat.id, "Dipartimento non riconosciuto, si prega di riprovare");
-        else
-          resolve("Dipartimento non riconosciuto, si prega di riprovare");
-      }
-      else
-      {
-        try
-        {
-          //Elimino le cartelle
-          Promise.all([deleteFolderRecursive("./Avvisi")]).then(values =>
-          {
-            //Scarico i file nella relativa cartella
-            dw(options)
-              .then((result) => { jsonResult = readHTMLFile("./Avvisi/" + dipartimento + "/index.html", bot, msg); resolve(jsonResult);})
-              .catch((err) => { console.log(err.message); });
-          });
-        }
-        catch (err) { console.log(err.message); }
-      }
+                })
+                .catch(err => {
+                    return reject(err);
+                });
+    	}).catch((err) => { return reject(err); });
     });
 }
 
+function toDate(dStr, format) {
+	var now = new Date();
+	if (format == "h:m:s") {
+        var arrSplit = dStr.split(":");
+ 		now.setHours(arrSplit[0]);
+ 		now.setMinutes(arrSplit[1]);
+ 		now.setSeconds(arrSplit[2]);
+ 		return now;
+	}else
+		return "Invalid Format";
+}
 
 // ---------- EXPORTS ----------
+exports.rimuoviDir = deleteAll;
+exports.deleteFolderRecursive = deleteFolderRecursive;
 exports.richiestaFile = downloadFiles;
 exports.richiestaFotoMensa = downloadPhoto;
 exports.distanceBetween = getDistance;
-exports.richiestaAvvisi = downloadAvvisi;
+exports.convertDate = toDate;

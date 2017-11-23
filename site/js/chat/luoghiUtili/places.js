@@ -1,14 +1,13 @@
 var places;
-var url="https://botingse2.herokuapp.com/localizza?";
 
-$(document).ready(function() {
-	places = function(name, place)
-    {
-		url += "name=" + name + "&";
-		url += "place=" + place;
-		$.getJSON(url, function(data) {
-			var myJSON = JSON.stringify(data);
-			parent.twonav(0,data);
-		});
-    }
-});
+places = function(name, place)
+{
+	var url="https://unitnhelpbot.herokuapp.com/localizza?";
+	url += "name=" + name + "&";
+	url += "place=" + place;
+	console.log("url: " + url);
+	$.getJSON(url, function(data) {
+		var myJSON = JSON.stringify(data);
+		parent.twonav(0,data);
+	});
+}
