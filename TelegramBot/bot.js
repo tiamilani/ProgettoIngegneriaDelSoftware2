@@ -37,7 +37,7 @@ const scadenzeChoices = ['scadenze documenti','inserisci scadenza','modifica sca
 const mensaChoices = ['mensa vicina'];
 const avvisiChoices = ['avvisi dipartimenti','dicam','dii','cisca'];
 const luoghiChoices = ['luoghi utili'];
-const howtoChoices = ['howto','ammissioni','immatricolazioni','borse di studio','tasse universitarie','supporto','libera circolazione',
+const howtoChoices = ['how to','ammissioni','immatricolazioni','borse di studio','tasse universitarie','supporto','libera circolazione',
     'trasferimenti','open day','rinnovo iscrizioni','futuro studente','didattica','orientamento','iscrizioni','agevolazioni','ateneo',
     'servizi','non solo studio','prospective international student','ammissioni lauree e lauree magistrali a ciclo unico',
     'ammissioni lauree magistrali','immatricolazioni lauree e lauree magistrali a ciclo unico','immatricolazioni lauree magistrali',
@@ -567,11 +567,12 @@ function Luoghi (msg) {
 
 function HowTo (msg) {
     switch (msg.text.toLowerCase()) {
-        case 'howto':
+        case 'how to':
             var text = "In questa sezione puoi ottenere le informazioni sul corretto svolgimento delle diverse pratiche legate all'Università";
             var keyboard = {
                 reply_markup: JSON.stringify({
                     keyboard: [
+                        ['Home'],
                         ['Ammissioni', 'Immatricolazioni'],
                         ['Tasse Universitarie', 'Borse di studio'],
                         ['Trasferimenti', 'Supporto'],
@@ -591,6 +592,7 @@ function HowTo (msg) {
             var keyboard = {
                 reply_markup: JSON.stringify({
                     keyboard: [
+                        ['Home'],
                         ['Tasse A.A. 17-18', 'ISEE A.A. 17-18'],
                         ['Pagamenti', 'Rimborsi'],
                     ],
@@ -620,6 +622,7 @@ function HowTo (msg) {
             var keyboard = {
                 reply_markup: JSON.stringify({
                     keyboard: [
+                        ['Home'],
                         ['Ammissioni Lauree e Lauree Magistrali a ciclo unico'],
                         ['Ammissioni Lauree Magistrali']
                     ],
@@ -642,6 +645,7 @@ function HowTo (msg) {
             var keyboard = {
                 reply_markup: JSON.stringify({
                     keyboard: [
+                        ['Home'],
                         ['Immatricolazioni Lauree e Lauree Magistrali a ciclo unico'],
                         ['Immatricolazioni Lauree Magistrali']
                     ],
@@ -664,6 +668,7 @@ function HowTo (msg) {
             var keyboard = {
                 reply_markup: JSON.stringify({
                     keyboard: [
+                        ['Home'],
                         ['Rinnovo iscrizione con pagamento tasse'],
                         ['Rinnovo iscrizione con richiesta borsa di studio'],
                         ['Rinnovo iscrizione studenti con bisogni particolari']
@@ -690,6 +695,7 @@ function HowTo (msg) {
             var keyboard = {
                 reply_markup: JSON.stringify({
                     keyboard: [
+                        ['Home'],
                         ['Borse di studio e Posto alloggio'],
                         ['Dichiarazione di invalidità o disabilità'],
                         ['Attesa di Laurea', 'Libera circolazione']
@@ -719,6 +725,7 @@ function HowTo (msg) {
             var keyboard = {
                 reply_markup: JSON.stringify({
                     keyboard: [
+                        ['Home'],
                         ['Trasferimento verso un altro ateneo'],
                         ['Trasferimento da un altro ateno'],
                         ['Trasferimento da un altro ateneo Laurea Magistrale']
@@ -743,6 +750,7 @@ function HowTo (msg) {
             var keyboard = {
                 reply_markup: JSON.stringify({
                     keyboard: [
+                        ['Home'],
                         ['Economia - Giurisprudenza - Lettere'],
                         ['Sociologia - Filosofia'],
                         ['Fisica - Matematica'],
@@ -795,6 +803,7 @@ function HowTo (msg) {
             var keyboard = {
                 reply_markup: JSON.stringify({
                     keyboard: [
+                        ['Home'],
                         ['Didattica', 'Iscrizioni'],
                         ['Orientamento', 'Agevolazioni'],
                         ['Servizi', 'Ateneo'],

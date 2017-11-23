@@ -12,6 +12,7 @@ function homeKeyboard () {
 			keyboard: [
 				['Mezzi Urbani TTE'],
 				['Luoghi Utili'],
+				['How To'],
 				['Avvisi Dipartimenti'],
 				['Scadenze Documenti'],
                 ['Mensa Vicina']
