@@ -3,7 +3,6 @@ const ch = require('cheerio');
 const dw = require('website-scraper');
 const fs = require('fs');
 const ext = require('path');
-const how = require('../../TelegramBot/howto.js');
 
 var link_tasse = {};
 var link_ammissioni = {};
@@ -26,11 +25,6 @@ var nonSoloStudio = {titolo: "", diretto: "", link:{} };
 var saved = false;
 
 exports.base = function(req, resp){
-  /*var json = JSON.stringify({
-    base: 'switch',
-    type: 'howto'
-  });
-  resp.end(json);*/
 
   console.log('Switch per verificare la richiesta in corso');
 	resp.writeHead(200, {"Content-Type": "application/json"});
