@@ -25,7 +25,31 @@
 								</select>
 								<div conv-fork="helpSelection">
 									<div conv-case="mezzi">
-										<input type="text" conv-question="Hai selezionato la sezione mezzi" no-answer="true">
+										<input type="text" conv-question="La sezione mezzi ti permette di: " no-answer="true">
+										<input type="text" conv-question="Cercare una fermata e vedere gli orari di quella fermata" no-answer="true">
+										<input type="text" conv-question="Cercare le informazioni di una linea" no-answer="true">
+										<input type="text" conv-question="Vedere solo i prossimi orari di una fermata" no-answer="true">
+										<input type="text" conv-question="Vedere gli avvisi del giorno per le linee che subiranno variazioni" no-answer="true">
+										<select name="sezzioneMezzi" conv-question="Cosa ti interessa?">
+		                                    <option value="fermata" callback="sezzioneMezzifermata">Fermata</option>
+		                                    <option value="linea" callback="sezzioneMezzilinea">Linea</option>
+											<option value="next" callback="sezzioneMezzinext">Prossimo autobus</option>
+											<option value="avvisi" callback="sezzioneMezziavvisi">Avvisi Linee</option>
+		                                </select>
+										<div conv-fork="sezioneAvvisi">
+		                                    <div conv-case="fermata">
+		                                        <input type="text" conv-question="Seleziona la fermata qui a destra per ottenere gli orari :) | Troverai i risultati qui sulla destra" no-answer="true">
+											</div>
+											<div conv-case="linea">
+		                                        <input type="text" conv-question="Seleziona la linea che ti interessa cercare qui a destra | Troverai le informazioni qui sulla destra | Spero tu posso trovare l'autobus che ti è più comodo qui sulla destra" no-answer="true">
+											</div>
+											<div conv-case="next">
+		                                        <input type="text" conv-question="Seleziona la fermata qui sulla destra per vedere i prossimi autobus che passeranno l&iacute;" no-answer="true">
+											</div>
+											<div conv-case="avvisi">
+		                                        <input type="text" conv-question="Sulla destra troverai gli avvisi del giorno, spero la tua linea non abbia subito variazioni" no-answer="true">
+											</div>
+										</div>
 									</div>
 									<div conv-case="howto">
 										<input type="text" conv-question="Hai selezionato la sezione How to" no-answer="true">
@@ -81,9 +105,23 @@
 											<div conv-case="trasferimenti">
 												<select name="sezioneHowToTrasferimenti" conv-question="Le informazioni che cerchi cosa riguardano? | cosa stai cercando? | Dimmi come posso aiutarti :)">
 				                                    <option value="verso" callback="howTotrasferimentiverso">Trasferimento verso un altro ateneo</option>
-				                                    <option value="da" callback="howTotrasferimentida">Trasferimento da un altro ateneo</option>
+				                                    <option value="da">Trasferimento da un altro ateneo</option>
 				                                    <option value="daMagistrali" callback="howTotrasferimentidaMagistrali">Trasferimento da un altro ateneo magistrale</option>
 				                                </select>
+												<div conv-fork="sezioneHowToTrasferimenti">
+													<div conv-case="da">
+														<select name="sezioneHowToTrasferimentida" conv-question="Che facolt&agrave; stai cercando?">
+						                                    <option value="centro" callback="sezioneHowToTrasferimentidacentro">Lettere Giurisprudenza Filosofia Sociologia Economia</option>
+						                                    <option value="povo" callback="sezioneHowToTrasferimentidapovo">Matematica Fisica Ingegneria dell'informazione</option>
+															<option value="rovereto" callback="sezioneHowToTrasferimentidarovereto"> Psicologia Scienze Cognitive</option>
+						                                    <option value="cibio" callback="sezioneHowToTrasferimentidacibio">Cibio</option>
+															<option value="dii" callback="sezioneHowToTrasferimentidadii">Dii</option>
+						                                    <option value="enologia" callback="sezioneHowToTrasferimentidaenologia">Enologia</option>
+															<option value="dicam" callback="sezioneHowToTrasferimentidadicam">Dicam</option>
+						                                    <option value="edile" callback="sezioneHowToTrasferimentidaedile">Ingegneria edile ed Architettura</option>
+						                                </select>
+													</div>
+												</div>
 											</div>
 											<div conv-case="supporto">
 												<input type="text" conv-question="Qui a destra troverai le informazioni che cerchi :)" no-answer="true">
@@ -317,10 +355,24 @@
 		<script type="text/javascript" src="../js/chat/luoghiUtili/places.js"></script>
 		<script type="text/javascript" src="../js/chat/avvisi/avvisi.js"></script>
 		<script type="text/javascript" src="../js/chat/howTo/howTo.js"></script>
+		<script type="text/javascript" src="../js/chat/mezzi/mezzi.js"></script>
 
 		<script>
 			function ricarica() {
 				reload();
+			}
+
+			function sezzioneMezzifermata() {
+				mezzi("ermata","1",4);
+			}
+			function sezzioneMezzilinea() {
+				mezzi("linea","1",5);
+			}
+			function sezzioneMezzinext() {
+				mezzi("next","1",6);
+			}
+			function sezzioneMezziavvisi() {
+				mezzi("AvvisiLinee","",7);
 			}
 
 			function HowToAmmissioniciclo() {
@@ -366,9 +418,32 @@
 			function howTotrasferimentiverso() {
 				howTo("trasferimenti","trasferimenti-verso","");
 			}
-			function howTotrasferimentida() {
-				howTo("trasferimenti","trasferimenti-da","");
+
+			function sezioneHowToTrasferimentidacentro(){
+				howTo("trasferimenti","trasferimenti-da","centro");
 			}
+			function sezioneHowToTrasferimentidapovo(){
+				howTo("trasferimenti","trasferimenti-da","povo");
+			}
+			function sezioneHowToTrasferimentidarovereto(){
+				howTo("trasferimenti","trasferimenti-da","rovereto");
+			}
+			function sezioneHowToTrasferimentidacibio(){
+				howTo("trasferimenti","trasferimenti-da","cibio");
+			}
+			function sezioneHowToTrasferimentidadii(){
+				howTo("trasferimenti","trasferimenti-da","dii");
+			}
+			function sezioneHowToTrasferimentidaenologia(){
+				howTo("trasferimenti","trasferimenti-da","enologia");
+			}
+			function sezioneHowToTrasferimentidadicam(){
+				howTo("trasferimenti","trasferimenti-da","dicam");
+			}
+			function sezioneHowToTrasferimentidaedile(){
+				howTo("trasferimenti","trasferimenti-da","edile");
+			}
+
 			function howTotrasferimentidaMagistrali() {
 				howTo("trasferimenti","trasferimenti-da-magistrale","");
 			}

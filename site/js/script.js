@@ -2,7 +2,11 @@ var links = [
     'page/luoghiUtili.html',
 	'page/avvisi.html',
     'page/howTo.html',
-    'page/howToOpenDay.html'
+    'page/howToOpenDay.html',
+    'page/mezzi/fermata.html',
+    'page/mezzi/linea.html',
+    'page/mezzi/next.html',
+    'page/mezzi/avvisi.html'
 ];
 
 var one, two;

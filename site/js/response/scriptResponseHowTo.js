@@ -11,5 +11,5 @@ $(document).ready(function() {
     $(explanation).appendTo('#rowHowTo');
 
 	console.log("Link inserito: " + link);
-	$("#linkPagina").prop("href", "http://" + link);
+	$("#linkPagina").prop("href", link);
 });

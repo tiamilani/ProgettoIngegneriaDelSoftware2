@@ -1,0 +1,48 @@
+body{
+	background-color: white;
+}
+
+#title{
+	font-size: 32px;
+}
+
+#colTitle{
+	background-color: #c0c5ce;
+	border-radius: 10px;
+}
+
+.row{
+    margin-top: 3%;
+    margin-bottom: 1%;
+}
+
+.rowStops{
+    font-size: 16px;
+}
+
+.getPMargin{
+    margin: 0 0 10px;
+}
+
+.alignColumn{
+    float: none;
+    display: table-cell;
+    vertical-align: bottom;
+}
+
+hr {
+  border: 0;
+  clear:both;
+  display:block;
+  width: 96%;
+  background-color:#c0c5be;
+  height: 1px;
+}
+
+#container-fluid {
+	margin-top: 3%;
+	margin-bottom: 3%;
+	margin-right: 5%;
+	margin-left: 5%;
+    font-size: 18px;
+}
