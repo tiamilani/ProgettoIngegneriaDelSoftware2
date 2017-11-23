@@ -43,7 +43,11 @@ const howtoChoices = ['howto','ammissioni','immatricolazioni','borse di studio',
     'ammissioni lauree magistrali','immatricolazioni lauree e lauree magistrali a ciclo unico','immatricolazioni lauree magistrali',
     'pagamenti','rimborsi','tasse a.a. 17-18','isee a.a. 17-18','borse di studio e posto alloggio','dichiarazione di invalidità o disabilità',
     'attesa di laurea','trasferimento verso un altro ateneo','trasferimento da un altro ateneo','trasferimento da un altro ateneo laurea magistrale',
-    'rinnovo iscrizione con pagamento tasse','rinnovo iscrizione con richiesta di borsa di studio','rinnovo iscrizione studenti con bisogni particolari'];
+    'rinnovo iscrizione con pagamento tasse','rinnovo iscrizione con richiesta di borsa di studio','rinnovo iscrizione studenti con bisogni particolari',
+    'Economia - Giurisprudenza - Lettere', 'Sociologia - Filosofia', 'Fisica - Matematica', 'Ingegneria dell\'Informazioni', 'Psicologia - Scienze Cognitive',
+    'Scienza e Tecnologie Biomolecolari', 'Ingegneria Industriale', 'Viticoltura ed Enologia', 'Ingengeria Civile - Ingegneria Ambientale',
+    'Ingegneria Edile - Architettura'];
+
 
 //var matches = similar.findBestMatch(msg.text.toLowerCase(), keywords);
 //bot.sendMessage(msg.chat.id, "Hai scritto " + msg.text + "\nNon ho trovato il comando desiderato. Forse intendevi " + matches.bestMatch.target + "?");
