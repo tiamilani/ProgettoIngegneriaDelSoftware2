@@ -8,22 +8,22 @@ Settare i riferimenti al file contentente le API di Mezzi
 ### FERMATA
 Basta aggiungere nel file Routes il seguente spezzone di codice:
 
-`app.route(/<rotta>).get(urban.Fermata).post(urban.Fermata);`
+`app.route(/fermata).get(urban.Fermata).post(urban.Fermata);`
 
 In pratica è sufficiente indirizzare le richieste get e post alla funzione `Fermata` presente in `urban`.
 
 Le richieste consentite sono:
 
-1. `/<rotta>?fase=1`
+1. `/fermata?fase=1`
 	> Questa è la prima fase. Verranno restituiti i valori:
 	+ `Ask`		-> Frase da stampare all'utente
 	+ `Choices` -> Scelte consentite
-2. `/<rotta>?fase=2&name=<fermata>`
+2. `/fermata?fase=2&name=<fermata>`
 	> Questa è la seconda fase. Verranno restituiti i valori:
 	+ `nameT` 	-> Nome da passare in request alla fase successiva
 	+ `Ask`		-> Frase da stampare all'utente
 	+ `Choices` -> Scelte consentite
-3. `/<rotta>?fase=3&nameT=<nameT>&name=<linea>`
+3. `/fermata?fase=3&nameT=<nameT>&name=<linea>`
 	> Questa è la terza fase. Verranno restituiti i valori:
 	+ `Choices` -> Risultati
 
