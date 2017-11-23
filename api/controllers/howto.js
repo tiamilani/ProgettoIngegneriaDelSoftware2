@@ -884,7 +884,7 @@ function controlAssign(title, link, node, $){
                       }
                       if(link.length != 0 && didattica.diretto.length == 0){
                         if(!link.includes('http')){
-                          link = 'www.unitn.it' + link;
+                          link = 'http://www.unitn.it' + link;
                         }
                         didattica.diretto = link;
                       }
@@ -896,7 +896,7 @@ function controlAssign(title, link, node, $){
                           console.log(desc);
 
                           if(!ref.includes('http')){
-                            ref = 'www.unitn.it' + ref;
+                            ref = 'http://www.unitn.it' + ref;
                           }
 
                           if(desc.includes('corsi'))
@@ -917,7 +917,7 @@ function controlAssign(title, link, node, $){
                       }
                       if(link.length != 0 && iscrizioni.diretto.length == 0){
                         if(!link.includes('http')){
-                          link = 'www.unitn.it' + link;
+                          link = 'http://www.unitn.it' + link;
                         }
                         iscrizioni.diretto = link;
                       }
@@ -929,7 +929,7 @@ function controlAssign(title, link, node, $){
                           console.log(desc);
 
                           if(!ref.includes('http')){
-                            ref = 'www.unitn.it' + ref;
+                            ref = 'http://www.unitn.it' + ref;
                           }
 
                           if(desc.includes('ammissione')){
@@ -956,7 +956,7 @@ function controlAssign(title, link, node, $){
                       }
                       if(link.length != 0){
                         if(!link.includes('http')){
-                          link = 'www.unitn.it' + link;
+                          link = 'http://www.unitn.it' + link;
                         }
                         orientamento.diretto = link;
                       }
@@ -968,7 +968,7 @@ function controlAssign(title, link, node, $){
                           console.log(desc);
 
                           if(!ref.includes('http')){
-                            ref = 'www.unitn.it' + ref;
+                            ref = 'http://www.unitn.it' + ref;
                           }
 
                           if(desc.includes('costo'))
@@ -989,7 +989,7 @@ function controlAssign(title, link, node, $){
                       }
                       if(link.length != 0 && agevolazioni.diretto.length == 0){
                         if(!link.includes('http')){
-                          link = 'www.unitn.it' + link;
+                          link = 'http://www.unitn.it' + link;
                         }
                         agevolazioni.diretto = link;
                       }
@@ -1001,7 +1001,7 @@ function controlAssign(title, link, node, $){
                           console.log(desc);
 
                           if(!ref.includes('http')){
-                            ref = 'www.unitn.it' + ref;
+                            ref = 'http://www.unitn.it' + ref;
                           }
 
                           if(desc.includes('borse'))
@@ -1024,7 +1024,7 @@ function controlAssign(title, link, node, $){
                       }
                       if(link.length != 0 && servizi.diretto.length == 0){
                         if(!link.includes('http')){
-                          link = 'www.unitn.it' + link;
+                          link = 'http://www.unitn.it' + link;
                         }
                         servizi.diretto = link;
                       }
@@ -1036,7 +1036,7 @@ function controlAssign(title, link, node, $){
                           console.log(desc);
 
                           if(!ref.includes('http')){
-                            ref = 'www.unitn.it' + ref;
+                            ref = 'http://www.unitn.it' + ref;
                           }
 
                           if(desc.includes('biblioteca'))
@@ -1075,7 +1075,7 @@ function controlAssign(title, link, node, $){
                       }
                       if(link.length != 0 && ateneo.diretto.length == 0){
                         if(!link.includes('http')){
-                          link = 'www.unitn.it' + link;
+                          link = 'http://www.unitn.it' + link;
                         }
                         ateneo.diretto = link;
                       }
@@ -1087,7 +1087,7 @@ function controlAssign(title, link, node, $){
                           console.log(desc);
 
                           if(!ref.includes('http')){
-                            ref = 'www.unitn.it' + ref;
+                            ref = 'http://www.unitn.it' + ref;
                           }
 
                           if(desc.includes('presentazione'))
@@ -1114,7 +1114,7 @@ function controlAssign(title, link, node, $){
                       }
                       if(link.length != 0 && international.diretto.length == 0){
                         if(!link.includes('http')){
-                          link = 'www.unitn.it' + link;
+                          link = 'http://www.unitn.it' + link;
                         }
                         international.diretto = link;
                       }
@@ -1126,7 +1126,7 @@ function controlAssign(title, link, node, $){
                           console.log(desc);
 
                           if(!ref.includes('http')){
-                            ref = 'www.unitn.it' + ref;
+                            ref = 'http://www.unitn.it' + ref;
                           }
 
                           if(desc.includes('students'))
@@ -1145,7 +1145,7 @@ function controlAssign(title, link, node, $){
                       }
                       if(link.length != 0 && nonSoloStudio.diretto.length == 0){
                         if(!link.includes('http')){
-                          link = 'www.unitn.it' + link;
+                          link = 'http://www.unitn.it' + link;
                         }
                         nonSoloStudio.diretto = link;
                       }
@@ -1157,7 +1157,7 @@ function controlAssign(title, link, node, $){
                           console.log(desc);
 
                           if(!ref.includes('http')){
-                            ref = 'www.unitn.it' + ref;
+                            ref = 'http://www.unitn.it' + ref;
                           }
 
                           if(desc.includes('apple'))
