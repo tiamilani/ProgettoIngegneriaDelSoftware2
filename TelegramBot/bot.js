@@ -5,7 +5,7 @@ const dead = require ('./sectionScadenze.js');
 const alert = require ('./sectionAvvisi.js');
 const place = require ('./sectionLuoghiUtili.js');
 const eat = require ('./sectionMensa.js');
-const how = require('./sectionHowTo.js');
+const how = require('./sectionHowTo');
 const similar = require('string-similarity');
 //const cron = require('node-schedule');
 
