@@ -5,6 +5,7 @@ module.exports = function(app) {
 	var telegramController = require ('../controllers/telegramController');
 	const TOKEN = process.env.TELEGRAM_TOKEN || '466491462:AAF8RxkhGR00Mylr0LGZfFWUMvPVWSHqUPE';
 	var avvisi = require ('../controllers/avvisi');
+	var howto = require ('../controllers/howto');
 	const urban = require ('../controllers/mezzi.js');
 
 	// todoList Routes
