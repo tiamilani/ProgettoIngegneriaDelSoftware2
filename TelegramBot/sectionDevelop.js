@@ -5,6 +5,23 @@ const tte = require('download-file');
 const unzip = require('adm-zip');
 const csv = require('fast-csv');
 
+function homeKeyboard () {
+	return {
+		parse_mode: "Markdown",
+        reply_markup: JSON.stringify({
+			keyboard: [
+				['Mezzi Urbani TTE'],
+				['Luoghi Utili'],
+				['Avvisi Dipartimenti'],
+				['Scadenze Documenti'],
+                ['Mensa Vicina']
+			],
+            one_time_keyboard: true,
+            resize_keyboard: true
+        })
+    };
+}
+
 function connectToDatabaseInit (connection) {
 	//console.log("IN CONNESSIONE");
 	return new Promise((resolve, reject) => {
@@ -24,7 +41,7 @@ function connectToDatabaseInit (connection) {
 				return resolve(con);
 			});
 		} else {
-			console.log("Connesso");
+			//console.log("Connesso");
 			return resolve(connection);
 		}
 	});
@@ -56,7 +73,7 @@ function connectToDatabase (connection) {
 				});
 			});
 		} else {
-			console.log("Connesso");
+			//console.log("Connesso");
 			connection.query("SHOW TABLES", function (err, result) {
 				if (err) return reject(err);
 
@@ -107,7 +124,33 @@ function checkAdmins (bot, msg, connection) {
 				});
 			})
 			.catch(err => {
-				bot.sendMessage(msg.chat.id, err);
+				return reject(err);
+			});
+	});
+}
+
+function checkAdminsLess (msg, connection) {
+	return new Promise((resolve, reject) => {
+		console.log("checkAdminsLess");
+		connectToDatabaseInit(connection)
+			.then((con) => {
+				var query = "SELECT * FROM users WHERE type='admin'";
+				con.query(query, function (err, result) {
+					if (err) return reject(err);
+
+					var admins = [];
+					for(let i = 0; i < result.length; i++)
+						if(result[i].type == "admin")
+							admins.push(parseInt(result[i].ChatID));
+
+					if(admins.includes(msg.chat.id))
+						return resolve(true);
+					else
+						return resolve(false);
+				});
+			})
+			.catch(err => {
+				return reject(err);
 			});
 	});
 }
@@ -335,9 +378,11 @@ function getInfoDB (bot, id, connection) {
 
 
 // ---------- EXPORTS ----------
+exports.createHome = homeKeyboard;
 exports.initiateConnection = connectToDatabase;
 exports.initConnectionLess = connectToDatabaseInit;
 exports.isAdmin = checkAdmins;
+exports.couldScadenze = checkAdminsLess;
 exports.eliminaDati = deleteTables;
 exports.inserisciDati = createTables;
 exports.inizializzaUtenti = resetTableUsers;

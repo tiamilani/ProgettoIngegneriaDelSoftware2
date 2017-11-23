@@ -1,5 +1,5 @@
 var howTo;
-var howToopenDay;
+var howToOpenDay;
 
 howTo = function(section,sub,detail)
 {
@@ -22,7 +22,7 @@ howTo = function(section,sub,detail)
 	});
 }
 
-howToopenDay = function(section)
+howToOpenDay = function(section)
 {
 	var url="https://unitnhelpcenter.herokuapp.com/howto?section=";
 	url += section;

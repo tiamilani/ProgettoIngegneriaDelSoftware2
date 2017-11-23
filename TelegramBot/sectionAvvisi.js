@@ -70,10 +70,8 @@ function readHTMLFile(path, bot, msg) {
                 		}
                 		else {
                   			if(bot != null)
-                    			for(i = 0; i < avvisi.length; i++) {
+                    			for(i = 0; i < avvisi.length; i++)
                       				bot.sendMessage(msg.chat.id, avvisi[i]);
-                      				systemSleep(200);
-                    			}
                   			else
 			                    resolve(avvisi);
                 		}
