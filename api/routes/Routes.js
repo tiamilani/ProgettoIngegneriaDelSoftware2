@@ -5,6 +5,7 @@ module.exports = function(app) {
 	const avvisi = require ('../controllers/avvisi');
 	const urban = require ('../controllers/mezzi.js');
 	const dead = require ('../controllers/scadenze.js');
+	const howto = require ('../controllers/howto.js');
 	const telegramController = require ('../controllers/telegramController');
 	const TOKEN = process.env.TELEGRAM_TOKEN || '466491462:AAF8RxkhGR00Mylr0LGZfFWUMvPVWSHqUPE';
 

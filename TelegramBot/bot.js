@@ -5,9 +5,9 @@ const dead = require ('./sectionScadenze.js');
 const alert = require ('./sectionAvvisi.js');
 const place = require ('./sectionLuoghiUtili.js');
 const eat = require ('./sectionMensa.js');
-const how = require('./sectionHowTo.js');
+const how = require ('./sectionHowto.js');
 const similar = require('string-similarity');
-//const cron = require('node-schedule');
+const cron = require('node-schedule');
 
 const TelegramBot = require('node-telegram-bot-api');
 
@@ -30,6 +30,7 @@ bot.setWebHook(`${url}/bot${TOKEN}`);
 console.log('BOT STARTED webHook: ' + `${url}/bot${TOKEN}`);
 
 var databaseConnection = undefined;
+
 const specialChoices = ['home','ilaria','giulia','virginia'];
 const developChoices = ['develop','elimina tabelle','inserisci tabelle','crea indici','crea join','reset users','info db'];
 const mezziChoices = ['mezzi urbani tte','ricerca per linea','ricerca per fermata','prossimo mezzo','avvisi linee', 'tariffe'];
@@ -37,7 +38,7 @@ const scadenzeChoices = ['scadenze documenti','inserisci scadenza','modifica sca
 const mensaChoices = ['mensa vicina'];
 const avvisiChoices = ['avvisi dipartimenti','dicam','dii','cisca'];
 const luoghiChoices = ['luoghi utili'];
-const howtoChoices = ['howto','ammissioni','immatricolazioni','borse di studio','tasse universitarie','supporto','libera circolazione',
+const howtoChoices = ['how to','ammissioni','immatricolazioni','borse di studio','tasse universitarie','supporto','libera circolazione',
     'trasferimenti','open day','rinnovo iscrizioni','futuro studente','didattica','orientamento','iscrizioni','agevolazioni','ateneo',
     'servizi','non solo studio','prospective international student','ammissioni lauree e lauree magistrali a ciclo unico',
     'ammissioni lauree magistrali','immatricolazioni lauree e lauree magistrali a ciclo unico','immatricolazioni lauree magistrali',
@@ -48,13 +49,62 @@ const howtoChoices = ['howto','ammissioni','immatricolazioni','borse di studio',
     'Scienza e Tecnologie Biomolecolari', 'Ingegneria Industriale', 'Viticoltura ed Enologia', 'Ingengeria Civile - Ingegneria Ambientale',
     'Ingegneria Edile - Architettura'];
 
+var last_command = "";
+var last_index;
 
 //var matches = similar.findBestMatch(msg.text.toLowerCase(), keywords);
 //bot.sendMessage(msg.chat.id, "Hai scritto " + msg.text + "\nNon ho trovato il comando desiderato. Forse intendevi " + matches.bestMatch.target + "?");
 
-// ---------- INTERVALS ----------
-
 // ---------- FUNCTIONS ----------
+function UpdateDB () {
+    db.initConnectionLess(databaseConnection)
+        .then((con) => {
+            databaseConnection = con;
+            var query = "SELECT * FROM users WHERE type='admin'";
+            con.query(query, function (err, result) {
+                if (err) throw err;
+
+                var admins = [];
+                for(let i = 0; i < result.length; i++)
+                    if(result[i].type == "admin")
+                        admins.push(parseInt(result[i].ChatID));
+
+                for(let i = 0; i < admins.length; i++)
+                    bot.sendMessage(admins[i], "Inizio Aggiornamento del DB");
+
+                db.eliminaDati(databaseConnection)
+                    .then((res) => {
+                        for(let i = 0; i < admins.length; i++)
+                            bot.sendMessage(admins[i], res);
+                        return db.inserisciDati(databaseConnection);
+                    })
+                    .then((res) => {
+                        for(let i = 0; i < admins.length; i++)
+                            bot.sendMessage(admins[i], res);
+                        return db.verificaDati(databaseConnection);
+                    })
+                    .then((res) => {
+                        for(let i = 0; i < admins.length; i++)
+                            bot.sendMessage(admins[i], res);
+                        return db.prepareMain(databaseConnection);
+                    })
+                    .then((res) => {
+                        for(let i = 0; i < admins.length; i++)
+                            bot.sendMessage(admins[i], res + "\nFine Aggiornamento del DB");
+                    })
+                    .catch(err => {
+                        for(let i = 0; i < admins.length; i++)
+                            bot.sendMessage(admins[i], "Ricomincio a causa dell'Errore: " + err);
+                        bot.emit('funzioniDB');
+                    });
+            });
+        })
+        .catch(err => {
+            console.log("Ricomincio a causa dell'Errore: " + err);
+            bot.emit('funzioniDB');
+        });
+}
+
 function routeCommands (msg, id, connection) {
     console.log("routeCommands");
 	db.initiateConnection(connection)
@@ -274,7 +324,13 @@ function Develop (msg) {
                     db.isAdmin(bot, msg, databaseConnection)
                         .then((result) => {
                             if(result)
-                                db.eliminaDati(bot, msg.chat.id, databaseConnection);
+                                db.eliminaDati(bot, msg.chat.id, databaseConnection)
+                                    .then((res) => {
+                                        bot.sendMessage(msg.chat.id, res);
+                                    })
+                                    .catch(err => {
+                                        bot.sendMessage(msg.chat.id, err);
+                                    });
                             else
                                 bot.sendMessage(msg.chat.id, "Non sei autorizzato ad accedere!\nSei stato segnalato agli amministratori!");
                         })
@@ -293,7 +349,13 @@ function Develop (msg) {
                     db.isAdmin(bot, msg, databaseConnection)
                         .then((result) => {
                             if(result)
-                                db.inserisciDati(bot, msg.chat.id, databaseConnection);
+                                db.inserisciDati(bot, msg.chat.id, databaseConnection)
+                                    .then((res) => {
+                                        bot.sendMessage(msg.chat.id, res);
+                                    })
+                                    .catch(err => {
+                                        bot.sendMessage(msg.chat.id, err);
+                                    });
                             else
                                 bot.sendMessage(msg.chat.id, "Non sei autorizzato ad accedere!\nSei stato segnalato agli amministratori!");
                         })
@@ -331,7 +393,13 @@ function Develop (msg) {
                     db.isAdmin(bot, msg, databaseConnection)
                         .then((result) => {
                             if(result)
-                                db.verificaDati(bot, msg.chat.id, databaseConnection);
+                                db.verificaDati(bot, msg.chat.id, databaseConnection)
+                                    .then((res) => {
+                                        bot.sendMessage(msg.chat.id, res);
+                                    })
+                                    .catch(err => {
+                                        bot.sendMessage(msg.chat.id, err);
+                                    });
                             else
                                 bot.sendMessage(msg.chat.id, "Non sei autorizzato ad accedere!\nSei stato segnalato agli amministratori!");
                         })
@@ -350,7 +418,13 @@ function Develop (msg) {
                     db.isAdmin(bot, msg, databaseConnection)
                         .then((result) => {
                             if(result)
-                                db.prepareMain(bot, msg.chat.id, databaseConnection);
+                                db.prepareMain(bot, msg.chat.id, databaseConnection)
+                                    .then((res) => {
+                                        bot.sendMessage(msg.chat.id, res);
+                                    })
+                                    .catch(err => {
+                                        bot.sendMessage(msg.chat.id, err);
+                                    });
                             else
                                 bot.sendMessage(msg.chat.id, "Non sei autorizzato ad accedere!\nSei stato segnalato agli amministratori!");
                         })
@@ -567,11 +641,12 @@ function Luoghi (msg) {
 
 function HowTo (msg) {
     switch (msg.text.toLowerCase()) {
-        case 'howto':
+        case 'how to':
             var text = "In questa sezione puoi ottenere le informazioni sul corretto svolgimento delle diverse pratiche legate all'Università";
             var keyboard = {
                 reply_markup: JSON.stringify({
                     keyboard: [
+                        ['Home'],
                         ['Ammissioni', 'Immatricolazioni'],
                         ['Tasse Universitarie', 'Borse di studio'],
                         ['Trasferimenti', 'Supporto'],
@@ -591,6 +666,7 @@ function HowTo (msg) {
             var keyboard = {
                 reply_markup: JSON.stringify({
                     keyboard: [
+                        ['Home'],
                         ['Tasse A.A. 17-18', 'ISEE A.A. 17-18'],
                         ['Pagamenti', 'Rimborsi'],
                     ],
@@ -620,6 +696,7 @@ function HowTo (msg) {
             var keyboard = {
                 reply_markup: JSON.stringify({
                     keyboard: [
+                        ['Home'],
                         ['Ammissioni Lauree e Lauree Magistrali a ciclo unico'],
                         ['Ammissioni Lauree Magistrali']
                     ],
@@ -642,6 +719,7 @@ function HowTo (msg) {
             var keyboard = {
                 reply_markup: JSON.stringify({
                     keyboard: [
+                        ['Home'],
                         ['Immatricolazioni Lauree e Lauree Magistrali a ciclo unico'],
                         ['Immatricolazioni Lauree Magistrali']
                     ],
@@ -664,6 +742,7 @@ function HowTo (msg) {
             var keyboard = {
                 reply_markup: JSON.stringify({
                     keyboard: [
+                        ['Home'],
                         ['Rinnovo iscrizione con pagamento tasse'],
                         ['Rinnovo iscrizione con richiesta borsa di studio'],
                         ['Rinnovo iscrizione studenti con bisogni particolari']
@@ -690,6 +769,7 @@ function HowTo (msg) {
             var keyboard = {
                 reply_markup: JSON.stringify({
                     keyboard: [
+                        ['Home'],
                         ['Borse di studio e Posto alloggio'],
                         ['Dichiarazione di invalidità o disabilità'],
                         ['Attesa di Laurea', 'Libera circolazione']
@@ -719,6 +799,7 @@ function HowTo (msg) {
             var keyboard = {
                 reply_markup: JSON.stringify({
                     keyboard: [
+                        ['Home'],
                         ['Trasferimento verso un altro ateneo'],
                         ['Trasferimento da un altro ateno'],
                         ['Trasferimento da un altro ateneo Laurea Magistrale']
@@ -743,6 +824,7 @@ function HowTo (msg) {
             var keyboard = {
                 reply_markup: JSON.stringify({
                     keyboard: [
+                        ['Home'],
                         ['Economia - Giurisprudenza - Lettere'],
                         ['Sociologia - Filosofia'],
                         ['Fisica - Matematica'],
@@ -795,6 +877,7 @@ function HowTo (msg) {
             var keyboard = {
                 reply_markup: JSON.stringify({
                     keyboard: [
+                        ['Home'],
                         ['Didattica', 'Iscrizioni'],
                         ['Orientamento', 'Agevolazioni'],
                         ['Servizi', 'Ateneo'],
@@ -811,32 +894,46 @@ function HowTo (msg) {
             break;
         case 'didattica':
             how.homeFuturoStudente('http://www.unitn.it/futuro-studente', './Futuro_Studente', bot, msg, 'didattica');
+            last_command = 'didattica';
             break;
         case 'iscrizioni':
             how.homeFuturoStudente('http://www.unitn.it/futuro-studente', './Futuro_Studente', bot, msg, 'iscrizioni');
+            last_command = 'iscrizioni';
             break;
         case 'orientamento':
             how.homeFuturoStudente('http://www.unitn.it/futuro-studente', './Futuro_Studente', bot, msg, 'orientamento');
+            last_command = 'orientamento';
             break;
         case 'agevolazioni':
             how.homeFuturoStudente('http://www.unitn.it/futuro-studente', './Futuro_Studente', bot, msg, 'agevolazioni');
+            last_command = 'agevolazioni';
             break;
         case 'servizi':
             how.homeFuturoStudente('http://www.unitn.it/futuro-studente', './Futuro_Studente', bot, msg, 'servizi');
+            last_command = 'servizi';
             break;
         case 'ateneo':
             how.homeFuturoStudente('http://www.unitn.it/futuro-studente', './Futuro_Studente', bot, msg, 'ateneo');
+            last_command = 'ateneo';
             break;
         case 'prospective international student':
             how.homeFuturoStudente('http://www.unitn.it/futuro-studente', './Futuro_Studente', bot, msg, 'international');
+            last_command = 'pis';
             break;
         case 'non solo studio':
             how.homeFuturoStudente('http://www.unitn.it/futuro-studente', './Futuro_Studente', bot, msg, 'studio');
+            last_command = 'nss';
             break;
     }
 }
 
+// ---------- INTERVALS ----------
+var j = cron.scheduleJob('0 0 * * 2', () => {
+    bot.emit('funzioniDB');
+});
+
 // ---------- EVENTS ----------
+bot.on('funzioniDB', UpdateDB);
 bot.on('funzioniSpeciali', Special);
 bot.on('funzioniDevelop', Develop);
 bot.on('funzioniMezzi', Mezzi);
@@ -925,6 +1022,10 @@ bot.on('location', function(msg) {
 
 bot.on('callback_query', function(msg) {
     if(msg.from.is_bot == false) {
+      if(msg.data.includes('howto')){
+        console.log(msg.data + "from " + last_command);
+        //redirect(msg.data.charAt(0), last_command, last_index);
+      }else{
         db.initiateConnection(databaseConnection)
             .then((con) => {
                 databaseConnection = con;
@@ -933,6 +1034,7 @@ bot.on('callback_query', function(msg) {
             .catch(err => {
                 bot.sendMessage(msg.message.chat.id, err);
             });
+      }
     }
 });
 

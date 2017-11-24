@@ -4,7 +4,6 @@ var express = require('express'),
   bodyParser = require('body-parser');
 
 app.use(function(req, res, next) {
-	console.log('Something is happening.');
 	res.header('Access-Control-Allow-Origin', '*');
 	res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
 	if (req.method === 'Options') {
@@ -27,4 +26,4 @@ app.listen(port);
 
 //const bot = require('./TelegramBot/bot');
 
-console.log('todo list RESTful API server started on: ' + port);
+console.log('RESTful API server started on: ' + port);
