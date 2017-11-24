@@ -1012,6 +1012,10 @@ bot.on('location', function(msg) {
 
 bot.on('callback_query', function(msg) {
     if(msg.from.is_bot == false) {
+      if(msg.data.includes('howto')){
+        console.log(msg.data + "from " + last_command);
+        //redirect(msg.data.charAt(0), last_command, last_index);
+      }else{
         db.initiateConnection(databaseConnection)
             .then((con) => {
                 databaseConnection = con;
@@ -1020,6 +1024,7 @@ bot.on('callback_query', function(msg) {
             .catch(err => {
                 bot.sendMessage(msg.message.chat.id, err);
             });
+      }
     }
 });
 
