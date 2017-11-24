@@ -7,7 +7,7 @@ const place = require ('./sectionLuoghiUtili.js');
 const eat = require ('./sectionMensa.js');
 const how = require ('./sectionHowto.js');
 const similar = require('string-similarity');
-//const cron = require('node-schedule');
+const cron = require('node-schedule');
 
 const TelegramBot = require('node-telegram-bot-api');
 
@@ -30,6 +30,7 @@ bot.setWebHook(`${url}/bot${TOKEN}`);
 console.log('BOT STARTED webHook: ' + `${url}/bot${TOKEN}`);
 
 var databaseConnection = undefined;
+
 const specialChoices = ['home','ilaria','giulia','virginia'];
 const developChoices = ['develop','elimina tabelle','inserisci tabelle','crea indici','crea join','reset users','info db'];
 const mezziChoices = ['mezzi urbani tte','ricerca per linea','ricerca per fermata','prossimo mezzo','avvisi linee', 'tariffe'];
@@ -52,9 +53,56 @@ const howtoChoices = ['how to','ammissioni','immatricolazioni','borse di studio'
 //var matches = similar.findBestMatch(msg.text.toLowerCase(), keywords);
 //bot.sendMessage(msg.chat.id, "Hai scritto " + msg.text + "\nNon ho trovato il comando desiderato. Forse intendevi " + matches.bestMatch.target + "?");
 
-// ---------- INTERVALS ----------
-
 // ---------- FUNCTIONS ----------
+function UpdateDB () {
+    db.initConnectionLess(databaseConnection)
+        .then((con) => {
+            databaseConnection = con;
+            var query = "SELECT * FROM users WHERE type='admin'";
+            con.query(query, function (err, result) {
+                if (err) throw err;
+
+                var admins = [];
+                for(let i = 0; i < result.length; i++)
+                    if(result[i].type == "admin")
+                        admins.push(parseInt(result[i].ChatID));
+
+                for(let i = 0; i < admins.length; i++)
+                    bot.sendMessage(admins[i], "Inizio Aggiornamento del DB");
+
+                db.eliminaDati(databaseConnection)
+                    .then((res) => {
+                        for(let i = 0; i < admins.length; i++)
+                            bot.sendMessage(admins[i], res);
+                        return db.inserisciDati(databaseConnection);
+                    })
+                    .then((res) => {
+                        for(let i = 0; i < admins.length; i++)
+                            bot.sendMessage(admins[i], res);
+                        return db.verificaDati(databaseConnection);
+                    })
+                    .then((res) => {
+                        for(let i = 0; i < admins.length; i++)
+                            bot.sendMessage(admins[i], res);
+                        return db.prepareMain(databaseConnection);
+                    })
+                    .then((res) => {
+                        for(let i = 0; i < admins.length; i++)
+                            bot.sendMessage(admins[i], res + "\nFine Aggiornamento del DB");
+                    })
+                    .catch(err => {
+                        for(let i = 0; i < admins.length; i++)
+                            bot.sendMessage(admins[i], "Ricomincio a causa dell'Errore: " + err);
+                        bot.emit('funzioniDB');
+                    });
+            });
+        })
+        .catch(err => {
+            console.log("Ricomincio a causa dell'Errore: " + err);
+            bot.emit('funzioniDB');
+        });
+}
+
 function routeCommands (msg, id, connection) {
     console.log("routeCommands");
 	db.initiateConnection(connection)
@@ -274,7 +322,13 @@ function Develop (msg) {
                     db.isAdmin(bot, msg, databaseConnection)
                         .then((result) => {
                             if(result)
-                                db.eliminaDati(bot, msg.chat.id, databaseConnection);
+                                db.eliminaDati(bot, msg.chat.id, databaseConnection)
+                                    .then((res) => {
+                                        bot.sendMessage(msg.chat.id, res);
+                                    })
+                                    .catch(err => {
+                                        bot.sendMessage(msg.chat.id, err);
+                                    });
                             else
                                 bot.sendMessage(msg.chat.id, "Non sei autorizzato ad accedere!\nSei stato segnalato agli amministratori!");
                         })
@@ -293,7 +347,13 @@ function Develop (msg) {
                     db.isAdmin(bot, msg, databaseConnection)
                         .then((result) => {
                             if(result)
-                                db.inserisciDati(bot, msg.chat.id, databaseConnection);
+                                db.inserisciDati(bot, msg.chat.id, databaseConnection)
+                                    .then((res) => {
+                                        bot.sendMessage(msg.chat.id, res);
+                                    })
+                                    .catch(err => {
+                                        bot.sendMessage(msg.chat.id, err);
+                                    });
                             else
                                 bot.sendMessage(msg.chat.id, "Non sei autorizzato ad accedere!\nSei stato segnalato agli amministratori!");
                         })
@@ -331,7 +391,13 @@ function Develop (msg) {
                     db.isAdmin(bot, msg, databaseConnection)
                         .then((result) => {
                             if(result)
-                                db.verificaDati(bot, msg.chat.id, databaseConnection);
+                                db.verificaDati(bot, msg.chat.id, databaseConnection)
+                                    .then((res) => {
+                                        bot.sendMessage(msg.chat.id, res);
+                                    })
+                                    .catch(err => {
+                                        bot.sendMessage(msg.chat.id, err);
+                                    });
                             else
                                 bot.sendMessage(msg.chat.id, "Non sei autorizzato ad accedere!\nSei stato segnalato agli amministratori!");
                         })
@@ -350,7 +416,13 @@ function Develop (msg) {
                     db.isAdmin(bot, msg, databaseConnection)
                         .then((result) => {
                             if(result)
-                                db.prepareMain(bot, msg.chat.id, databaseConnection);
+                                db.prepareMain(bot, msg.chat.id, databaseConnection)
+                                    .then((res) => {
+                                        bot.sendMessage(msg.chat.id, res);
+                                    })
+                                    .catch(err => {
+                                        bot.sendMessage(msg.chat.id, err);
+                                    });
                             else
                                 bot.sendMessage(msg.chat.id, "Non sei autorizzato ad accedere!\nSei stato segnalato agli amministratori!");
                         })
@@ -845,7 +917,13 @@ function HowTo (msg) {
     }
 }
 
+// ---------- INTERVALS ----------
+var j = cron.scheduleJob('0 0 * * 2', () => {
+    bot.emit('funzioniDB');
+});
+
 // ---------- EVENTS ----------
+bot.on('funzioniDB', UpdateDB);
 bot.on('funzioniSpeciali', Special);
 bot.on('funzioniDevelop', Develop);
 bot.on('funzioniMezzi', Mezzi);
