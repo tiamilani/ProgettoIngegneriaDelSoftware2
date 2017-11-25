@@ -1,4 +1,5 @@
 var mezzi;
+var mezziTariffe;
 
 mezzi = function(rotta,fase,documento)
 {
@@ -13,4 +14,8 @@ mezzi = function(rotta,fase,documento)
 		var myJSON = JSON.stringify(data);
 		parent.twonav(documento,data);
 	});
+}
+
+mezziTariffe = function() {
+	parent.twonav(8,"");
 }

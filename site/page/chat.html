@@ -22,6 +22,7 @@
 									<option value="howto">How To</option>
 									<option value="luoghiutili">Luoghi utili</option>
 									<option value="avvisi">Avvisi</option>
+									<option value="scadenze" callback="scadenze">Scadenze</option>
 								</select>
 								<div conv-fork="helpSelection">
 									<div conv-case="mezzi">
@@ -35,6 +36,7 @@
 		                                    <option value="linea" callback="sezzioneMezzilinea">Linea</option>
 											<option value="next" callback="sezzioneMezzinext">Prossimo autobus</option>
 											<option value="avvisi" callback="sezzioneMezziavvisi">Avvisi Linee</option>
+											<option value="prezzi" callback="sezzioneMezzitariffe">Tariffe</option>
 		                                </select>
 										<div conv-fork="sezioneAvvisi">
 		                                    <div conv-case="fermata">
@@ -48,6 +50,9 @@
 											</div>
 											<div conv-case="avvisi">
 		                                        <input type="text" conv-question="Sulla destra troverai gli avvisi del giorno, spero la tua linea non abbia subito variazioni" no-answer="true">
+											</div>
+											<div conv-case="tariffe">
+												<input type="text" conv-question="Sulla destra troverai tutte le tariffe offerte da TTE :)" no-answer="true">
 											</div>
 										</div>
 									</div>
@@ -337,6 +342,9 @@
 											</div>
 										</div>
 									</div>
+									<div conv-case="scadenze">
+										<input type="text" conv-question="Ecco a te le scadenze che attualmente conosco :)" no-answer="true">
+									</div>
 								</div>
 								<select conv-question="Mi spiace ma in questa sezione non ho altro da mostrarti, torniamo al menu principale, ok? :)">
                                     <option value="ok" callback="ricarica">Ok</option>
@@ -356,14 +364,19 @@
 		<script type="text/javascript" src="../js/chat/avvisi/avvisi.js"></script>
 		<script type="text/javascript" src="../js/chat/howTo/howTo.js"></script>
 		<script type="text/javascript" src="../js/chat/mezzi/mezzi.js"></script>
+		<script type="text/JavaScript" src="../js/chat/scadenze/scadenze.js"></script>
 
 		<script>
 			function ricarica() {
 				reload();
 			}
 
+			function scadenze() {
+				scadenza();
+			}
+
 			function sezzioneMezzifermata() {
-				mezzi("ermata","1",4);
+				mezzi("fermata","1",4);
 			}
 			function sezzioneMezzilinea() {
 				mezzi("linea","1",5);
@@ -373,6 +386,10 @@
 			}
 			function sezzioneMezziavvisi() {
 				mezzi("AvvisiLinee","",7);
+			}
+
+			function sezzioneMezzitariffe() {
+				mezziTariffe();
 			}
 
 			function HowToAmmissioniciclo() {

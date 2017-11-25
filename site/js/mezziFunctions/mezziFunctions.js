@@ -71,6 +71,12 @@ presentazioneVettore = function(choices,rowName) {
     var vettore = choices;
     var result = "";
 
+	if(vettore == undefined) {
+		result += "<div class=\"row rowStops\"><div class=\"col-md-12\"><h2>Mi dispiace ma non ho trovato alcuna corsa disponibile <i class=\"em em-cry\"></i></h2></div><hr></div>"
+		$('#'+rowName+'').html(result);
+		return;
+	}
+
     for (var i = 0; i < vettore.length; i++) {
         result += "<div class=\"row rowStops\">";
 		result += presentazioneSingolo(vettore[i]);

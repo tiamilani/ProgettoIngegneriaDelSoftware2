@@ -6,7 +6,9 @@ var links = [
     'page/mezzi/fermata.html',
     'page/mezzi/linea.html',
     'page/mezzi/next.html',
-    'page/mezzi/avvisi.html'
+    'page/mezzi/avvisi.html',
+    'page/mezzi/tariffe.html',
+    'page/scadenze.html'
 ];
 
 var one, two;
