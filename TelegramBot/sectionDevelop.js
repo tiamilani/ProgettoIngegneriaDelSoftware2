@@ -5,8 +5,26 @@ const tte = require('download-file');
 const unzip = require('adm-zip');
 const csv = require('fast-csv');
 
+function homeKeyboard () {
+	return {
+		parse_mode: "Markdown",
+        reply_markup: JSON.stringify({
+			keyboard: [
+				['Mezzi Urbani TTE'],
+				['Luoghi Utili'],
+				['How To'],
+				['Avvisi Dipartimenti'],
+				['Scadenze Documenti'],
+                ['Mensa Vicina']
+			],
+            one_time_keyboard: true,
+            resize_keyboard: true
+        })
+    };
+}
+
 function connectToDatabaseInit (connection) {
-	console.log("IN CONNESSIONE");
+	//console.log("IN CONNESSIONE");
 	return new Promise((resolve, reject) => {
 		if(connection == undefined || connection.state === 'disconnected') {
 			console.log("Connetto");
@@ -20,11 +38,11 @@ function connectToDatabaseInit (connection) {
 
 			con.connect(function(err) {
 		        if (err) return reject(err);
-				console.log("ok");
+
 				return resolve(con);
 			});
 		} else {
-			console.log("Connesso");
+			//console.log("Connesso");
 			return resolve(connection);
 		}
 	});
@@ -56,7 +74,7 @@ function connectToDatabase (connection) {
 				});
 			});
 		} else {
-			console.log("Connesso");
+			//console.log("Connesso");
 			connection.query("SHOW TABLES", function (err, result) {
 				if (err) return reject(err);
 
@@ -107,151 +125,228 @@ function checkAdmins (bot, msg, connection) {
 				});
 			})
 			.catch(err => {
-				bot.sendMessage(msg.chat.id, err);
+				return reject(err);
 			});
 	});
 }
 
-function deleteTables (bot, id, connection) {
-	console.log("deleteTables");
-	connectToDatabaseInit(connection)
-		.then((con) => {
-			con.query("SHOW TABLES", function (err, result) {
-				if (err) throw err;
+function checkAdminsLess (msg, connection) {
+	return new Promise((resolve, reject) => {
+		console.log("checkAdminsLess");
+		connectToDatabaseInit(connection)
+			.then((con) => {
+				var query = "SELECT * FROM users WHERE type='admin'";
+				con.query(query, function (err, result) {
+					if (err) return reject(err);
 
-				if(result.length > 1) {
-					let query = "";
+					var admins = [];
 					for(let i = 0; i < result.length; i++)
-						if(result[i].Tables_in_ttesercizio != 'users' && result[i].Tables_in_ttesercizio != 'deadline')
-							query += ("DROP TABLE " + result[i].Tables_in_ttesercizio + ";");
+						if(result[i].type == "admin")
+							admins.push(parseInt(result[i].ChatID));
 
-					con.query(query, function (err, result) {
-						if (err) throw err;
-
-						bot.sendMessage(id, "Tabelle Eliminate");
-					});
-				} else {
-					bot.sendMessage(id, "Tabelle già eliminate");
-				}
+					if(admins.includes(msg.chat.id))
+						return resolve(true);
+					else
+						return resolve(false);
+				});
+			})
+			.catch(err => {
+				return reject(err);
 			});
-		})
-		.catch(err => {
-			bot.sendMessage(id, err);
-		});
+	});
 }
 
-function createTables (bot, id, connection) {
-	console.log("createTables");
-	connectToDatabaseInit(connection)
-		.then((con) => {
-			let url = "http://www.ttesercizio.it/opendata/google_transit_urbano_tte.zip";
+function deleteTables (connection) {
+	return new Promise((resolve, reject) => {
+		console.log("deleteTables");
+		connectToDatabaseInit(connection)
+			.then((con) => {
+				con.query("SHOW TABLES", function (err, result) {
+					if (err) return reject(err);
 
-			let options = {
-				directory: "./tte_db",
-				filename: "tte_urbano.zip"
-			};
+					if(result.length > 2) {
+						var query = "";
+						for(let i = 0; i < result.length; i++)
+							if(result[i].Tables_in_ttesercizio != 'users' && result[i].Tables_in_ttesercizio != 'deadline')
+								query += ("DROP TABLE " + result[i].Tables_in_ttesercizio + ";");
 
-			tte(url, options, function(err) {
-				if (err) throw err;
+						con.query(query, function (err, result) {
+							if (err) throw err;
 
-				try {
-					let zip = new unzip("./tte_db/tte_urbano.zip");
+							return resolve("Tabelle Eliminate");
+						});
+					} else
+						return resolve("Tabelle già eliminate");
+				});
+			})
+			.catch(err => {
+				return reject(err);
+			});
+	});
+}
 
-					zip.extractAllToAsync('./tte_db', true, function (err) {
-						if (err) throw err;
+function createTables (connection) {
+	return new Promise((resolve, reject) => {
+		console.log("createTables");
+		connectToDatabaseInit(connection)
+			.then((con) => {
+				let url = "http://www.ttesercizio.it/opendata/google_transit_urbano_tte.zip";
 
-						let tmpFiles = fs.readdirSync('./tte_db');
-						let fileName;
-						for(let i = 0; i < tmpFiles.length; i++)
-						{
-							fileName = ext.parse(tmpFiles[i]).name;
+				let options = {
+					directory: "./tte_db",
+					filename: "tte_urbano.zip"
+				};
 
-							if(tmpFiles[i].includes("agency") || tmpFiles[i].includes("feed") || tmpFiles[i].includes(".zip") || tmpFiles[i].includes("shape"))
-								fs.unlinkSync('./tte_db' + '/' + tmpFiles[i]);
-							else if(tmpFiles[i].includes(".txt"))
-								fs.renameSync('./tte_db' + '/' + tmpFiles[i], './tte_db' + '/' + fileName + '.csv');
-						}
+				tte(url, options, function(err) {
+					if (err) return reject(err);
 
-						tmpFiles = fs.readdirSync('./tte_db');
-						for(let i = 0; i < tmpFiles.length; i++) {
-							let dirFile = './tte_db/' + tmpFiles[i];
-							let file = tmpFiles[i];
+					try {
+						let zip = new unzip("./tte_db/tte_urbano.zip");
+
+						zip.extractAllToAsync('./tte_db', true, function (err) {
+							if (err) return reject(err);
+
+							let tmpFiles = fs.readdirSync('./tte_db');
+							let fileName;
+							for(let i = 0; i < tmpFiles.length; i++)
+							{
+								fileName = ext.parse(tmpFiles[i]).name;
+
+								if(tmpFiles[i].includes("agency") || tmpFiles[i].includes("feed") || tmpFiles[i].includes(".zip") || tmpFiles[i].includes("shape"))
+									fs.unlinkSync('./tte_db' + '/' + tmpFiles[i]);
+								else if(tmpFiles[i].includes(".txt"))
+									fs.renameSync('./tte_db' + '/' + tmpFiles[i], './tte_db' + '/' + fileName + '.csv');
+							}
+
+							tmpFiles = fs.readdirSync('./tte_db');
+							let dirFile = './tte_db/' + tmpFiles[0];
+							let file = tmpFiles[0];
 							let nameFile = ext.parse(file).name;
 
-							createTableSupport(dirFile, file, nameFile, con, bot, id);
-						}
-					});
-				} catch (e) { bot.sendMessage(id, "Riprova: " + e); }
+							createTableSupport(dirFile, file, nameFile, con)
+							.then((res) => {
+								let dirFile = './tte_db/' + tmpFiles[1];
+								let file = tmpFiles[1];
+								let nameFile = ext.parse(file).name;
+
+								return createTableSupport(dirFile, file, nameFile, con);
+					        })
+					        .then((res) => {
+								let dirFile = './tte_db/' + tmpFiles[2];
+								let file = tmpFiles[2];
+								let nameFile = ext.parse(file).name;
+
+								return createTableSupport(dirFile, file, nameFile, con);
+					        })
+					        .then((res) => {
+								let dirFile = './tte_db/' + tmpFiles[3];
+								let file = tmpFiles[3];
+								let nameFile = ext.parse(file).name;
+
+								return createTableSupport(dirFile, file, nameFile, con);
+					        })
+							.then((res) => {
+								let dirFile = './tte_db/' + tmpFiles[4];
+								let file = tmpFiles[4];
+								let nameFile = ext.parse(file).name;
+
+								return createTableSupport(dirFile, file, nameFile, con);
+					        })
+					        .then((res) => {
+								let dirFile = './tte_db/' + tmpFiles[5];
+								let file = tmpFiles[5];
+								let nameFile = ext.parse(file).name;
+
+								return createTableSupport(dirFile, file, nameFile, con);
+					        })
+							.then((res) => {
+								let dirFile = './tte_db/' + tmpFiles[6];
+								let file = tmpFiles[6];
+								let nameFile = ext.parse(file).name;
+
+								return createTableSupport(dirFile, file, nameFile, con);
+					        })
+							.then((res) => {
+								return resolve("Tabelle Create");
+							})
+					        .catch(err => {
+					            console.log("Creating: " + err);
+					        });
+						});
+					} catch (e) { return reject(e); }
+				});
+			})
+			.catch((err) => {
+				return reject(err);
 			});
-		})
-		.catch((err) => {
-			bot.sendMessage(id, err);
-		});
+	});
 }
 
-function createTableSupport (dirFile, file, nameFile, con, bot, id) {
-    let create = "";
-    let insert = "";
-    let headers = [];
-    let c = 0;
+function createTableSupport (dirFile, file, nameFile, con) {
+	return new Promise((resolve, reject) => {
+	    let create = "";
+	    let insert = "";
+	    let headers = [];
+	    let c = 0;
 
-    csv.fromPath(dirFile)
-    .transform(function(data) {
-        for(j = 0; j < data.length; j++) {
-            data[j] = data[j].replace(/"/g, '');
-            data[j] = data[j].replace(/'/g, '');
-        }
-        return data;
-    })
-    .on("data", function(data) {
-        if(c == 0) {
-            c = 1;
-            create += "CREATE TABLE " + nameFile + ' (';
-            insert += "INSERT INTO " + nameFile + ' (';
-            headers = data.slice();
+	    csv.fromPath(dirFile)
+	    .transform(function(data) {
+	        for(j = 0; j < data.length; j++) {
+	            data[j] = data[j].replace(/"/g, '');
+	            data[j] = data[j].replace(/'/g, '');
+	        }
+	        return data;
+	    })
+	    .on("data", function(data) {
+	        if(c == 0) {
+	            c = 1;
+	            create += "CREATE TABLE " + nameFile + ' (';
+	            insert += "INSERT INTO " + nameFile + ' (';
+	            headers = data.slice();
 
-            for(let j = 0; j < headers.length; j++)
-            {
-                create += headers[j] + " VARCHAR(255)";
-                insert += headers[j];
-                if(j != headers.length - 1)
-                {
-                    create += ', ';
-                    insert += ', ';
-                }
-            }
+	            for(let j = 0; j < headers.length; j++)
+	            {
+	                create += headers[j] + " VARCHAR(255)";
+	                insert += headers[j];
+	                if(j != headers.length - 1)
+	                {
+	                    create += ', ';
+	                    insert += ', ';
+	                }
+	            }
 
-            create += ');';
-            insert += ') VALUES ';
-        }
-        else {
-            headers = data.slice();
-            insert += '(';
+	            create += ');';
+	            insert += ') VALUES ';
+	        }
+	        else {
+	            headers = data.slice();
+	            insert += '(';
 
-            for(let j = 0; j < headers.length; j++)
-            {
-                insert += '\'' + headers[j] + '\'';
-                if(j != headers.length - 1)
-                    insert += ', ';
-            }
+	            for(let j = 0; j < headers.length; j++)
+	            {
+	                insert += '\'' + headers[j] + '\'';
+	                if(j != headers.length - 1)
+	                    insert += ', ';
+	            }
 
-            insert += '),';
-        }
-    })
-    .on("end", function() {
-        var index = insert.lastIndexOf(",");
-        insert = insert.substr(0, index) + ';';
+	            insert += '),';
+	        }
+	    })
+	    .on("end", function() {
+	        var index = insert.lastIndexOf(",");
+	        insert = insert.substr(0, index) + ';';
 
-        con.query(create, function (err, result) {
-            if (err) throw err;
+	        con.query(create, function (err, result) {
+	            if (err) return reject(e);
 
-            con.query(insert, function (err, result) {
-                if (err) throw err;
+	            con.query(insert, function (err, result) {
+	                if (err) return reject(e);
 
-				bot.sendMessage(id, "Creata Tabella " + nameFile);
-            });
-        });
-    });
+					return resolve("Creata Tabella " + nameFile);
+	            });
+	        });
+	    });
+	});
 }
 
 function resetTableUsers (bot, id, connection) {
@@ -271,45 +366,49 @@ function resetTableUsers (bot, id, connection) {
 		});
 }
 
-function alterTable (bot, id, connection) {
-	console.log("alterTable");
-	connectToDatabaseInit(connection)
-		.then((con) => {
-			var query = "ALTER TABLE routes DROP agency_id, DROP route_color, DROP route_text_color;";
-			query += "ALTER TABLE stops DROP stop_code, DROP stop_desc;";
-			query += "ALTER TABLE trips DROP shape_id;";
-			query += "CREATE INDEX trips ON trips (route_id);";
-			query += "CREATE INDEX route_id ON routes (route_id);";
-			query += "CREATE INDEX stop_times ON stop_times (stop_id);";
-			query += "CREATE INDEX stops ON stops (stop_id);";
+function alterTable (connection) {
+	return new Promise((resolve, reject) => {
+		console.log("alterTable");
+		connectToDatabaseInit(connection)
+			.then((con) => {
+				var query = "ALTER TABLE routes DROP agency_id, DROP route_color, DROP route_text_color;";
+				query += "ALTER TABLE stops DROP stop_code, DROP stop_desc;";
+				query += "ALTER TABLE trips DROP shape_id;";
+				query += "CREATE INDEX trips ON trips (route_id);";
+				query += "CREATE INDEX route_id ON routes (route_id);";
+				query += "CREATE INDEX stop_times ON stop_times (stop_id);";
+				query += "CREATE INDEX stops ON stops (stop_id);";
 
-			con.query(query, function (err, result) {
-				if (err) throw err;
+				con.query(query, function (err, result) {
+					if (err) return reject(err);
 
-				bot.sendMessage(id, "Indici Creati & Colonne Eliminate");
+					return resolve("Indici Creati & Colonne Eliminate");
+				});
+			})
+			.catch(err => {
+				return reject(err);
 			});
-		})
-		.catch(err => {
-			bot.sendMessage(id, err);
-		});
+	});
 }
 
-function createJoin (bot, id, connection) {
-	console.log("createJoin");
-	connectToDatabaseInit(connection)
-		.then((con) => {
-			var query = "CREATE TABLE IF NOT EXISTS time_table AS ";
-			query += "SELECT * FROM (((stops NATURAL JOIN stop_times) NATURAL JOIN trips) NATURAL JOIN routes) NATURAL JOIN calendar";
+function createJoin (connection) {
+	return new Promise((resolve, reject) => {
+		console.log("createJoin");
+		connectToDatabaseInit(connection)
+			.then((con) => {
+				var query = "CREATE TABLE IF NOT EXISTS time_table AS ";
+				query += "SELECT * FROM (((stops NATURAL JOIN stop_times) NATURAL JOIN trips) NATURAL JOIN routes) NATURAL JOIN calendar";
 
-			con.query(query, function (err, result) {
-				if (err) throw err;
+				con.query(query, function (err, result) {
+					if (err) return reject(err);
 
-				bot.sendMessage(id, "Join Eseguito");
+					return resolve("Join Eseguito");
+				});
+			})
+			.catch(err => {
+				return reject(err);
 			});
-		})
-		.catch(err => {
-			bot.sendMessage(id, err);
-		});
+	});
 }
 
 function getInfoDB (bot, id, connection) {
@@ -335,9 +434,11 @@ function getInfoDB (bot, id, connection) {
 
 
 // ---------- EXPORTS ----------
+exports.createHome = homeKeyboard;
 exports.initiateConnection = connectToDatabase;
 exports.initConnectionLess = connectToDatabaseInit;
 exports.isAdmin = checkAdmins;
+exports.couldScadenze = checkAdminsLess;
 exports.eliminaDati = deleteTables;
 exports.inserisciDati = createTables;
 exports.inizializzaUtenti = resetTableUsers;
