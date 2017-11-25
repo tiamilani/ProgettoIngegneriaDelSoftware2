@@ -997,6 +997,7 @@ bot.on('text', function(msg) {
                 });
         }
     }
+    
 });
 
 bot.on('location', function(msg) {

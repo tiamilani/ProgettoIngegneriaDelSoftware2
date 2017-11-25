@@ -24,28 +24,13 @@ var international = {titolo: "", diretto: "", link: [] };
 var nonSoloStudio = {titolo: "", diretto: "", link: [] };
 var saved = false;
 
-<<<<<<< HEAD
-function getPaginationFull( current, maxpage ) {
-=======
 /*function getPaginationFull( current, maxpage ) {
->>>>>>> howto
     var buttons = [];
 
     if (current > 1)
         buttons.push( { text: '«1', callback_data: '1' } );
 
     if (current > 2)
-<<<<<<< HEAD
-        buttons.push( { text: `‹${current-1}`, callback_data: (current - 1).toString() } );
-
-    buttons.push( { text: `-${current}-`, callback_data: current.toString() } );
-
-    if (current < maxpage-1)
-        buttons.push( { text: `${current+1}›`, callback_data: (current + 1).toString() } );
-
-    if (current < maxpage)
-        buttons.push( { text: `${maxpage}»`, callback_data: maxpage.toString() } );
-=======
         buttons.push( { text: `‹${current-1}`, callback_data: (current - 1).toString() + " - howto" } );
 
     buttons.push( { text: `-${current}-`, callback_data: current.toString() + " - howto"} );
@@ -55,7 +40,6 @@ function getPaginationFull( current, maxpage ) {
 
     if (current < maxpage)
         buttons.push( { text: `${maxpage}»`, callback_data: maxpage.toString() + " - howto"} );
->>>>>>> howto
 
     return {
         parse_mode: 'Markdown',
@@ -63,11 +47,7 @@ function getPaginationFull( current, maxpage ) {
             inline_keyboard: [ buttons ]
         })
     };
-<<<<<<< HEAD
-}
-=======
 }*/
->>>>>>> howto
 
 var deleteFolderAndFile = function (path, estensione) {
 	if (fs.existsSync(path)) {
@@ -539,55 +519,6 @@ var downloadPageFuturoStudente = function(link, dir, bot, msg, action){
 
         switch(action){
           case 'didattica':
-<<<<<<< HEAD
-														var text = "Eccoti nella sezione " + didattica.titolo + "\n\n" + didattica.diretto + "\n" + didattica.link[0];
-                            /*for(var i = 0; i < didattica.link.length; i++)
-                              bot.sendMessage(msg.chat.id, "Link " + i + ": " + didattica.link[i]);*/
-														bot.sendMessage(msg.chat.id, text, getPaginationFull(1, didattica.link.length));
-
-                            break;
-          case 'iscrizioni':
-                            bot.sendMessage(msg.chat.id, "Titolo: " + iscrizioni.titolo + " e link diretto: " + iscrizioni.diretto);
-                            for(var i = 0; i < iscrizioni.link.length; i++)
-                              bot.sendMessage(msg.chat.id, "Link " + i + ": " + iscrizioni.link[i]);
-
-                            break;
-          case 'orientamento':
-                            bot.sendMessage(msg.chat.id, "Titolo: " + orientamento.titolo + " e link diretto: " + orientamento.diretto);
-                            for(var i = 0; i < orientamento.link.length; i++)
-                              bot.sendMessage(msg.chat.id, "Link " + i + ": " + orientamento.link[i]);
-
-                            break;
-          case 'agevolazioni':
-                            bot.sendMessage(msg.chat.id, "Titolo: " + agevolazioni.titolo + " e link diretto: " + agevolazioni.diretto);
-                            for(var i = 0; i < agevolazioni.link.length; i++)
-                              bot.sendMessage(msg.chat.id, "Link " + i + ": " + agevolazioni.link[i]);
-
-                            break;
-          case 'servizi':
-                            bot.sendMessage(msg.chat.id, "Titolo: " + servizi.titolo + " e link diretto: " + servizi.diretto);
-                            for(var i = 0; i < servizi.link.length; i++)
-                              bot.sendMessage(msg.chat.id, "Link " + i + ": " + servizi.link[i]);
-
-                            break;
-          case 'ateneo':
-                            bot.sendMessage(msg.chat.id, "Titolo: " + ateneo.titolo + " e link diretto: " + ateneo.diretto);
-                            for(var i = 0; i < ateneo.link.length; i++)
-                              bot.sendMessage(msg.chat.id, "Link " + i + ": " + ateneo.link[i]);
-
-                            break;
-          case "international":
-                            bot.sendMessage(msg.chat.id, "Titolo: " + international.titolo + " e link diretto: " + international.diretto);
-                            for(var i = 0; i < international.link.length; i++)
-                              bot.sendMessage(msg.chat.id, "Link " + i + ": " + international.link[i]);
-
-                            break;
-          case "studio":
-                            bot.sendMessage(msg.chat.id, "Titolo: " + nonSoloStudio.titolo + " e link diretto: " + nonSoloStudio.diretto);
-                            for(var i = 0; i < nonSoloStudio.link.length; i++)
-                              bot.sendMessage(msg.chat.id, "Link " + i + ": " + nonSoloStudio.link[i]);
-
-=======
 														var text = "Eccoti nella sezione " + didattica.titolo + "\n\n";
                             if(didattica.diretto.length != 0){
                               text = text + didattica.diretto + "\n\n"
@@ -659,7 +590,6 @@ var downloadPageFuturoStudente = function(link, dir, bot, msg, action){
                             for(var i = 0; i < nonSoloStudio.link.length; i++)
                               text = text + nonSoloStudio.link[i].descrizione + "\n" + nonSoloStudio.link[i].pagina + "\n\n";
                             bot.sendMessage(msg.chat.id, text);
->>>>>>> howto
                             break;
           default: break;
         }
@@ -673,10 +603,6 @@ var downloadPageFuturoStudente = function(link, dir, bot, msg, action){
 
 function controlAssign(title, link, bot, msg, node, $){
 
-<<<<<<< HEAD
-	console.log(title.toLowerCase());
-=======
->>>>>>> howto
   switch(title.toLowerCase()){
     case 'didattica':
                       if(didattica.titolo == ""){
@@ -692,22 +618,15 @@ function controlAssign(title, link, bot, msg, node, $){
                       if(didattica.link.length == 0){
                         node.siblings().children("li").children("a").each(function(){
                           var ref = $(this).attr('href');
-<<<<<<< HEAD
-=======
                           var desc = $(this).text().trim();
                           console.log("Titolo sottosezione -> " + desc);
->>>>>>> howto
 
                           if(!ref.includes('http')){
                             ref = 'www.unitn.it' + ref;
                           }
-<<<<<<< HEAD
 
-                          didattica.link.push(ref);
-=======
                           var couple = {descrizione: desc, pagina: ref};
                           didattica.link.push(couple);
->>>>>>> howto
 
                         });
                       }
@@ -728,24 +647,14 @@ function controlAssign(title, link, bot, msg, node, $){
                       if(iscrizioni.link.length == 0){
                         node.siblings().children("li").children("a").each(function(){
                           var ref = $(this).attr('href');
-<<<<<<< HEAD
-                          var desc = $(this).text().trim().toLowerCase();
-                          console.log(desc);
-=======
                           var desc = $(this).text().trim();
                           console.log("Titolo sottosezione -> " + desc);
->>>>>>> howto
 
                           if(!ref.includes('http')){
                             ref = 'www.unitn.it' + ref;
                           }
-
-<<<<<<< HEAD
-                          iscrizioni.link.push(ref);
-=======
                           var couple = {descrizione: desc, pagina: ref};
                           iscrizioni.link.push(couple);
->>>>>>> howto
 
                         });
                       }
@@ -766,24 +675,14 @@ function controlAssign(title, link, bot, msg, node, $){
                       if(orientamento.link.length == 0){
                         node.siblings().children("li").children("a").each(function(){
                           var ref = $(this).attr('href');
-<<<<<<< HEAD
-                          var desc = $(this).text().trim().toLowerCase();
-                          console.log(desc);
-=======
                           var desc = $(this).text().trim();
                           console.log("Titolo sottosezione -> " + desc);
->>>>>>> howto
 
                           if(!ref.includes('http')){
                             ref = 'www.unitn.it' + ref;
                           }
-
-<<<<<<< HEAD
-                          orientamento.link.push(ref);
-=======
                           var couple = {descrizione: desc, pagina: ref};
                           orientamento.link.push(couple);
->>>>>>> howto
 
                         });
                       }
@@ -804,24 +703,14 @@ function controlAssign(title, link, bot, msg, node, $){
                       if(agevolazioni.link.length == 0){
                         node.siblings().children("li").children("a").each(function(){
                           var ref = $(this).attr('href');
-<<<<<<< HEAD
-                          var desc = $(this).text().trim().toLowerCase();
-                          console.log(desc);
-=======
                           var desc = $(this).text().trim();
                           console.log("Titolo sottosezione -> " + desc);
->>>>>>> howto
 
                           if(!ref.includes('http')){
                             ref = 'www.unitn.it' + ref;
                           }
-
-<<<<<<< HEAD
-                          agevolazioni.link.push(ref);
-=======
                           var couple = {descrizione: desc, pagina: ref};
                           agevolazioni.link.push(couple);
->>>>>>> howto
 
                         });
                       }
@@ -842,24 +731,14 @@ function controlAssign(title, link, bot, msg, node, $){
                       if(servizi.link.length == 0){
                         node.siblings().children("li").children("a").each(function(){
                           var ref = $(this).attr('href');
-<<<<<<< HEAD
-                          var desc = $(this).text().trim().toLowerCase();
-                          console.log(desc);
-=======
                           var desc = $(this).text().trim();
                           console.log("Titolo sottosezione -> " + desc);
->>>>>>> howto
 
                           if(!ref.includes('http')){
                             ref = 'www.unitn.it' + ref;
                           }
-
-<<<<<<< HEAD
-                          servizi.link.push(ref);
-=======
                           var couple = {descrizione: desc, pagina: ref};
                           servizi.link.push(couple);
->>>>>>> howto
 
                         });
                       }
@@ -880,24 +759,14 @@ function controlAssign(title, link, bot, msg, node, $){
                       if(ateneo.link.length == 0){
                         node.siblings().children("li").children("a").each(function(){
                           var ref = $(this).attr('href');
-<<<<<<< HEAD
-                          var desc = $(this).text().trim().toLowerCase();
-                          console.log(desc);
-=======
                           var desc = $(this).text().trim();
                           console.log("Titolo sottosezione -> " + desc);
->>>>>>> howto
 
                           if(!ref.includes('http')){
                             ref = 'www.unitn.it' + ref;
                           }
-
-<<<<<<< HEAD
-                          ateneo.link.push(ref);
-=======
                           var couple = {descrizione: desc, pagina: ref};
                           ateneo.link.push(couple);
->>>>>>> howto
 
                         });
                       }
@@ -918,24 +787,14 @@ function controlAssign(title, link, bot, msg, node, $){
                       if(international.link.length == 0){
                         node.siblings().children("li").children("a").each(function(){
                           var ref = $(this).attr('href');
-<<<<<<< HEAD
-                          var desc = $(this).text().trim().toLowerCase();
-                          console.log(desc);
-=======
                           var desc = $(this).text().trim();
                           console.log("Titolo sottosezione -> " + desc);
->>>>>>> howto
 
                           if(!ref.includes('http')){
                             ref = 'www.unitn.it' + ref;
                           }
-
-<<<<<<< HEAD
-                          international.link.push(ref);
-=======
                           var couple = {descrizione: desc, pagina: ref};
                           international.link.push(couple);
->>>>>>> howto
 
                         });
                       }
@@ -956,24 +815,14 @@ function controlAssign(title, link, bot, msg, node, $){
                       if(nonSoloStudio.link.length == 0){
                         node.siblings().children("li").children("a").each(function(){
                           var ref = $(this).attr('href');
-<<<<<<< HEAD
-                          var desc = $(this).text().trim().toLowerCase();
-                          console.log(desc);
-=======
                           var desc = $(this).text().trim();
                           console.log("Titolo sottosezione -> " + desc);
->>>>>>> howto
 
                           if(!ref.includes('http')){
                             ref = 'www.unitn.it' + ref;
                           }
-
-<<<<<<< HEAD
-                          nonSoloStudio.link.push(ref);
-=======
                           var couple = {descrizione: desc, pagina: ref};
                           nonSoloStudio.link.push(couple);
->>>>>>> howto
 
                         });
                       }
