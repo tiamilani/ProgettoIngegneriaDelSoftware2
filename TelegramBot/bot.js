@@ -5,7 +5,9 @@ const dead = require ('./sectionScadenze.js');
 const alert = require ('./sectionAvvisi.js');
 const place = require ('./sectionLuoghiUtili.js');
 const eat = require ('./sectionMensa.js');
-//const cron = require('node-schedule');
+const how = require ('./sectionHowto.js');
+const similar = require('string-similarity');
+const cron = require('node-schedule');
 
 const TelegramBot = require('node-telegram-bot-api');
 
@@ -18,7 +20,7 @@ const TOKEN = process.env.TELEGRAM_TOKEN || '466491462:AAF8RxkhGR00Mylr0LGZfFWUM
 };
 const bot = new TelegramBot(TOKEN, options);
 bot.setWebHook(`${url}/bot${TOKEN}`);*/
-const url = process.env.APP_URL || 'https://botingse2.herokuapp.com:443';
+const url = process.env.APP_URL || 'https://unitnhelpbot.herokuapp.com:443';
 
 const bot = new TelegramBot(TOKEN);
 
@@ -29,45 +31,87 @@ console.log('BOT STARTED webHook: ' + `${url}/bot${TOKEN}`);
 
 var databaseConnection = undefined;
 
-// ---------- INTERVALS ----------
-/*setInterval(function() {
-    var date = new Date();
-    var middle = date.getTime();
+const specialChoices = ['home','ilaria','giulia','virginia'];
+const developChoices = ['develop','elimina tabelle','inserisci tabelle','crea indici','crea join','reset users','info db'];
+const mezziChoices = ['mezzi urbani tte','ricerca per linea','ricerca per fermata','prossimo mezzo','avvisi linee', 'tariffe'];
+const scadenzeChoices = ['scadenze documenti','inserisci scadenza','modifica scadenza','elimina scadenza'];
+const mensaChoices = ['mensa vicina'];
+const avvisiChoices = ['avvisi dipartimenti','dicam','dii','cisca'];
+const luoghiChoices = ['luoghi utili'];
+const howtoChoices = ['how to','ammissioni','immatricolazioni','borse di studio','tasse universitarie','supporto','libera circolazione',
+    'trasferimenti','open day','rinnovo iscrizioni','futuro studente','didattica','orientamento','iscrizioni','agevolazioni','ateneo',
+    'servizi','non solo studio','prospective international student','ammissioni lauree e lauree magistrali a ciclo unico',
+    'ammissioni lauree magistrali','immatricolazioni lauree e lauree magistrali a ciclo unico','immatricolazioni lauree magistrali',
+    'pagamenti','rimborsi','tasse a.a. 17-18','isee a.a. 17-18','borse di studio e posto alloggio','dichiarazione di invalidità o disabilità',
+    'attesa di laurea','trasferimento verso un altro ateneo','trasferimento da un altro ateneo','trasferimento da un altro ateneo laurea magistrale',
+    'rinnovo iscrizione con pagamento tasse','rinnovo iscrizione con richiesta di borsa di studio','rinnovo iscrizione studenti con bisogni particolari',
+    'Economia - Giurisprudenza - Lettere', 'Sociologia - Filosofia', 'Fisica - Matematica', 'Ingegneria dell\'Informazioni', 'Psicologia - Scienze Cognitive',
+    'Scienza e Tecnologie Biomolecolari', 'Ingegneria Industriale', 'Viticoltura ed Enologia', 'Ingengeria Civile - Ingegneria Ambientale',
+    'Ingegneria Edile - Architettura'];
 
-    date.setHours(11);
-    date.setMinutes(45);
-    var min = date.getTime();
 
-    date.setHours(14);
-    date.setMinutes(30);
-    var max = date.getTime();
-
-    if(middle <= max && middle >= min) {
-        rmrf('./WebcamMense', function () {
-            fun.richiestaFotoMensa('http://www.operauni.tn.it/servizi/ristorazione/webcam', './WebcamMense', ['Povo01.jpg', 'Povo02.jpg', 'mesiano01.jpg', 'mesiano02.jpg', 'tgar.jpg'])
-                .then((res) => {
-                    // Nothing
-                })
-                .catch(err => {
-                    console.error(err);
-                });
-        });
-    }
-
-}, 120 * 1000);*/
+//var matches = similar.findBestMatch(msg.text.toLowerCase(), keywords);
+//bot.sendMessage(msg.chat.id, "Hai scritto " + msg.text + "\nNon ho trovato il comando desiderato. Forse intendevi " + matches.bestMatch.target + "?");
 
 // ---------- FUNCTIONS ----------
+function UpdateDB () {
+    db.initConnectionLess(databaseConnection)
+        .then((con) => {
+            databaseConnection = con;
+            var query = "SELECT * FROM users WHERE type='admin'";
+            con.query(query, function (err, result) {
+                if (err) throw err;
+
+                var admins = [];
+                for(let i = 0; i < result.length; i++)
+                    if(result[i].type == "admin")
+                        admins.push(parseInt(result[i].ChatID));
+
+                for(let i = 0; i < admins.length; i++)
+                    bot.sendMessage(admins[i], "Inizio Aggiornamento del DB");
+
+                db.eliminaDati(databaseConnection)
+                    .then((res) => {
+                        for(let i = 0; i < admins.length; i++)
+                            bot.sendMessage(admins[i], res);
+                        return db.inserisciDati(databaseConnection);
+                    })
+                    .then((res) => {
+                        for(let i = 0; i < admins.length; i++)
+                            bot.sendMessage(admins[i], res);
+                        return db.verificaDati(databaseConnection);
+                    })
+                    .then((res) => {
+                        for(let i = 0; i < admins.length; i++)
+                            bot.sendMessage(admins[i], res);
+                        return db.prepareMain(databaseConnection);
+                    })
+                    .then((res) => {
+                        for(let i = 0; i < admins.length; i++)
+                            bot.sendMessage(admins[i], res + "\nFine Aggiornamento del DB");
+                    })
+                    .catch(err => {
+                        for(let i = 0; i < admins.length; i++)
+                            bot.sendMessage(admins[i], "Ricomincio a causa dell'Errore: " + err);
+                        bot.emit('funzioniDB');
+                    });
+            });
+        })
+        .catch(err => {
+            console.log("Ricomincio a causa dell'Errore: " + err);
+            bot.emit('funzioniDB');
+        });
+}
+
 function routeCommands (msg, id, connection) {
-    console.log("in reoutes");
+    console.log("routeCommands");
 	db.initiateConnection(connection)
 		.then((con) => {
             databaseConnection = con;
-            console.log("init routes");
 	        var query = "SELECT * FROM users WHERE ChatID='" + id + "'";
 	        con.query(query, function (err, result) {
 	            if (err) throw err;
 
-                console.log(result[0].last_command);
 				result = result[0];
 
 				if ((result.last_command).includes("Fermata")) {
@@ -180,555 +224,6 @@ function routeCommands (msg, id, connection) {
 		});
 }
 
-function OperaUniTN (msg) {
-    switch (msg.text) {
-        case 'OperaUniTN':
-            var text = "In questa sezione puoi ottenere i vari documenti:\nBdS -> Borse di Studio\n150O -> Servizio 150 Ore";
-            var keyboard = {
-                reply_markup: JSON.stringify({
-                    keyboard: [
-                        ['Home'],
-                        ['Bandi_BdS', 'Graduatorie_BdS'],
-                        ['Bandi_150O', 'Graduatorie_15O']
-                    ],
-                    one_time_keyboard: true,
-                    resize_keyboard: true
-                })
-            };
-
-            bot.sendMessage(msg.chat.id, text, keyboard);
-            break;
-        case 'Bandi_BdS':
-            fun.richiestaFile('http://www.operauni.tn.it/servizi/borse-di-studio', './Bandi_BdS', bot, msg);
-            break;
-        case 'Graduatorie_BdS':
-        	fun.richiestaFile('http://www.operauni.tn.it/servizi/borse-di-studio/graduatorie', './Graduatorie_BdS', bot, msg);
-            break;
-        case 'Bandi_150O':
-        	fun.richiestaFile('http://www.operauni.tn.it/servizi/150-ore/bandi', './Bandi_150O', bot, msg);
-            break;
-        case 'Graduatorie_15O':
-        	fun.richiestaFile('http://www.operauni.tn.it/servizi/150-ore/graduatorie', './Graduatorie_15O', bot, msg);
-    }
-}
-
-function Mensa (msg) {
-    switch (msg.text) {
-        case 'Mensa':
-            db.initiateConnection(databaseConnection)
-                .then((con) => {
-                    databaseConnection = con;
-                    db.isAdmin(bot, msg, databaseConnection)
-                        .then((result) => {
-                            if(result) {
-                                var text = "In questa sezione puoi ottenere il menu e visualizzare le telecamere delle mense";
-                                var keyboard = {
-                                    reply_markup: JSON.stringify({
-                                        keyboard: [
-                                            ['Home'],
-                                            ['Povo1_PastoLesto', 'Povo1_PastoCompleto'],
-                                            ['Mesiano_1', 'Mesiano_2'],
-                                            ['Tommaso_Gar', 'Menu_Mensa'],
-                                            ['Nearest']
-                                        ],
-                                        one_time_keyboard: true,
-                                        resize_keyboard: true
-                                    })
-                                };
-
-                                bot.sendMessage(msg.chat.id, text, keyboard);
-                            } else {
-                                var text = "In questa sezione puoi ottenere il menu la mensa più vicina";
-                                var keyboard = {
-                                    reply_markup: JSON.stringify({
-                                        keyboard: [
-                                            ['Home'],
-                                            ['Menu_Mensa','Nearest']
-                                        ],
-                                        one_time_keyboard: true,
-                                        resize_keyboard: true
-                                    })
-                                };
-
-                                bot.sendMessage(msg.chat.id, text, keyboard);
-                            }
-                        })
-                        .catch((err) => {
-                            bot.sendMessage(msg.chat.id, err);
-                        });
-                })
-                .catch(err => {
-                    bot.sendMessage(msg.chat.id, err);
-                });
-            break;
-        case 'Povo1_PastoLesto':
-            db.initiateConnection(databaseConnection)
-                .then((con) => {
-                    databaseConnection = con;
-                    db.isAdmin(bot, msg, databaseConnection)
-                    .then((result) => {
-                        if(result) {
-                            if (fs.existsSync("./WebcamMense/Povo01.jpg"))
-                                bot.sendPhoto(msg.chat.id, "./WebcamMense/Povo01.jpg", {caption : "Mensa Pasto Completo di Povo1"} );
-                            else
-                                bot.sendMessage(msg.chat.id, "Le videocamere funzionano unicamente dalle 11:45 alle 14:30");
-                        }
-                        else
-                            bot.sendMessage(msg.chat.id, "Non sei autorizzato ad accedere!\nSei stato segnalato agli amministratori!");
-                    })
-                    .catch(err => {
-                        bot.sendMessage(msg.chat.id, err);
-                    });
-                })
-                .catch(err => {
-                    bot.sendMessage(msg.chat.id, err);
-                });
-            break;
-        case 'Povo1_PastoCompleto':
-            db.initiateConnection(databaseConnection)
-                .then((con) => {
-                    databaseConnection = con;
-                    db.isAdmin(bot, msg, databaseConnection)
-                    .then((result) => {
-                        if(result) {
-                            if (fs.existsSync("./WebcamMense/Povo02.jpg"))
-                                bot.sendPhoto(msg.chat.id, "./WebcamMense/Povo02.jpg", {caption : "Mensa Pasto Lesto di Povo1"} );
-                            else
-                                bot.sendMessage(msg.chat.id, "Le videocamere funzionano unicamente dalle 11:45 alle 14:30");
-                        }
-                        else
-                            bot.sendMessage(msg.chat.id, "Non sei autorizzato ad accedere!\nSei stato segnalato agli amministratori!");
-                    })
-                    .catch(err => {
-                        bot.sendMessage(msg.chat.id, err);
-                    });
-                })
-                .catch(err => {
-                    bot.sendMessage(msg.chat.id, err);
-                });
-            break;
-        case 'Mesiano_1':
-            db.initiateConnection(databaseConnection)
-                .then((con) => {
-                    databaseConnection = con;
-                    db.isAdmin(bot, msg, databaseConnection)
-                    .then((result) => {
-                        if(result) {
-                            if (fs.existsSync("./WebcamMense/mesiano01.jpg"))
-                                bot.sendPhoto(msg.chat.id, "./WebcamMense/mesiano01.jpg", {caption : "Mensa di Mesiano"} );
-                            else
-                                bot.sendMessage(msg.chat.id, "Le videocamere funzionano unicamente dalle 11:45 alle 14:30");
-                        }
-                        else
-                            bot.sendMessage(msg.chat.id, "Non sei autorizzato ad accedere!\nSei stato segnalato agli amministratori!");
-                    })
-                    .catch(err => {
-                        bot.sendMessage(msg.chat.id, err);
-                    });
-                })
-                .catch(err => {
-                    bot.sendMessage(msg.chat.id, err);
-                });
-            break;
-        case 'Mesiano_2':
-            db.initiateConnection(databaseConnection)
-                .then((con) => {
-                    databaseConnection = con;
-                    db.isAdmin(bot, msg, databaseConnection)
-                    .then((result) => {
-                        if(result) {
-                            if (fs.existsSync("./WebcamMense/mesiano02.jpg"))
-                                bot.sendPhoto(msg.chat.id, "./WebcamMense/mesiano02.jpg", {caption : "Mensa di Mesiano"} );
-                            else
-                                bot.sendMessage(msg.chat.id, "Le videocamere funzionano unicamente dalle 11:45 alle 14:30");
-                        }
-                        else
-                            bot.sendMessage(msg.chat.id, "Non sei autorizzato ad accedere!\nSei stato segnalato agli amministratori!");
-                    })
-                    .catch(err => {
-                        bot.sendMessage(msg.chat.id, err);
-                    });
-                })
-                .catch(err => {
-                    bot.sendMessage(msg.chat.id, err);
-                });
-            break;
-        case 'Tommaso_Gar':
-            db.initiateConnection(databaseConnection)
-                .then((con) => {
-                    databaseConnection = con;
-                    db.isAdmin(bot, msg, databaseConnection)
-                    .then((result) => {
-                        if(result) {
-                            if (fs.existsSync("./WebcamMense/tgar.jpg"))
-                                bot.sendPhoto(msg.chat.id, "./WebcamMense/tgar.jpg", {caption : "Mensa di Tommaso Gar"} );
-                            else
-                                bot.sendMessage(msg.chat.id, "Le videocamere funzionano unicamente dalle 11:45 alle 14:30");
-                        }
-                        else
-                            bot.sendMessage(msg.chat.id, "Non sei autorizzato ad accedere!\nSei stato segnalato agli amministratori!");
-                    })
-                    .catch(err => {
-                        bot.sendMessage(msg.chat.id, err);
-                    });
-                })
-                .catch(err => {
-                    bot.sendMessage(msg.chat.id, err);
-                });
-            break;
-        case 'Menu_Mensa':
-        console.log("inoltro");
-            fun.richiestaFile('http://www.operauni.tn.it/servizi/ristorazione/menu', './Menu_Mensa', bot, msg);
-            break;
-        case 'Nearest':
-            eat.Mensa_F1 (bot, msg, databaseConnection);
-    }
-}
-
-function Mezzi (msg) {
-    switch (msg.text) {
-        case 'Mezzi':
-            var text = "In questa sezione puoi ottenere informazioni riguardanti i mezzi di trasporto!";
-            var keyboard = {
-                reply_markup: JSON.stringify({
-                    keyboard: [
-                        ['Home'],
-                        ['Linea','Fermata'],
-                        ['PrimiOrari'],
-                        ['Avvisi_Linee', 'Tariffe']
-                    ],
-                    one_time_keyboard: true,
-                    resize_keyboard: true
-                })
-            };
-
-            bot.sendMessage(msg.chat.id, text, keyboard);
-            break;
-        case 'Linea':
-            urban.Linea_F1(bot, msg, databaseConnection);
-            break;
-        case 'Fermata':
-            urban.Fermata_F1(bot, msg, databaseConnection);
-            break;
-        case 'PrimiOrari':
-            urban.Next_F1(bot, msg, databaseConnection);
-            break;
-        case 'Avvisi_Linee':
-            urban.Avvisi_Linee(bot, msg, databaseConnection);
-            break;
-        case 'Tariffe':
-            var text = "*TARIFFE URBANE DI TRENTO*\n\t*Cartaceo*\n\t\t`€1,20 ->` 70 minuti\n\t\t`€1,50 ->` 120 minuti\n\t\t`€3,00 ->` Giornaliero\n\t*OpenMove*\n\t\t`€1,10 ->` 70 minuti\n\t\t`€1,40 ->` 120 minuti\n\t\t`€2,80 ->` Giornaliero\n\t*A Bordo*\n\t\t`€2,00 ->` Corsa Singola";
-            var keyboard = {
-                parse_mode: "Markdown",
-                reply_markup: JSON.stringify({
-                    keyboard: [
-                        ['Mezzi'],
-                        ['Mensa'],
-                        ['OperaUniTN'],
-                        ['Scadenze']
-                    ],
-                    one_time_keyboard: true,
-                    resize_keyboard: true
-                })
-            };
-
-            bot.sendMessage(msg.chat.id, text, keyboard).then(() => {
-                bot.sendDocument(msg.chat.id, 'http://www.ttesercizio.it/Public/Documenti/tariffario.pdf', {caption: 'Tariffario Biglietti Cartacei 2017/2018'});
-                bot.sendDocument(msg.chat.id, 'http://www.ttesercizio.it/Public/INTROITI/OpenMove_vademecum.pdf', {caption: 'Tariffario Biglietti Elettronici 2017/2018'});
-            });
-    }
-}
-
-function Develop (msg) {
-    switch (msg.text) {
-        case 'Develop':
-            db.initConnectionLess(databaseConnection)
-                .then((con) => {
-                    databaseConnection = con;
-                    db.isAdmin(bot, msg, databaseConnection)
-                        .then((result) => {
-                            if(result) {
-                                var text = "Sezione Sviluppatori";
-                                var keyboard = {
-                                    reply_markup: JSON.stringify({
-                                        keyboard: [
-                                            ['Home'],
-                                            ['Elimina_Tabelle','Inserisci_Tabelle'],
-                                            ['Crea_Indici','Crea_Join'],
-                                            ['Reset_Users','Info_DB']
-                                        ],
-                                        resize_keyboard: true
-                                    })
-                                };
-
-                                bot.sendMessage(msg.chat.id, text, keyboard);
-                            }
-                            else
-                                bot.sendMessage(msg.chat.id, "Non sei autorizzato ad accedere!\nSei stato segnalato agli amministratori!");
-                        })
-                        .catch(err => {
-                            bot.sendMessage(msg.chat.id, err);
-                        });
-                })
-                .catch(err => {
-                    bot.sendMessage(msg.chat.id, err);
-                });
-            break;
-        case 'Elimina_Tabelle':
-            db.initConnectionLess(databaseConnection)
-                .then((con) => {
-                    databaseConnection = con;
-                    db.isAdmin(bot, msg, databaseConnection)
-                        .then((result) => {
-                            if(result)
-                                db.eliminaDati(bot, msg.chat.id, databaseConnection);
-                            else
-                                bot.sendMessage(msg.chat.id, "Non sei autorizzato ad accedere!\nSei stato segnalato agli amministratori!");
-                        })
-                        .catch(err => {
-                            bot.sendMessage(msg.chat.id, err);
-                        });
-                })
-                .catch(err => {
-                    bot.sendMessage(msg.chat.id, err);
-                });
-            break;
-        case 'Inserisci_Tabelle':
-            db.initConnectionLess(databaseConnection)
-                .then((con) => {
-                    databaseConnection = con;
-                    db.isAdmin(bot, msg, databaseConnection)
-                        .then((result) => {
-                            if(result)
-                                db.inserisciDati(bot, msg.chat.id, databaseConnection);
-                            else
-                                bot.sendMessage(msg.chat.id, "Non sei autorizzato ad accedere!\nSei stato segnalato agli amministratori!");
-                        })
-                        .catch(err => {
-                            bot.sendMessage(msg.chat.id, err);
-                        });
-                })
-                .catch(err => {
-                    bot.sendMessage(msg.chat.id, err);
-                });
-            break;
-        case 'Reset_Users':
-            db.initConnectionLess(databaseConnection)
-                .then((con) => {
-                    databaseConnection = con;
-                    db.isAdmin(bot, msg, databaseConnection)
-                        .then((result) => {
-                            if(result)
-                                db.inizializzaUtenti(bot, msg.chat.id, databaseConnection);
-                            else
-                                bot.sendMessage(msg.chat.id, "Non sei autorizzato ad accedere!\nSei stato segnalato agli amministratori!");
-                        })
-                        .catch(err => {
-                            bot.sendMessage(msg.chat.id, err);
-                        });
-                })
-                .catch(err => {
-                    bot.sendMessage(msg.chat.id, err);
-                });
-            break;
-        case 'Crea_Indici':
-            db.initConnectionLess(databaseConnection)
-                .then((con) => {
-                    databaseConnection = con;
-                    db.isAdmin(bot, msg, databaseConnection)
-                        .then((result) => {
-                            if(result)
-                                db.verificaDati(bot, msg.chat.id, databaseConnection);
-                            else
-                                bot.sendMessage(msg.chat.id, "Non sei autorizzato ad accedere!\nSei stato segnalato agli amministratori!");
-                        })
-                        .catch(err => {
-                            bot.sendMessage(msg.chat.id, err);
-                        });
-                })
-                .catch(err => {
-                    bot.sendMessage(msg.chat.id, err);
-                });
-            break;
-        case 'Crea_Join':
-            db.initConnectionLess(databaseConnection)
-                .then((con) => {
-                    databaseConnection = con;
-                    db.isAdmin(bot, msg, databaseConnection)
-                        .then((result) => {
-                            if(result)
-                                db.prepareMain(bot, msg.chat.id, databaseConnection);
-                            else
-                                bot.sendMessage(msg.chat.id, "Non sei autorizzato ad accedere!\nSei stato segnalato agli amministratori!");
-                        })
-                        .catch(err => {
-                            bot.sendMessage(msg.chat.id, err);
-                        });
-                })
-                .catch(err => {
-                    bot.sendMessage(msg.chat.id, err);
-                });
-            break;
-        case 'Info_DB':
-            db.initConnectionLess(databaseConnection)
-                .then((con) => {
-                    databaseConnection = con;
-                    db.isAdmin(bot, msg, databaseConnection)
-                        .then((result) => {
-                            if(result)
-                                db.dbInfo(bot, msg.chat.id, databaseConnection);
-                            else
-                                bot.sendMessage(msg.chat.id, "Non sei autorizzato ad accedere!\nSei stato segnalato agli amministratori!");
-                        })
-                        .catch(err => {
-                            bot.sendMessage(msg.chat.id, err);
-                        });
-                })
-                .catch(err => {
-                    bot.sendMessage(msg.chat.id, err);
-                });
-            break;
-    }
-}
-
-function Scadenze (msg) {
-    switch (msg.text) {
-        case 'Scadenze':
-            db.initConnectionLess(databaseConnection)
-                .then((con) => {
-                    databaseConnection = con;
-                    db.isAdmin(bot, msg, databaseConnection)
-                        .then((result) => {
-                            if(result) {
-                                dead.mostraScadenze(bot, msg.chat.id, databaseConnection);
-                                var text = "Sezione Scadenze";
-                                var keyboard = {
-                                    reply_markup: JSON.stringify({
-                                        keyboard: [
-                                            ['Home'],
-                                            ['Inserisci_Scadenza','Modifica_Scadenza'],
-                                            ['Elimina_Scadenza']
-                                        ],
-                                        resize_keyboard: true
-                                    })
-                                };
-
-                                bot.sendMessage(msg.chat.id, text, keyboard);
-                            }
-                            else
-                                dead.mostraScadenze(bot, msg.chat.id, databaseConnection);
-                        })
-                        .catch(err => {
-                            bot.sendMessage(msg.chat.id, err);
-                        });
-                })
-                .catch(err => {
-                    bot.sendMessage(msg.chat.id, err);
-                });
-            break;
-        case 'Inserisci_Scadenza':
-            db.initConnectionLess(databaseConnection)
-                .then((con) => {
-                    databaseConnection = con;
-                    db.isAdmin(bot, msg, databaseConnection)
-                        .then((result) => {
-                            if(result) {
-                                bot.sendMessage(msg.chat.id, "Ricorda il formato:\ndescrizione,dataInizio,dataFine\n\ndata = gg/mm/aaaa");
-                                dead.mostraScadenzeStatus(bot, msg.chat.id, databaseConnection, 'Inserisci_Scadenza');
-                            } else
-                                bot.sendMessage(msg.chat.id, "Non sei autorizzato ad accedere!\nSei stato segnalato agli amministratori!");
-                        })
-                        .catch(err => {
-                            bot.sendMessage(msg.chat.id, err);
-                        });
-                })
-                .catch(err => {
-                    bot.sendMessage(msg.chat.id, err);
-                });
-            break;
-        case 'Modifica_Scadenza':
-            db.initConnectionLess(databaseConnection)
-                .then((con) => {
-                    databaseConnection = con;
-                    db.isAdmin(bot, msg, databaseConnection)
-                        .then((result) => {
-                            if(result) {
-                                bot.sendMessage(msg.chat.id, "Ricorda il formato:\nid,descrizione,dataInizio,dataFine\n\ndata = gg/mm/aaaa");
-                                dead.mostraScadenzeStatus(bot, msg.chat.id, databaseConnection, 'Modifica_Scadenza');
-                            } else
-                                bot.sendMessage(msg.chat.id, "Non sei autorizzato ad accedere!\nSei stato segnalato agli amministratori!");
-                        })
-                        .catch(err => {
-                            bot.sendMessage(msg.chat.id, err);
-                        });
-                })
-                .catch(err => {
-                    bot.sendMessage(msg.chat.id, err);
-                });
-            break;
-        case 'Elimina_Scadenza':
-            db.initConnectionLess(databaseConnection)
-                .then((con) => {
-                    databaseConnection = con;
-                    db.isAdmin(bot, msg, databaseConnection)
-                        .then((result) => {
-                            if(result) {
-                                bot.sendMessage(msg.chat.id, "Ricorda il formato:\nid");
-                                dead.mostraScadenzeStatus(bot, msg.chat.id, databaseConnection, 'Elimina_Scadenza');
-                            } else
-                                bot.sendMessage(msg.chat.id, "Non sei autorizzato ad accedere!\nSei stato segnalato agli amministratori!");
-                        })
-                        .catch(err => {
-                            bot.sendMessage(msg.chat.id, err);
-                        });
-                })
-                .catch(err => {
-                    bot.sendMessage(msg.chat.id, err);
-                });
-            break;
-    }
-}
-
-function Avvisi (msg) {
-    switch (msg.text) {
-        case 'Avvisi':
-            var text = "In questa sezione puoi ottenere gli avvisi del giorno dei vari dipartimenti";
-            var keyboard = {
-                reply_markup: JSON.stringify({
-                    keyboard: [
-                        ['Home'],
-                        ['DICAM','DII','CISCA']
-                    ],
-                    one_time_keyboard: true,
-                    resize_keyboard: true
-                })
-            };
-            bot.sendMessage(msg.chat.id, text, keyboard);
-            break;
-        case 'DICAM':
-            alert.richiestaAvvisi("DICAM", bot, msg);
-            break;
-        case 'DII':
-            alert.richiestaAvvisi("DII", bot, msg);
-            break;
-        case 'CISCA':
-            alert.richiestaAvvisi("CISCA", bot, msg);
-            break;
-    }
-}
-
-function Luoghi (msg) {
-    switch (msg.text) {
-        case 'Luoghi':
-            place.Luoghi_F1(bot, msg, databaseConnection);
-            break;
-    }
-}
-
-function EasterEgg (msg) {
-    bot.sendMessage(msg.chat.id, "Ti Amo <3");
-}
-
 function BackHome (msg) {
     return new Promise((resolve, reject) => {
     	db.initConnectionLess(databaseConnection)
@@ -756,74 +251,716 @@ function BackHome (msg) {
     				}
     			});
     		})
-    		.catch(err => {
-    			bot.sendMessage(id, err);
+    		.catch((err) => {
+    			bot.sendMessage(msg.chat.id, err);
     		});
     });
 }
 
-function createHome () {
-	return {
-		parse_mode: "Markdown",
-        reply_markup: JSON.stringify({
-			keyboard: [
-				['Mezzi'],
-				['Mensa'],
-				['OperaUniTN'],
-				['Luoghi'],
-				['Avvisi'],
-				['Scadenze']
-			],
-            one_time_keyboard: true,
-            resize_keyboard: true
-        })
-    };
+function Special (msg) {
+    switch (msg.text.toLowerCase()) {
+        case 'home':
+            BackHome(msg)
+                .then((result) => {
+                    bot.sendMessage(msg.chat.id, "Torno alla Home...", db.createHome());
+                })
+                .catch(err => {
+                    console.error(err);
+                });
+            break;
+        case 'ilaria':
+            bot.sendMessage(msg.chat.id, "Ti Amo <3");
+            break;
+        case 'giulia':
+            bot.sendMessage(msg.chat.id, "Ti Amo <3");
+            break;
+        case 'virginia':
+            bot.sendMessage(msg.chat.id, "Ti Amo <3");
+            break;
+    }
 }
 
-// ---------- EVENTS ----------
-bot.on('funzioniOpera', OperaUniTN);
-bot.on('funzioniMensa', Mensa);
-bot.on('funzioniMezzi', Mezzi);
-bot.on('funzioniDevelop', Develop);
-bot.on('funzioniAvvisi', Avvisi);
-bot.on('funzioniLuoghi', Luoghi);
-bot.on('funzioniScadenze', Scadenze);
-
-bot.on('text', function(msg) {
-    if(msg.from.is_bot == false) {
-        if((msg.text) != '/start') {
+function Develop (msg) {
+    switch (msg.text.toLowerCase()) {
+        case 'develop':
             db.initConnectionLess(databaseConnection)
                 .then((con) => {
                     databaseConnection = con;
-                    if(['Home'].includes(msg.text)) {
-                        BackHome(msg)
-                            .then((result) => {
-                                bot.sendMessage(msg.chat.id, "Torno alla Home...", createHome());
-                            })
-                            .catch(err => {
-                                console.error(err);
-                            });
-                    }
-                    else if(['Mezzi','Linea','Fermata','PrimiOrari','Avvisi_Linee','Tariffe'].includes(msg.text))
-                        bot.emit('funzioniMezzi', msg);
-                    else if(['Scadenze','Inserisci_Scadenza','Modifica_Scadenza','Elimina_Scadenza'].includes(msg.text))
-                        bot.emit('funzioniScadenze', msg);
-                    else if(['OperaUniTN','Bandi_BdS','Graduatorie_BdS','Bandi_150O','Graduatorie_15O'].includes(msg.text))
-                        bot.emit('funzioniOpera', msg);
-                    else if(['Mensa','Povo1_PastoLesto','Povo1_PastoCompleto','Mesiano_1','Mesiano_2','Tommaso_Gar','Menu_Mensa','Nearest'].includes(msg.text))
-                        bot.emit('funzioniMensa', msg);
-                    else if(['Develop','Elimina_Tabelle','Inserisci_Tabelle','Reset_Users','Crea_Indici','Crea_Join','Info_DB'].includes(msg.text))
+                    db.isAdmin(bot, msg, databaseConnection)
+                        .then((result) => {
+                            if(result) {
+                                var text = "Sezione Sviluppatori";
+                                var keyboard = {
+                                    reply_markup: JSON.stringify({
+                                        keyboard: [
+                                            ['Home'],
+                                            ['Elimina Tabelle','Inserisci Tabelle'],
+                                            ['Crea Indici','Crea Join'],
+                                            ['Reset Users','Info DB']
+                                        ],
+                                        resize_keyboard: true
+                                    })
+                                };
+
+                                bot.sendMessage(msg.chat.id, text, keyboard);
+                            }
+                            else
+                                bot.sendMessage(msg.chat.id, "Non sei autorizzato ad accedere!\nSei stato segnalato agli amministratori!");
+                        })
+                        .catch(err => {
+                            bot.sendMessage(msg.chat.id, err);
+                        });
+                })
+                .catch(err => {
+                    bot.sendMessage(msg.chat.id, err);
+                });
+            break;
+        case 'elimina tabelle':
+            db.initConnectionLess(databaseConnection)
+                .then((con) => {
+                    databaseConnection = con;
+                    db.isAdmin(bot, msg, databaseConnection)
+                        .then((result) => {
+                            if(result)
+                                db.eliminaDati(bot, msg.chat.id, databaseConnection)
+                                    .then((res) => {
+                                        bot.sendMessage(msg.chat.id, res);
+                                    })
+                                    .catch(err => {
+                                        bot.sendMessage(msg.chat.id, err);
+                                    });
+                            else
+                                bot.sendMessage(msg.chat.id, "Non sei autorizzato ad accedere!\nSei stato segnalato agli amministratori!");
+                        })
+                        .catch(err => {
+                            bot.sendMessage(msg.chat.id, err);
+                        });
+                })
+                .catch(err => {
+                    bot.sendMessage(msg.chat.id, err);
+                });
+            break;
+        case 'inserisci tabelle':
+            db.initConnectionLess(databaseConnection)
+                .then((con) => {
+                    databaseConnection = con;
+                    db.isAdmin(bot, msg, databaseConnection)
+                        .then((result) => {
+                            if(result)
+                                db.inserisciDati(bot, msg.chat.id, databaseConnection)
+                                    .then((res) => {
+                                        bot.sendMessage(msg.chat.id, res);
+                                    })
+                                    .catch(err => {
+                                        bot.sendMessage(msg.chat.id, err);
+                                    });
+                            else
+                                bot.sendMessage(msg.chat.id, "Non sei autorizzato ad accedere!\nSei stato segnalato agli amministratori!");
+                        })
+                        .catch(err => {
+                            bot.sendMessage(msg.chat.id, err);
+                        });
+                })
+                .catch(err => {
+                    bot.sendMessage(msg.chat.id, err);
+                });
+            break;
+        case 'reset users':
+            db.initConnectionLess(databaseConnection)
+                .then((con) => {
+                    databaseConnection = con;
+                    db.isAdmin(bot, msg, databaseConnection)
+                        .then((result) => {
+                            if(result)
+                                db.inizializzaUtenti(bot, msg.chat.id, databaseConnection);
+                            else
+                                bot.sendMessage(msg.chat.id, "Non sei autorizzato ad accedere!\nSei stato segnalato agli amministratori!");
+                        })
+                        .catch(err => {
+                            bot.sendMessage(msg.chat.id, err);
+                        });
+                })
+                .catch(err => {
+                    bot.sendMessage(msg.chat.id, err);
+                });
+            break;
+        case 'crea indici':
+            db.initConnectionLess(databaseConnection)
+                .then((con) => {
+                    databaseConnection = con;
+                    db.isAdmin(bot, msg, databaseConnection)
+                        .then((result) => {
+                            if(result)
+                                db.verificaDati(bot, msg.chat.id, databaseConnection)
+                                    .then((res) => {
+                                        bot.sendMessage(msg.chat.id, res);
+                                    })
+                                    .catch(err => {
+                                        bot.sendMessage(msg.chat.id, err);
+                                    });
+                            else
+                                bot.sendMessage(msg.chat.id, "Non sei autorizzato ad accedere!\nSei stato segnalato agli amministratori!");
+                        })
+                        .catch(err => {
+                            bot.sendMessage(msg.chat.id, err);
+                        });
+                })
+                .catch(err => {
+                    bot.sendMessage(msg.chat.id, err);
+                });
+            break;
+        case 'crea join':
+            db.initConnectionLess(databaseConnection)
+                .then((con) => {
+                    databaseConnection = con;
+                    db.isAdmin(bot, msg, databaseConnection)
+                        .then((result) => {
+                            if(result)
+                                db.prepareMain(bot, msg.chat.id, databaseConnection)
+                                    .then((res) => {
+                                        bot.sendMessage(msg.chat.id, res);
+                                    })
+                                    .catch(err => {
+                                        bot.sendMessage(msg.chat.id, err);
+                                    });
+                            else
+                                bot.sendMessage(msg.chat.id, "Non sei autorizzato ad accedere!\nSei stato segnalato agli amministratori!");
+                        })
+                        .catch(err => {
+                            bot.sendMessage(msg.chat.id, err);
+                        });
+                })
+                .catch(err => {
+                    bot.sendMessage(msg.chat.id, err);
+                });
+            break;
+        case 'info db':
+            db.initConnectionLess(databaseConnection)
+                .then((con) => {
+                    databaseConnection = con;
+                    db.isAdmin(bot, msg, databaseConnection)
+                        .then((result) => {
+                            if(result)
+                                db.dbInfo(bot, msg.chat.id, databaseConnection);
+                            else
+                                bot.sendMessage(msg.chat.id, "Non sei autorizzato ad accedere!\nSei stato segnalato agli amministratori!");
+                        })
+                        .catch(err => {
+                            bot.sendMessage(msg.chat.id, err);
+                        });
+                })
+                .catch(err => {
+                    bot.sendMessage(msg.chat.id, err);
+                });
+            break;
+    }
+}
+
+function Mezzi (msg) {
+    switch (msg.text.toLowerCase()) {
+        case 'mezzi urbani tte':
+            var text = "In questa sezione puoi ottenere informazioni riguardanti i mezzi di trasporto!";
+            var keyboard = {
+                reply_markup: JSON.stringify({
+                    keyboard: [
+                        ['Home'],
+                        ['Ricerca per Linea','Ricerca per Fermata'],
+                        ['Prossimo Mezzo'],
+                        ['Avvisi Linee', 'Tariffe']
+                    ],
+                    one_time_keyboard: true,
+                    resize_keyboard: true
+                })
+            };
+
+            bot.sendMessage(msg.chat.id, text, keyboard);
+            break;
+        case 'ricerca per linea':
+            urban.Linea_F1(bot, msg, databaseConnection);
+            break;
+        case 'ricerca per fermata':
+            urban.Fermata_F1(bot, msg, databaseConnection);
+            break;
+        case 'prossimo mezzo':
+            urban.Next_F1(bot, msg, databaseConnection);
+            break;
+        case 'avvisi linee':
+            urban.Avvisi_Linee(bot, msg, databaseConnection);
+            break;
+        case 'tariffe':
+            var text = "*TARIFFE URBANE DI TRENTO*\n\t*Cartaceo*\n\t\t`€1,20 ->` 70 minuti\n\t\t`€1,50 ->` 120 minuti\n\t\t`€3,00 ->` Giornaliero\n\t*OpenMove*\n\t\t`€1,10 ->` 70 minuti\n\t\t`€1,40 ->` 120 minuti\n\t\t`€2,80 ->` Giornaliero\n\t*A Bordo*\n\t\t`€2,00 ->` Corsa Singola";
+
+            bot.sendMessage(msg.chat.id, text, db.createHome()).then(() => {
+                bot.sendDocument(msg.chat.id, 'http://www.ttesercizio.it/Public/Documenti/tariffario.pdf', {caption: 'Tariffario Biglietti Cartacei 2017/2018'});
+                bot.sendDocument(msg.chat.id, 'http://www.ttesercizio.it/Public/INTROITI/OpenMove_vademecum.pdf', {caption: 'Tariffario Biglietti Elettronici 2017/2018'});
+            });
+    }
+}
+
+function Scadenze (msg) {
+    switch (msg.text.toLowerCase()) {
+        case 'scadenze documenti':
+            db.initConnectionLess(databaseConnection)
+                .then((con) => {
+                    databaseConnection = con;
+                    db.couldScadenze(msg, databaseConnection)
+                        .then((result) => {
+                            if(result) {
+                                dead.mostraScadenze(bot, msg.chat.id, databaseConnection);
+                                var text = "Sezione Scadenze";
+                                var keyboard = {
+                                    reply_markup: JSON.stringify({
+                                        keyboard: [
+                                            ['Home'],
+                                            ['Inserisci Scadenza','Modifica Scadenza'],
+                                            ['Elimina Scadenza']
+                                        ],
+                                        resize_keyboard: true
+                                    })
+                                };
+
+                                bot.sendMessage(msg.chat.id, text, keyboard);
+                            }
+                            else
+                                dead.mostraScadenze(bot, msg.chat.id, databaseConnection);
+                        })
+                        .catch(err => {
+                            bot.sendMessage(msg.chat.id, err);
+                        });
+                })
+                .catch(err => {
+                    bot.sendMessage(msg.chat.id, err);
+                });
+            break;
+        case 'inserisci scadenza':
+            db.initConnectionLess(databaseConnection)
+                .then((con) => {
+                    databaseConnection = con;
+                    db.isAdmin(bot, msg, databaseConnection)
+                        .then((result) => {
+                            if(result) {
+                                bot.sendMessage(msg.chat.id, "Ricorda il formato:\ndescrizione,dataInizio,dataFine\n\ndata = gg/mm/aaaa");
+                                dead.mostraScadenzeStatus(bot, msg.chat.id, databaseConnection, 'Inserisci_Scadenza');
+                            } else
+                                bot.sendMessage(msg.chat.id, "Non sei autorizzato ad accedere!\nSei stato segnalato agli amministratori!");
+                        })
+                        .catch(err => {
+                            bot.sendMessage(msg.chat.id, err);
+                        });
+                })
+                .catch(err => {
+                    bot.sendMessage(msg.chat.id, err);
+                });
+            break;
+        case 'modifica scadenza':
+            db.initConnectionLess(databaseConnection)
+                .then((con) => {
+                    databaseConnection = con;
+                    db.isAdmin(bot, msg, databaseConnection)
+                        .then((result) => {
+                            if(result) {
+                                bot.sendMessage(msg.chat.id, "Ricorda il formato:\nid,descrizione,dataInizio,dataFine\n\ndata = gg/mm/aaaa");
+                                dead.mostraScadenzeStatus(bot, msg.chat.id, databaseConnection, 'Modifica_Scadenza');
+                            } else
+                                bot.sendMessage(msg.chat.id, "Non sei autorizzato ad accedere!\nSei stato segnalato agli amministratori!");
+                        })
+                        .catch(err => {
+                            bot.sendMessage(msg.chat.id, err);
+                        });
+                })
+                .catch(err => {
+                    bot.sendMessage(msg.chat.id, err);
+                });
+            break;
+        case 'elimina scadenza':
+            db.initConnectionLess(databaseConnection)
+                .then((con) => {
+                    databaseConnection = con;
+                    db.isAdmin(bot, msg, databaseConnection)
+                        .then((result) => {
+                            if(result) {
+                                bot.sendMessage(msg.chat.id, "Ricorda il formato:\nid");
+                                dead.mostraScadenzeStatus(bot, msg.chat.id, databaseConnection, 'Elimina_Scadenza');
+                            } else
+                                bot.sendMessage(msg.chat.id, "Non sei autorizzato ad accedere!\nSei stato segnalato agli amministratori!");
+                        })
+                        .catch(err => {
+                            bot.sendMessage(msg.chat.id, err);
+                        });
+                })
+                .catch(err => {
+                    bot.sendMessage(msg.chat.id, err);
+                });
+            break;
+    }
+}
+
+function Mensa (msg) {
+    switch (msg.text.toLowerCase()) {
+        case 'mensa vicina':
+            eat.Mensa_F1 (bot, msg, databaseConnection);
+    }
+}
+
+function Avvisi (msg) {
+    switch (msg.text.toLowerCase()) {
+        case 'avvisi dipartimenti':
+            var text = "In questa sezione puoi ottenere gli avvisi del giorno dei vari dipartimenti";
+            var keyboard = {
+                reply_markup: JSON.stringify({
+                    keyboard: [
+                        ['Home'],
+                        ['DICAM','DII','CISCA']
+                    ],
+                    resize_keyboard: true
+                })
+            };
+            bot.sendMessage(msg.chat.id, text, keyboard);
+            break;
+        case 'dicam':
+            alert.richiestaAvvisi("DICAM", bot, msg);
+            break;
+        case 'dii':
+            alert.richiestaAvvisi("DII", bot, msg);
+            break;
+        case 'cisca':
+            alert.richiestaAvvisi("CISCA", bot, msg);
+            break;
+    }
+}
+
+function Luoghi (msg) {
+    switch (msg.text.toLowerCase()) {
+        case 'luoghi utili':
+            place.Luoghi_F1(bot, msg, databaseConnection);
+            break;
+    }
+}
+
+function HowTo (msg) {
+    switch (msg.text.toLowerCase()) {
+        case 'how to':
+            var text = "In questa sezione puoi ottenere le informazioni sul corretto svolgimento delle diverse pratiche legate all'Università";
+            var keyboard = {
+                reply_markup: JSON.stringify({
+                    keyboard: [
+                        ['Home'],
+                        ['Ammissioni', 'Immatricolazioni'],
+                        ['Tasse Universitarie', 'Borse di studio'],
+                        ['Trasferimenti', 'Supporto'],
+                        ['Libera Circolazione', 'Open Day'],
+                        ['Rinnovo Iscrizioni', 'Futuro Studente'],
+                    ],
+                    one_time_keyboard: true,
+                    resize_keyboard: true
+                })
+            };
+
+            bot.sendMessage(msg.chat.id, text, keyboard);
+
+            break;
+        case 'tasse universitarie':
+            var text = "Qui puoi trovare tutte le informazioni sulle tasse che ti possono interessare. Seleziona un argomento da sotto";
+            var keyboard = {
+                reply_markup: JSON.stringify({
+                    keyboard: [
+                        ['Home'],
+                        ['Tasse A.A. 17-18', 'ISEE A.A. 17-18'],
+                        ['Pagamenti', 'Rimborsi'],
+                    ],
+                    one_time_keyboard: true,
+                    resize_keyboard: true
+                })
+            };
+
+            how.homeTasse('https://infostudenti.unitn.it/it/tasse-universitarie', './Tasse_Home', bot, msg, 'init');
+            bot.sendMessage(msg.chat.id, text, keyboard);
+
+            break;
+        case 'rimborsi':
+            how.homeTasse('https://infostudenti.unitn.it/it/tasse-universitarie', './Tasse_Home', bot, msg, 'rimborsi');
+            break;
+        case 'pagamenti':
+            how.homeTasse('https://infostudenti.unitn.it/it/tasse-universitarie', './Tasse_Home', bot, msg, 'pagamenti');
+            break;
+        case 'tasse a.a. 17-18':
+            how.homeTasse('https://infostudenti.unitn.it/it/tasse-universitarie', './Tasse_Home', bot, msg, 'tasse');
+            break;
+        case 'isee a.a. 17-18':
+            how.homeTasse('https://infostudenti.unitn.it/it/tasse-universitarie', './Tasse_Home', bot, msg, 'isee');
+            break;
+        case 'ammissioni':
+            var text = "Qui puoi trovare tutte e le informazioni sulle ammissioni ai corsi di laurea che ti possono interessare";
+            var keyboard = {
+                reply_markup: JSON.stringify({
+                    keyboard: [
+                        ['Home'],
+                        ['Ammissioni Lauree e Lauree Magistrali a ciclo unico'],
+                        ['Ammissioni Lauree Magistrali']
+                    ],
+                    one_time_keyboard: true,
+                    resize_keyboard: true
+                })
+            };
+
+            how.homeAmmissioni('https://infostudenti.unitn.it/it/ammissioni', './Ammissioni_Home', bot, msg, 'init');
+            bot.sendMessage(msg.chat.id, text, keyboard);
+            break;
+        case 'ammissioni lauree e lauree magistrali a ciclo unico':
+            how.homeAmmissioni('https://infostudenti.unitn.it/it/ammissioni', './Ammissioni_Home', bot, msg, 'ammissioni_triennali');
+            break;
+        case 'ammissioni lauree magistrali':
+            how.homeAmmissioni('https://infostudenti.unitn.it/it/ammissioni', './Ammissioni_Home', bot, msg, 'ammissioni_magistrali');
+            break;
+        case 'immatricolazioni':
+            var text = "Qui puoi trovare tutte e le informazioni sulle immatricolazioni ai corsi di laurea che ti possono interessare";
+            var keyboard = {
+                reply_markup: JSON.stringify({
+                    keyboard: [
+                        ['Home'],
+                        ['Immatricolazioni Lauree e Lauree Magistrali a ciclo unico'],
+                        ['Immatricolazioni Lauree Magistrali']
+                    ],
+                    one_time_keyboard: true,
+                    resize_keyboard: true
+                })
+            };
+
+            how.homeImmatricolazioni('https://infostudenti.unitn.it/it/immatricolazioni', './Immatricolazioni_Home', bot, msg, 'init');
+            bot.sendMessage(msg.chat.id, text, keyboard);
+            break;
+        case 'immatricolazioni lauree e lauree magistrali a ciclo unico':
+            how.homeImmatricolazioni('https://infostudenti.unitn.it/it/immatricolazioni', './Immatricolazioni_Home', bot, msg, 'immatricolazioni_triennali');
+            break;
+        case 'immatricolazioni lauree magistrali':
+            how.homeImmatricolazioni('https://infostudenti.unitn.it/it/immatricolazioni', './Immatricolazioni_Home', bot, msg, 'immatricolazioni_magistrali');
+            break;
+        case 'rinnovo iscrizioni':
+            var text = "Qui puoi trovare tutte e le informazioni sui rinnovi delle iscrizioni ai corsi di laurea";
+            var keyboard = {
+                reply_markup: JSON.stringify({
+                    keyboard: [
+                        ['Home'],
+                        ['Rinnovo iscrizione con pagamento tasse'],
+                        ['Rinnovo iscrizione con richiesta borsa di studio'],
+                        ['Rinnovo iscrizione studenti con bisogni particolari']
+                    ],
+                    one_time_keyboard: true,
+                    resize_keyboard: true
+                })
+            };
+
+            how.homeRinnovi('https://infostudenti.unitn.it/it/rinnovo-iscrizioni', './Rinnovi_Home', bot, msg, 'init');
+            bot.sendMessage(msg.chat.id, text, keyboard);
+            break;
+        case 'rinnovo iscrizione con pagamento tasse':
+            how.homeRinnovi('https://infostudenti.unitn.it/it/rinnovo-iscrizioni', './Rinnovi_Home', bot, msg, 'rinnovi_tasse');
+            break;
+        case 'rinnovo iscrizione con richiesta borsa di studio':
+            how.homeRinnovi('https://infostudenti.unitn.it/it/rinnovo-iscrizioni', './Rinnovi_Home', bot, msg, 'rinnovi_borsa');
+            break;
+        case 'rinnovo iscrizione studenti con bisogni particolari':
+            how.homeRinnovi('https://infostudenti.unitn.it/it/rinnovo-iscrizioni', './Rinnovi_Home', bot, msg, 'rinnovi_particolari');
+            break;
+        case 'borse di studio':
+            var text = "Qui puoi trovare tutte le informazioni sulle borse di studio e le agevolazioni fornite dall'Università";
+            var keyboard = {
+                reply_markup: JSON.stringify({
+                    keyboard: [
+                        ['Home'],
+                        ['Borse di studio e Posto alloggio'],
+                        ['Dichiarazione di invalidità o disabilità'],
+                        ['Attesa di Laurea', 'Libera circolazione']
+                    ],
+                    one_time_keyboard: true,
+                    resize_keyboard: true
+                })
+            };
+
+            how.homeBorse('https://infostudenti.unitn.it/it/borse-di-studio-e-agevolazioni', './Borse_Home', bot, msg, 'init');
+            bot.sendMessage(msg.chat.id, text, keyboard);
+            break;
+        case 'borse di studio e posto alloggio':
+            how.homeBorse('https://infostudenti.unitn.it/it/borse-di-studio-e-agevolazioni', './Borse_Home', bot, msg, 'borse_alloggi');
+            break;
+        case 'dichiarazione di invalidità o disabilità':
+            how.homeBorse('https://infostudenti.unitn.it/it/borse-di-studio-e-agevolazioni', './Borse_Home', bot, msg, 'bisogni_particolari');
+            break;
+        case 'attesa di laurea':
+            how.homeBorse('https://infostudenti.unitn.it/it/borse-di-studio-e-agevolazioni', './Borse_Home', bot, msg, 'attesa_laurea');
+            break;
+        case 'libera circolazione':
+            how.homeBorse('https://infostudenti.unitn.it/it/borse-di-studio-e-agevolazioni', './Borse_Home', bot, msg, 'libera_circolazione');
+            break;
+        case 'trasferimenti':
+            var text = "Qui puoi trovare tutte le informazioni riguardanti le modalità e i requisiti per i trasferimenti da e verso UniTrento";
+            var keyboard = {
+                reply_markup: JSON.stringify({
+                    keyboard: [
+                        ['Home'],
+                        ['Trasferimento verso un altro ateneo'],
+                        ['Trasferimento da un altro ateno'],
+                        ['Trasferimento da un altro ateneo Laurea Magistrale']
+                    ],
+                    one_time_keyboard: true,
+                    resize_keyboard: true
+                })
+            };
+
+            how.homeTrasferimenti('https://infostudenti.unitn.it/it/trasferirsi-e-cambiare-corso', './Trasferimenti_Home', bot, msg, 'init');
+            bot.sendMessage(msg.chat.id, text, keyboard);
+            break;
+        case 'trasferimento verso un altro ateneo':
+            how.homeTrasferimenti('https://infostudenti.unitn.it/it/trasferirsi-e-cambiare-corso', './Traferimenti_Home', bot, msg, 'trasferimenti_verso');
+            break;
+        case 'trasferimento da un altro ateneo laurea magistrale':
+            how.homeTrasferimenti('https://infostudenti.unitn.it/it/trasferirsi-e-cambiare-corso', './Trasferimenti_Home', bot, msg, 'trasferimenti_da_magistrale');
+            break;
+        case 'trasferimento da un altro ateno':
+            how.homeTrasferimenti('https://infostudenti.unitn.it/it/trasferirsi-e-cambiare-corso', './Trasferimenti_Home', bot, msg, 'trasferimenti_da_triennale');
+            var text = "Qui puoi trovare tutte le informazioni riguardanti i trasferimenti da un altro ateneo in qualsiasi laurea di UniTrento";
+            var keyboard = {
+                reply_markup: JSON.stringify({
+                    keyboard: [
+                        ['Home'],
+                        ['Economia - Giurisprudenza - Lettere'],
+                        ['Sociologia - Filosofia'],
+                        ['Fisica - Matematica'],
+                        ['Ingegneria dell\'Informazione'],
+                        ['Psicologia - Scienze Cognitive'],
+                        ['Scienza e Tecnologie Biomolecolari'],
+                        ['Ingegneria Industriale'],
+                        ['Viticoltura ed Enologia'],
+                        ['Ingegneria Civile - Ingengeria Ambientale'],
+                        ['Ingegneria Edile - Architettura']
+                    ],
+                    one_time_keyboard: true,
+                    resize_keyboard: true
+                })
+            };
+            bot.sendMessage(msg.chat.id, text, keyboard);
+            break;
+        case 'economia - giurisprudenza - lettere': case 'sociologia - filosofia':
+            how.homeTrasferimenti('https://infostudenti.unitn.it/it/trasferirsi-e-cambiare-corso', './Trasferimenti_Home', bot, msg, 'centro');
+            break;
+        case 'fisica - matematica': case 'ingegneria dell\'informazione':
+            how.homeTrasferimenti('https://infostudenti.unitn.it/it/trasferirsi-e-cambiare-corso', './Trasferimenti_Home', bot, msg, 'povo');
+            break;
+        case 'psicologia - scienze cognitive':
+            how.homeTrasferimenti('https://infostudenti.unitn.it/it/trasferirsi-e-cambiare-corso', './Trasferimenti_Home', bot, msg, 'rovereto');
+            break;
+        case 'scienza e tecnologie biomolecolari':
+            how.homeTrasferimenti('https://infostudenti.unitn.it/it/trasferirsi-e-cambiare-corso', './Trasferimenti_Home', bot, msg, 'cibio');
+            break;
+        case 'ingegneria industriale':
+            how.homeTrasferimenti('https://infostudenti.unitn.it/it/trasferirsi-e-cambiare-corso', './Trasferimenti_Home', bot, msg, 'dii');
+            break;
+        case 'viticoltura ed enologia':
+            how.homeTrasferimenti('https://infostudenti.unitn.it/it/trasferirsi-e-cambiare-corso', './Trasferimenti_Home', bot, msg, 'enologia');
+            break;
+        case 'ingegneria civile - ingengeria ambientale':
+            how.homeTrasferimenti('https://infostudenti.unitn.it/it/trasferirsi-e-cambiare-corso', './Trasferimenti_Home', bot, msg, 'dicam');
+            break;
+        case 'ingegneria edile - architettura':
+            how.homeTrasferimenti('https://infostudenti.unitn.it/it/trasferirsi-e-cambiare-corso', './Trasferimenti_Home', bot, msg, 'edile');
+            break;
+        case 'supporto':
+            how.homeSupporto('https://infostudenti.unitn.it/it/supporto-studenti', './Supporto_Home', bot, msg, 'init');
+            break;
+        case 'open day':
+            how.homeOpenDay('http://events.unitn.it/porteaperte-2017', './OpenDay_Home', bot, msg, 'init');
+            break;
+        case 'futuro studente':
+            var text = "Sei un futuro studente UNITN o vorresti diventarlo? Non riesci ad orientarti nelle varie pagine del sito e non trovi quello che ti serve?\nQuesta sezione è proprio quello che stai cercando! Seleziona uno degli argomenti qui sotto!";
+            var keyboard = {
+                reply_markup: JSON.stringify({
+                    keyboard: [
+                        ['Home'],
+                        ['Didattica', 'Iscrizioni'],
+                        ['Orientamento', 'Agevolazioni'],
+                        ['Servizi', 'Ateneo'],
+                        ['Prospective International Student'],
+                        ['Non solo studio']
+                    ],
+                    one_time_keyboard: true,
+                    resize_keyboard: true
+                })
+            };
+
+            how.homeFuturoStudente('http://www.unitn.it/futuro-studente', './Futuro_Studente', bot, msg, 'init');
+            bot.sendMessage(msg.chat.id, text, keyboard);
+            break;
+        case 'didattica':
+            how.homeFuturoStudente('http://www.unitn.it/futuro-studente', './Futuro_Studente', bot, msg, 'didattica');
+            break;
+        case 'iscrizioni':
+            how.homeFuturoStudente('http://www.unitn.it/futuro-studente', './Futuro_Studente', bot, msg, 'iscrizioni');
+            break;
+        case 'orientamento':
+            how.homeFuturoStudente('http://www.unitn.it/futuro-studente', './Futuro_Studente', bot, msg, 'orientamento');
+            break;
+        case 'agevolazioni':
+            how.homeFuturoStudente('http://www.unitn.it/futuro-studente', './Futuro_Studente', bot, msg, 'agevolazioni');
+            break;
+        case 'servizi':
+            how.homeFuturoStudente('http://www.unitn.it/futuro-studente', './Futuro_Studente', bot, msg, 'servizi');
+            break;
+        case 'ateneo':
+            how.homeFuturoStudente('http://www.unitn.it/futuro-studente', './Futuro_Studente', bot, msg, 'ateneo');
+            break;
+        case 'prospective international student':
+            how.homeFuturoStudente('http://www.unitn.it/futuro-studente', './Futuro_Studente', bot, msg, 'international');
+            break;
+        case 'non solo studio':
+            how.homeFuturoStudente('http://www.unitn.it/futuro-studente', './Futuro_Studente', bot, msg, 'studio');
+            break;
+    }
+}
+
+// ---------- INTERVALS ----------
+var j = cron.scheduleJob('0 0 * * 2', () => {
+    bot.emit('funzioniDB');
+});
+
+// ---------- EVENTS ----------
+bot.on('funzioniDB', UpdateDB);
+bot.on('funzioniSpeciali', Special);
+bot.on('funzioniDevelop', Develop);
+bot.on('funzioniMezzi', Mezzi);
+bot.on('funzioniScadenze', Scadenze);
+bot.on('funzioniMensa', Mensa);
+bot.on('funzioniAvvisi', Avvisi);
+bot.on('funzioniLuoghi', Luoghi);
+bot.on('funzioniHowTo', HowTo);
+
+bot.on('text', function(msg) {
+    if(msg.from.is_bot == false) {
+        var testoUtente = msg.text.toLowerCase();
+
+        if(testoUtente != '/start') {
+            db.initConnectionLess(databaseConnection)
+                .then((con) => {
+                    databaseConnection = con;
+                    if(specialChoices.includes(testoUtente))
+                        bot.emit('funzioniSpeciali', msg);
+                    else if(developChoices.includes(testoUtente))
                         bot.emit('funzioniDevelop', msg);
-                    else if(['Avvisi','DICAM','DII','CISCA'].includes(msg.text))
+                    else if(mezziChoices.includes(testoUtente))
+                        bot.emit('funzioniMezzi', msg);
+                    else if(scadenzeChoices.includes(testoUtente))
+                        bot.emit('funzioniScadenze', msg);
+                    else if(mensaChoices.includes(testoUtente))
+                        bot.emit('funzioniMensa', msg);
+                    else if(avvisiChoices.includes(testoUtente))
                         bot.emit('funzioniAvvisi', msg);
-                    else if(['Luoghi'].includes(msg.text))
+                    else if(luoghiChoices.includes(testoUtente))
                         bot.emit('funzioniLuoghi', msg);
-                    else if(['Giulia','Ilaria','Virginia'].includes(msg.text))
-                        EasterEgg(msg);
+                    else if(howtoChoices.includes(testoUtente))
+                        bot.emit('funzioniHowTo', msg);
                     else
                         routeCommands(msg, msg.chat.id, con);
                 })
-                .catch(err => {
+                .catch((err) => {
                     bot.sendMessage(msg.chat.id, err);
                 });
         } else {
@@ -831,7 +968,6 @@ bot.on('text', function(msg) {
         	bot.sendMessage(msg.chat.id, text);
 
             text = "Benvenuto " + msg.from.first_name + "!\nUniTN Help Center è un bot sviluppato per aiutare attuali e/o futuri studenti dell'Università degli Studi di Trento in vari ambiti della propria vita quotidiana!";
-
             db.initConnectionLess(databaseConnection)
                 .then((con) => {
                     databaseConnection = con;
@@ -849,14 +985,14 @@ bot.on('text', function(msg) {
 							con.query(query, function (err, result) {
 								if (err) return reject(err);
 
-								bot.sendMessage(msg.chat.id, text, createHome());
+								bot.sendMessage(msg.chat.id, text, db.createHome());
 							});
                         })
-                        .catch(err => {
+                        .catch((err) => {
                             console.error(err);
                         });
                 })
-                .catch(err => {
+                .catch((err) => {
                     bot.sendMessage(msg.chat.id, err);
                 });
         }
@@ -864,11 +1000,9 @@ bot.on('text', function(msg) {
 });
 
 bot.on('location', function(msg) {
-    console.log("Location");
     db.initiateConnection(databaseConnection)
         .then((con) => {
             databaseConnection = con;
-            console.log("routes");
             routeCommands(msg, msg.chat.id, con);
         })
         .catch(err => {
@@ -877,18 +1011,20 @@ bot.on('location', function(msg) {
 });
 
 bot.on('callback_query', function(msg) {
-    console.log("bot?");
     if(msg.from.is_bot == false) {
-        console.log("callback");
+      if(msg.data.includes('howto')){
+        console.log(msg.data + "from " + last_command);
+        //redirect(msg.data.charAt(0), last_command, last_index);
+      }else{
         db.initiateConnection(databaseConnection)
             .then((con) => {
                 databaseConnection = con;
-                console.log("routes");
                 routeCommands(msg, msg.message.chat.id, con);
             })
             .catch(err => {
                 bot.sendMessage(msg.message.chat.id, err);
             });
+      }
     }
 });
 

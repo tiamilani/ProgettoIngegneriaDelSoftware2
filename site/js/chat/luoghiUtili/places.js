@@ -2,7 +2,7 @@ var places;
 
 places = function(name, place)
 {
-	var url="https://botingse2.herokuapp.com/localizza?";
+	var url="https://unitnhelpbot.herokuapp.com/localizza?";
 	url += "name=" + name + "&";
 	url += "place=" + place;
 	console.log("url: " + url);

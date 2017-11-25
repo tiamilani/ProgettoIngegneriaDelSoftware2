@@ -2,7 +2,7 @@ var avvisi;
 
 avvisi = function(dipartimento)
 {
-	var url="https://bot-avvisi.herokuapp.com/avvisi?dipartimento=";
+	var url="https://unitnhelpbot.herokuapp.com/avvisi?dipartimento=";
 	url += dipartimento;
 
 	$.getJSON(url, function(data) {

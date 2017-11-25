@@ -1,6 +1,6 @@
 // ---------- REQUIRE ----------
 const fun = require ('./functions.js');
-const db = require('./sectionDevelop');
+const db = require('./sectionDevelop.js');
 
 // ---------- FUNCTIONS ----------
 function checkID (id, lastCommand, connection) {
@@ -46,24 +46,6 @@ function checkID (id, lastCommand, connection) {
 	});
 }
 
-function createHome () {
-	return {
-		parse_mode: "Markdown",
-        reply_markup: JSON.stringify({
-			keyboard: [
-				['Mezzi'],
-				['Mensa'],
-				['OperaUniTN'],
-				['Luoghi'],
-				['Avvisi'],
-				['Scadenze']
-			],
-            one_time_keyboard: true,
-            resize_keyboard: true
-        })
-    };
-}
-
 function createChoice (array, npr, argument, checkName, requestPosition) {
     let elements = [];
 
@@ -86,11 +68,13 @@ function createChoice (array, npr, argument, checkName, requestPosition) {
             elements.push(item);
         }
 
-        var item = [];
-        for(let j = array.length - rest; j < array.length; j++)
-            item.push((array[j])[argument]);
+		if(rest != 0) {
+	        var item = [];
+	        for(let j = array.length - rest; j < array.length; j++)
+	            item.push((array[j])[argument]);
 
-        elements.push(item);
+	        elements.push(item);
+		}
     }
 
     if(requestPosition)
@@ -281,7 +265,7 @@ function Location_Init (bot, msg, con, stato, result) {
 			.then((result) => {
 				var text = "Sei troppo lontano, cerca di avvicinarti...";
 
-				bot.sendMessage(msg.chat.id, text, createHome());
+				bot.sendMessage(msg.chat.id, text, db.createHome());
 			})
 			.catch(err => {
 				console.error(err);
@@ -308,78 +292,81 @@ function Fermata_F2_Location_F1 (bot, msg, connection) {
 
 function Fermata_F2_Location_F2 (bot, msg, connection) {
 	console.log("Fermata_F2_Location_F2");
-	db.initiateConnection(connection)
-		.then((con) => {
-			var query = "SELECT * FROM users WHERE ChatID='" + msg.message.chat.id + "'";
-			con.query(query, function (err, result) {
-				if (err) throw err;
+	if(msg.message != undefined) {
+		db.initiateConnection(connection)
+			.then((con) => {
+				var query = "SELECT * FROM users WHERE ChatID='" + msg.message.chat.id + "'";
+				con.query(query, function (err, result) {
+					if (err) throw err;
 
-				var res = result[0];
-				var prevChoice = res.prevChoice;
-				res = JSON.parse(res.lastResult);
+					var res = result[0];
+					var prevChoice = res.prevChoice;
+					res = JSON.parse(res.lastResult);
 
-		        if(msg.data == 'loc') {
-					bot.editMessageText(printText(res[prevChoice-1]), {chat_id: msg.message.chat.id, message_id: msg.message.message_id, parse_mode: "Markdown"});
-		            bot.sendLocation(msg.message.chat.id, res[prevChoice-1].stop_lat, res[prevChoice-1].stop_lon);
+			        if(msg.data == 'loc') {
+						bot.editMessageText(printText(res[prevChoice-1]), {chat_id: msg.message.chat.id, message_id: msg.message.message_id, parse_mode: "Markdown"});
+			            bot.sendLocation(msg.message.chat.id, res[prevChoice-1].stop_lat, res[prevChoice-1].stop_lon);
 
-					var query = "UPDATE users SET prevChoice='1' WHERE ChatID='" + msg.message.chat.id + "'";
-					con.query(query, function (err, result) {
-						if (err) throw err;
+						var query = "UPDATE users SET prevChoice='1' WHERE ChatID='" + msg.message.chat.id + "'";
+						con.query(query, function (err, result) {
+							if (err) throw err;
 
-			            var fermata = res[prevChoice-1].stop_name;
-			            var tmpF = fermata.replace(/[\W_]/g, '');
-			            var nameT1 = "fermata_" + tmpF;
+				            var fermata = res[prevChoice-1].stop_name;
+				            var tmpF = fermata.replace(/[\W_]/g, '');
+				            var nameT1 = "fermata_" + tmpF;
 
-			            query = "CREATE TABLE IF NOT EXISTS " + nameT1 + " AS SELECT * FROM time_table WHERE stop_name='" + fermata + "'";
-			            con.query(query, function (err, result) {
-			                if (err) throw err;
+				            query = "CREATE TABLE IF NOT EXISTS " + nameT1 + " AS SELECT * FROM time_table WHERE stop_name='" + fermata + "'";
+				            con.query(query, function (err, result) {
+				                if (err) throw err;
 
-			                query = "SELECT DISTINCT route_short_name FROM " + nameT1 + " ORDER BY length(route_short_name) ASC, route_short_name ASC";
-			                con.query(query, function (err, result, fields) {
-			                    if (err) throw err;
+				                query = "SELECT DISTINCT route_short_name FROM " + nameT1 + " ORDER BY length(route_short_name) ASC, route_short_name ASC";
+				                con.query(query, function (err, result, fields) {
+				                    if (err) throw err;
 
-			                    var text = "Seleziona la linea:";
-								var keyboard = createChoice(result, 5, 'route_short_name', undefined, false);
+				                    var text = "Seleziona la linea:";
+									var keyboard = createChoice(result, 5, 'route_short_name', undefined, false);
 
-								var keyboardString = JSON.parse(keyboard.reply_markup).keyboard;
-								var stringKeyboard = [].concat.apply([], keyboardString);
+									var keyboardString = JSON.parse(keyboard.reply_markup).keyboard;
+									var stringKeyboard = [].concat.apply([], keyboardString);
 
-								var query = "UPDATE users SET NameT='" + nameT1 + "',keyboard='" + JSON.stringify(stringKeyboard) + "' WHERE ChatID='" + msg.message.chat.id + "'";
-								con.query(query, function (err, result) {
-									if (err) throw err;
+									var query = "UPDATE users SET NameT='" + nameT1 + "',keyboard='" + JSON.stringify(stringKeyboard) + "' WHERE ChatID='" + msg.message.chat.id + "'";
+									con.query(query, function (err, result) {
+										if (err) throw err;
 
-									checkID(msg.message.chat.id, 'Fermata_F2_Location_F2', con)
-										.then((result) => {
-			                				bot.sendMessage(msg.message.chat.id, text, keyboard);
-										})
-										.catch(err => {
-											console.error(err);
-										});
+										checkID(msg.message.chat.id, 'Fermata_F2_Location_F2', con)
+											.then((result) => {
+				                				bot.sendMessage(msg.message.chat.id, text, keyboard);
+											})
+											.catch(err => {
+												console.error(err);
+											});
+									});
 								});
 							});
 						});
-					});
-				} else {
-					if(prevChoice != parseInt(msg.data)) {
-						prevChoice = parseInt(msg.data);
+					} else {
+						if(prevChoice != parseInt(msg.data)) {
+							prevChoice = parseInt(msg.data);
 
-						var options = getPagination(prevChoice, res.length);
-						options['chat_id'] = msg.message.chat.id;
-						options['message_id'] = msg.message.message_id;
+							var options = getPagination(prevChoice, res.length);
+							options['chat_id'] = msg.message.chat.id;
+							options['message_id'] = msg.message.message_id;
 
-						var query = "UPDATE users SET prevChoice='" + prevChoice + "' WHERE ChatID='" + msg.message.chat.id + "'";
-			            con.query(query, function (err, result) {
-			                if (err) throw err;
+							var query = "UPDATE users SET prevChoice='" + prevChoice + "' WHERE ChatID='" + msg.message.chat.id + "'";
+				            con.query(query, function (err, result) {
+				                if (err) throw err;
 
-							bot.editMessageText(printText(res[prevChoice-1]), options);
-						});
+								bot.editMessageText(printText(res[prevChoice-1]), options);
+							});
+						}
 					}
-				}
+				});
+			})
+			.catch(err => {
+				bot.sendMessage(msg.message.chat.id, err);
 			});
-		})
-		.catch(err => {
-			bot.sendMessage(msg.chat.id, err);
-		});
+	} else
+		bot.sendMessage(msg.chat.id, "Valore non consentito, prima di effettuare un'altra ricerca fatti inviare la posizione della ricerca precedente!");
 }
 
 function Fermata_F2_Location_F3 (bot, msg, nameT1, connection) {
@@ -436,7 +423,7 @@ function Fermata_F2_Location_F3 (bot, msg, nameT1, connection) {
 									.then((result) => {
 										var text = "Mi dispiace ma la linea selezionata ha terminato le corse per oggi...";
 
-										bot.sendMessage(msg.chat.id, text, createHome());
+										bot.sendMessage(msg.chat.id, text, db.createHome());
 									})
 									.catch(err => {
 										console.error(err);
@@ -449,7 +436,7 @@ function Fermata_F2_Location_F3 (bot, msg, nameT1, connection) {
 						.then((result) => {
 							var text = "La linea inserita non è stata riconosciuta!";
 
-							bot.sendMessage(msg.chat.id, text, createHome());
+							bot.sendMessage(msg.chat.id, text, db.createHome());
 						})
 						.catch(err => {
 							console.error(err);
@@ -547,7 +534,7 @@ function Fermata_F2_Name_F2 (bot, msg, connection) {
 						.then((result) => {
 							var text = "La linea fermata non è stata riconosciuta!";
 
-							bot.sendMessage(msg.chat.id, text, createHome());
+							bot.sendMessage(msg.chat.id, text, db.createHome());
 						})
 						.catch(err => {
 							console.error(err);
@@ -615,7 +602,7 @@ function Fermata_F2_Name_F3 (bot, msg, nameT1, connection) {
 									.then((result) => {
 										var text = "Mi dispiace ma la linea selezionata ha terminato le corse per oggi...";
 
-										bot.sendMessage(msg.chat.id, text, createHome());
+										bot.sendMessage(msg.chat.id, text, db.createHome());
 									})
 									.catch(err => {
 										console.error(err);
@@ -628,7 +615,7 @@ function Fermata_F2_Name_F3 (bot, msg, nameT1, connection) {
 						.then((result) => {
 							var text = "La linea inserita non è stata riconosciuta!";
 
-							bot.sendMessage(msg.chat.id, text, createHome());
+							bot.sendMessage(msg.chat.id, text, db.createHome());
 						})
 						.catch(err => {
 							console.error(err);
@@ -724,7 +711,7 @@ function Linea_F2 (bot, msg, connection) {
 						.then((result) => {
 							var text = "La linea inserita non è stata riconosciuta!";
 
-							bot.sendMessage(msg.chat.id, text, createHome());
+							bot.sendMessage(msg.chat.id, text, db.createHome());
 						})
 						.catch(err => {
 							console.error(err);
@@ -789,7 +776,7 @@ function Linea_F3 (bot, msg, nameT1, connection) {
 						.then((result) => {
 							var text = "La direzione inserita non è stata riconosciuta!";
 
-							bot.sendMessage(msg.chat.id, text, createHome());
+							bot.sendMessage(msg.chat.id, text, db.createHome());
 						})
 						.catch(err => {
 							console.error(err);
@@ -824,7 +811,7 @@ function Linea_F4_Location_F1 (bot, msg, nameT2, connection) {
 						.then((result) => {
 							var text = "Mi dispiace ma la linea selezionata ha terminato le corse per oggi, oppure non lavora oggi...";
 
-							bot.sendMessage(msg.chat.id, text, createHome());
+							bot.sendMessage(msg.chat.id, text, db.createHome());
 						})
 						.catch(err => {
 							console.error(err);
@@ -877,7 +864,7 @@ function Linea_F4_Name_F1 (bot, msg, nameT2, connection) {
 								.then((result) => {
 									var text = "Mi dispiace ma la linea selezionata ha terminato le corse per oggi...";
 
-									bot.sendMessage(msg.chat.id, text, createHome());
+									bot.sendMessage(msg.chat.id, text, db.createHome());
 								})
 								.catch(err => {
 									console.error(err);
@@ -889,7 +876,7 @@ function Linea_F4_Name_F1 (bot, msg, nameT2, connection) {
 						.then((result) => {
 							var text = "La linea inserita non è stata riconosciuta!";
 
-							bot.sendMessage(msg.chat.id, text, createHome());
+							bot.sendMessage(msg.chat.id, text, db.createHome());
 						})
 						.catch(err => {
 							console.error(err);
@@ -939,87 +926,90 @@ function Next_F2_Location_F1 (bot, msg, connection) {
 
 function Next_F2_Location_F2 (bot, msg, connection) {
 	console.log("Next_F2_Location_F2");
-	db.initiateConnection(connection)
-		.then((con) => {
-			var query = "SELECT * FROM users WHERE ChatID='" + msg.message.chat.id + "'";
-			con.query(query, function (err, result) {
-				if (err) throw err;
+	if(msg.message != undefined) {
+		db.initiateConnection(connection)
+			.then((con) => {
+				var query = "SELECT * FROM users WHERE ChatID='" + msg.message.chat.id + "'";
+				con.query(query, function (err, result) {
+					if (err) throw err;
 
-				var res = result[0];
-				var prevChoice = res.prevChoice;
-				res = JSON.parse(res.lastResult);
+					var res = result[0];
+					var prevChoice = res.prevChoice;
+					res = JSON.parse(res.lastResult);
 
-	            if(msg.data == 'loc') {
-					bot.editMessageText(printText(res[prevChoice-1]), {chat_id: msg.message.chat.id, message_id: msg.message.message_id, parse_mode: "Markdown"});
-					bot.sendLocation(msg.message.chat.id, res[prevChoice-1].stop_lat, res[prevChoice-1].stop_lon);
+		            if(msg.data == 'loc') {
+						bot.editMessageText(printText(res[prevChoice-1]), {chat_id: msg.message.chat.id, message_id: msg.message.message_id, parse_mode: "Markdown"});
+						bot.sendLocation(msg.message.chat.id, res[prevChoice-1].stop_lat, res[prevChoice-1].stop_lon);
 
-	                var fermata = res[prevChoice-1].stop_name;
-	                var tmpF = fermata.replace(/[\W_]/g, '');
-	                var nameT1 = "fermata_" + tmpF;
+		                var fermata = res[prevChoice-1].stop_name;
+		                var tmpF = fermata.replace(/[\W_]/g, '');
+		                var nameT1 = "fermata_" + tmpF;
 
-	                query = "CREATE TABLE IF NOT EXISTS " + nameT1 + " AS SELECT * FROM time_table WHERE stop_name='" + fermata + "'";
-	                con.query(query, function (err, result) {
-	                    if (err) throw err;
+		                query = "CREATE TABLE IF NOT EXISTS " + nameT1 + " AS SELECT * FROM time_table WHERE stop_name='" + fermata + "'";
+		                con.query(query, function (err, result) {
+		                    if (err) throw err;
 
-						var date = new Date();
-						var clockNow = date.toTimeString();
-						clockNow = clockNow.split(' ')[0];
+							var date = new Date();
+							var clockNow = date.toTimeString();
+							clockNow = clockNow.split(' ')[0];
 
-						var weekday = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
-						var today = weekday[date.getDay()];
+							var weekday = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
+							var today = weekday[date.getDay()];
 
-	                    query = "SELECT MIN(arrival_time),stop_name,stop_lat,stop_lon,wheelchair_boarding,arrival_time,departure_time,trip_headsign,wheelchair_accessible,route_short_name,route_long_name,route_type FROM " + nameT1 + " where arrival_time>'" + clockNow + "' AND " + today + "='1' GROUP BY route_short_name ORDER BY length(route_short_name) ASC, route_short_name ASC";
-	                    con.query(query, function (err, result, fields) {
-	                        if (err) throw err;
-							var res = result;
+		                    query = "SELECT MIN(arrival_time),stop_name,stop_lat,stop_lon,wheelchair_boarding,arrival_time,departure_time,trip_headsign,wheelchair_accessible,route_short_name,route_long_name,route_type FROM " + nameT1 + " where arrival_time>'" + clockNow + "' AND " + today + "='1' GROUP BY route_short_name ORDER BY arrival_time ASC";
+		                    con.query(query, function (err, result, fields) {
+		                        if (err) throw err;
+								var res = result;
 
-	                        if(result.length > 0) {
-								var query = "UPDATE users SET lastResult='" + JSON.stringify(res) + "' WHERE ChatID='" + msg.message.chat.id + "'";
-								con.query(query, function (err, result) {
-									if (err) throw err;
+		                        if(result.length > 0) {
+									var query = "UPDATE users SET prevChoice='1',lastResult='" + JSON.stringify(res) + "' WHERE ChatID='" + msg.message.chat.id + "'";
+									con.query(query, function (err, result) {
+										if (err) throw err;
 
-									checkID(msg.message.chat.id, 'Next_F2_Location_F2', con)
-										.then((status) => {
-											bot.sendMessage(msg.message.chat.id, printText(res[0]), getPaginationFull(1, res.length));
+										checkID(msg.message.chat.id, 'Next_F2_Location_F2', con)
+											.then((status) => {
+												bot.sendMessage(msg.message.chat.id, printText(res[0]), getPaginationFull(1, res.length));
+											})
+											.catch(err => {
+												console.error(err);
+											});
+									});
+								} else {
+									checkID(msg.message.chat.id, '/start', con)
+										.then((result) => {
+											var text = "Mi dispiace ma per oggi sono terminate le corse in questa fermata, oppure non lavora oggi...";
+
+											bot.sendMessage(msg.message.chat.id, text, db.createHome());
 										})
 										.catch(err => {
 											console.error(err);
 										});
-								});
-							} else {
-								checkID(msg.message.chat.id, '/start', con)
-									.then((result) => {
-										var text = "Mi dispiace ma per oggi sono terminate le corse in questa fermata, oppure non lavora oggi...";
-
-										bot.sendMessage(msg.message.chat.id, text, createHome());
-									})
-									.catch(err => {
-										console.error(err);
-									});
-					        }
+						        }
+							});
 						});
-					});
-				} else {
-					if(prevChoice != parseInt(msg.data)) {
-						prevChoice = parseInt(msg.data);
+					} else {
+						if(prevChoice != parseInt(msg.data)) {
+							prevChoice = parseInt(msg.data);
 
-						var options = getPagination(prevChoice, res.length);
-						options['chat_id'] = msg.message.chat.id;
-						options['message_id'] = msg.message.message_id;
+							var options = getPagination(prevChoice, res.length);
+							options['chat_id'] = msg.message.chat.id;
+							options['message_id'] = msg.message.message_id;
 
-						var query = "UPDATE users SET prevChoice='" + prevChoice + "' WHERE ChatID='" + msg.message.chat.id + "'";
-			            con.query(query, function (err, result) {
-			                if (err) throw err;
+							var query = "UPDATE users SET prevChoice='" + prevChoice + "' WHERE ChatID='" + msg.message.chat.id + "'";
+				            con.query(query, function (err, result) {
+				                if (err) throw err;
 
-		                	bot.editMessageText(printText(res[prevChoice-1]), options);
-						});
+			                	bot.editMessageText(printText(res[prevChoice-1]), options);
+							});
+						}
 					}
-				}
+				});
+			})
+			.catch(err => {
+				bot.sendMessage(msg.message.chat.id, err);
 			});
-		})
-		.catch(err => {
-			bot.sendMessage(msg.message.chat.id, err);
-		});
+	} else
+		bot.sendMessage(msg.chat.id, "Valore non consentito, prima di effettuare un'altra ricerca fatti inviare la posizione della ricerca precedente!");
 }
 
 function Next_F2_Name_F1 (bot, msg, connection) {
@@ -1079,7 +1069,7 @@ function Next_F2_Name_F2 (bot, msg, connection) {
 		                var weekday = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
 		                var today = weekday[date.getDay()];
 
-		                query = "SELECT MIN(arrival_time),stop_name,stop_lat,stop_lon,wheelchair_boarding,arrival_time,departure_time,trip_headsign,wheelchair_accessible,route_short_name,route_long_name,route_type FROM " + nameT1 + " where arrival_time>'" + clockNow + "' AND " + today + "='1' GROUP BY route_short_name,trip_headsign ORDER BY length(route_short_name) ASC, route_short_name ASC";
+		                query = "SELECT MIN(arrival_time),stop_name,stop_lat,stop_lon,wheelchair_boarding,arrival_time,departure_time,trip_headsign,wheelchair_accessible,route_short_name,route_long_name,route_type FROM " + nameT1 + " where arrival_time>'" + clockNow + "' AND " + today + "='1' GROUP BY route_short_name,trip_headsign ORDER BY arrival_time ASC";
 		                con.query(query, function (err, result, fields) {
 		                    if (err) throw err;
 
@@ -1102,9 +1092,9 @@ function Next_F2_Name_F2 (bot, msg, connection) {
 							else {
 								checkID(msg.chat.id, '/start', con)
 									.then((result) => {
-										var text = "Mi dispiace ma la linea selezionata ha terminato le corse per oggi...";
+										var text = "Mi dispiace ma tutte le linee hanno terminato le corse per oggi...";
 
-										bot.sendMessage(msg.chat.id, text, createHome());
+										bot.sendMessage(msg.chat.id, text, db.createHome());
 									})
 									.catch(err => {
 										console.error(err);
@@ -1117,7 +1107,7 @@ function Next_F2_Name_F2 (bot, msg, connection) {
 						.then((result) => {
 							var text = "La fermata inserita non è stata riconosciuta!";
 
-							bot.sendMessage(msg.chat.id, text, createHome());
+							bot.sendMessage(msg.chat.id, text, db.createHome());
 						})
 						.catch(err => {
 							console.error(err);
@@ -1132,50 +1122,53 @@ function Next_F2_Name_F2 (bot, msg, connection) {
 
 function All_FF (bot, msg, connection) {
 	console.log("Stato Finale");
-	db.initiateConnection(connection)
-		.then((con) => {
-			var query = "SELECT * FROM users WHERE ChatID='" + msg.message.chat.id + "'";
-			con.query(query, function (err, result) {
-				if (err) throw err;
+	if(msg.message != undefined) {
+		db.initiateConnection(connection)
+			.then((con) => {
+				var query = "SELECT * FROM users WHERE ChatID='" + msg.message.chat.id + "'";
+				con.query(query, function (err, result) {
+					if (err) throw err;
 
-				var res = result[0];
-				var prevChoice = res.prevChoice;
-				res = JSON.parse(res.lastResult);
+					var res = result[0];
+					var prevChoice = res.prevChoice;
+					res = JSON.parse(res.lastResult);
 
-                if(msg.data == 'loc') {
-					console.log("Send");
-					checkID(msg.message.chat.id, '/start', con)
-						.then((result) => {
-							console.log("edit");
-							bot.editMessageText(printText(res[prevChoice-1]), {chat_id: msg.message.chat.id,message_id: msg.message.message_id,parse_mode: "Markdown"});
-							console.log("send2");
-							bot.sendMessage(msg.message.chat.id, "Ecco la posizione selezionata!", createHome());
-				            bot.sendLocation(msg.message.chat.id, res[prevChoice-1].stop_lat, res[prevChoice-1].stop_lon);
-						})
-						.catch(err => {
-							console.error(err);
-						});
-                } else {
-					if(prevChoice != parseInt(msg.data)) {
-						prevChoice = parseInt(msg.data);
+	                if(msg.data == 'loc') {
+						console.log("Send");
+						checkID(msg.message.chat.id, '/start', con)
+							.then((result) => {
+								console.log("edit");
+								bot.editMessageText(printText(res[prevChoice-1]), {chat_id: msg.message.chat.id,message_id: msg.message.message_id,parse_mode: "Markdown"});
+								console.log("send2");
+								bot.sendMessage(msg.message.chat.id, "Ecco la posizione selezionata!", db.createHome());
+					            bot.sendLocation(msg.message.chat.id, res[prevChoice-1].stop_lat, res[prevChoice-1].stop_lon);
+							})
+							.catch(err => {
+								console.error(err);
+							});
+	                } else {
+						if(prevChoice != parseInt(msg.data)) {
+							prevChoice = parseInt(msg.data);
 
-						var options = getPaginationFull(prevChoice, res.length);
-						options['chat_id'] = msg.message.chat.id;
-						options['message_id'] = msg.message.message_id;
+							var options = getPaginationFull(prevChoice, res.length);
+							options['chat_id'] = msg.message.chat.id;
+							options['message_id'] = msg.message.message_id;
 
-						var query = "UPDATE users SET prevChoice='" + prevChoice + "' WHERE ChatID='" + msg.message.chat.id + "'";
-			            con.query(query, function (err, result) {
-			                if (err) throw err;
+							var query = "UPDATE users SET prevChoice='" + prevChoice + "' WHERE ChatID='" + msg.message.chat.id + "'";
+				            con.query(query, function (err, result) {
+				                if (err) throw err;
 
-		                	bot.editMessageText(printText(res[prevChoice-1]), options);
-						});
-					}
-                }
-            });
-		})
-		.catch(err => {
-			bot.sendMessage(msg.message.chat.id, err);
-		});
+			                	bot.editMessageText(printText(res[prevChoice-1]), options);
+							});
+						}
+	                }
+	            });
+			})
+			.catch(err => {
+				bot.sendMessage(msg.message.chat.id, err);
+			});
+	} else
+		bot.sendMessage(msg.chat.id, "Valore non consentito, prima di effettuare un'altra ricerca fatti inviare la posizione della ricerca precedente!");
 }
 
 function Avvisi_Linee (bot, msg, connection) {
@@ -1193,9 +1186,9 @@ function Avvisi_Linee (bot, msg, connection) {
 	            if(result.length > 0) {
 	                var text = "Ecco le linee che subiranno variazioni nella giornata odierna:";
 	                for(let i = 0; i < result.length; i++)
-	                    text += "\nLinea " + result[i].route_short_name + " (" + result[i].route_long_name + ")";
+	                    text += "\n*Linea " + result[i].route_short_name + "* (" + result[i].route_long_name + ")";
 
-	                bot.sendMessage(msg.chat.id, text);
+	                bot.sendMessage(msg.chat.id, text, {parse_mode: 'Markdown'});
 	            }
 	            else {
 	                bot.sendMessage(msg.chat.id, "Oggi non ci sono variazioni di orario in alcuna linea!");

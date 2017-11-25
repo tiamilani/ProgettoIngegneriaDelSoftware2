@@ -34,19 +34,6 @@ function checkID (id, lastCommand, connection) {
 	});
 }
 
-function createScadenze () {
-	return {
-        reply_markup: JSON.stringify({
-			keyboard: [
-				['Home'],
-				['Inserisci_Scadenza','Modifica_Scadenza'],
-				['Elimina_Scadenza']
-			],
-            resize_keyboard: true
-        })
-    };
-}
-
 function mostraScadenze (bot, id, connection) {
     console.log("mostraScadenze");
 	db.initiateConnection(connection)
@@ -139,7 +126,7 @@ function inserisciScadenza (bot, msg, connection) {
 
                 checkID(msg.chat.id, '/start', con)
                     .then((result) => {
-                        bot.sendMessage(msg.chat.id, "Scadenza Inserita", createScadenze());
+                        bot.sendMessage(msg.chat.id, "Scadenza Inserita");
                     })
                     .catch(err => {
                         console.error(err);
@@ -173,7 +160,7 @@ function modificaScadenza (bot, msg, connection) {
                 checkID(msg.chat.id, '/start', con)
                     .then((result) => {
 
-                        bot.sendMessage(msg.chat.id, "Scadenza Modificata", createScadenze());
+                        bot.sendMessage(msg.chat.id, "Scadenza Modificata");
                     })
                     .catch(err => {
                         console.error(err);
@@ -196,7 +183,7 @@ function eliminaScadenza (bot, msg, connection) {
                 checkID(msg.chat.id, '/start', con)
                     .then((result) => {
 
-                        bot.sendMessage(msg.chat.id, "Scadenza Eliminata", createScadenze());
+                        bot.sendMessage(msg.chat.id, "Scadenza Eliminata");
                     })
                     .catch(err => {
                         console.error(err);
