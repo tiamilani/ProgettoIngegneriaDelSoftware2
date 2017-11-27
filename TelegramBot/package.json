@@ -20,15 +20,13 @@
   "dependencies": {
     "body-parser": "^1.18.2",
     "express": "^4.16.2",
-    "file-type": "^7.2.0",
+    "file-type": "^7.3.0",
     "fs": "0.0.1-security",
-    "http": "0.0.0",
     "node-telegram-bot-api": "^0.28.0",
     "path": "^0.12.7",
     "read-chunk": "^2.1.0",
     "rimraf": "^2.6.2",
     "string-similarity": "^1.2.0",
-    "util": "^0.10.3",
-    "website-scraper": "^3.3.1"
+    "website-scraper": "^3.3.2"
   }
 }
