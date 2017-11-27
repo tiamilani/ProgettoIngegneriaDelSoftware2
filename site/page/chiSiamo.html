@@ -4,10 +4,7 @@
 
 	<head>
 		<title>HCUniTn</title>
-		<link rel="stylesheet" href="../css/content.css">
-
 		<script type="text/javascript" src="../js/jquery-1.12.3.min.js"></script>
-		<link rel="stylesheet" href="../css/sviluppatori.css">
 		<!-- Latest compiled and minified CSS -->
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
@@ -16,6 +13,8 @@
 
 		<!-- Latest compiled and minified JavaScript -->
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+		<link href="https://afeld.github.io/emoji-css/emoji.css" rel="stylesheet">
+		<link rel="stylesheet" href="../css/sviluppatori.css">
 	</head>
 
 	<body style="background-color: aquamarine;">
@@ -25,7 +24,7 @@
 				<div class="container">
 					<div class="navbar-header">
 						<img src="../img/UniTNHelpCenter.png" alt="LOGO" height="50" width="50">
-						<a class="navbar-brand" href="../index.html">UniTn Help Center</a>
+						<a class="navbar-brand" href="../../index.html">UniTn Help Center</a>
 					</div>
 					<div id="navbar" class="collapse navbar-collapse">
 						<ul class="nav navbar-nav">
@@ -33,29 +32,82 @@
 							<li><a href="#">Chi siamo?</a></li>
 							<li><a href="contattaci.html">Contattaci</a></li>
 						</ul>
+						<ul class="nav navbar-nav navbar-right">
+							<p class="navbar-btn">
+			                    <a href="https://t.me/UniTNHelp_bot" target="_blank" class="btn btn-primary">Telegram Bot</a>
+			                </p>
+						</ul>
 					</div>
 				</div>
 			</nav>
 		</div>
 
-		<div class="container-fluid" id="container-fluid">
+		<div class="container-fluid">
 			<div class="row">
-		        <div class="col-6 description">
+		        <div class="col-md-12 description">
 		            <h1>Ciao</h1>
 		            <p>
-		                Siamo un gruppo di studenti di Informatica all'UniversitÃ  degli Studi di Trento.<br>
-		                Benvenuto nel nostro nuovo bot
+		                Siamo un gruppo di studenti di Informatica all'Universit&aacute;  degli Studi di Trento.<br>
+		                Benvenuto nel nostro bot<br>
+						Speriamo possa esserti utile <i class="em em-stuck_out_tongue_winking_eye"></i>
 		            </p>
 		        </div>
 		    </div>
+		</div>
 
-		    <div>
-		        <div class="row justify-content-center">
-		            <div class="col-6 description">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-3">
+					<div class="inner">
+						<div class="description">
+							<h1>mattia</h1>
+				            <p>
+				                Full stack developer
+				            </p>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-3">
+					<div class="inner">
+						<div class="description">
+							<h1>Andrea</h1>
+				            <p>
+				                Full stack developer
+				            </p>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-3">
+					<div class="inner">
+						<div class="description">
+							<h1>Damiano</h1>
+				            <p>
+				                Full stack developer
+				            </p>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-3">
+					<div class="inner">
+						<div class="description">
+							<h1>Federico</h1>
+				            <p>
+				                Full stack developer
+				            </p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="container-fluid">
+		    <div class="backElement">
+		        <div class="row">
+		            <div class="col-md-12 description">
 		                <h1 id="findUs">Dove Trovarci</h1>
 		            </div>
 		        </div>
-		        <div class="row justify-content-around">
+		        <div class="row">
 		            <div id="mapObject" style="height: 400px; width: 600px"></div>
 		        </div>
 		    </div>
@@ -89,8 +141,6 @@
 				<p class="text-muted">Questo bot punta ad aiutare la vita di tutti gli studenti di Trento, &egrave; ancora in test, ma pu&ograve; gi&agrave; fornirti molte delle risposte che ti servono :)</p>
 			</div>
 	    </footer>
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-		<script src="../js/script.js"></script>
 	</body>
 
 </html>
