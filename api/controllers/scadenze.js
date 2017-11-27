@@ -6,6 +6,8 @@ var databaseConnection = undefined;
 // ---------- FUNCTIONS ----------
 function mostraScadenze (request, response) {
     console.log("mostraScadenze");
+    response.writeHead(200, {"Content-Type": "application/json; charset=utf-8"});
+    
 	db.initiateConnection(databaseConnection)
 		.then((con) => {
 			databaseConnection = con;
