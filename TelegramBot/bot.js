@@ -6,7 +6,6 @@ const alert = require ('./sectionAvvisi.js');
 const place = require ('./sectionLuoghiUtili.js');
 const eat = require ('./sectionMensa.js');
 const how = require ('./sectionHowto.js');
-const similar = require('string-similarity');
 const cron = require('node-schedule');
 
 const TelegramBot = require('node-telegram-bot-api');
@@ -48,10 +47,6 @@ const howtoChoices = ['how to','ammissioni','immatricolazioni','borse di studio'
     'Economia - Giurisprudenza - Lettere', 'Sociologia - Filosofia', 'Fisica - Matematica', 'Ingegneria dell\'Informazioni', 'Psicologia - Scienze Cognitive',
     'Scienza e Tecnologie Biomolecolari', 'Ingegneria Industriale', 'Viticoltura ed Enologia', 'Ingengeria Civile - Ingegneria Ambientale',
     'Ingegneria Edile - Architettura'];
-
-
-//var matches = similar.findBestMatch(msg.text.toLowerCase(), keywords);
-//bot.sendMessage(msg.chat.id, "Hai scritto " + msg.text + "\nNon ho trovato il comando desiderato. Forse intendevi " + matches.bestMatch.target + "?");
 
 // ---------- FUNCTIONS ----------
 function UpdateDB () {
@@ -216,6 +211,8 @@ function routeCommands (msg, id, connection) {
                                 break;
                     }
                 }
+                else
+                    bot.sendMessage(id, "Comando non riconosciuto!");
 			});
 		})
 		.catch((err) => {
@@ -997,7 +994,7 @@ bot.on('text', function(msg) {
                 });
         }
     }
-    
+
 });
 
 bot.on('location', function(msg) {
