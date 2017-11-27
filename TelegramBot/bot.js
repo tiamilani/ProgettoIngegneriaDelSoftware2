@@ -33,7 +33,7 @@ var databaseConnection = undefined;
 
 const specialChoices = ['home','ilaria','giulia','virginia'];
 const developChoices = ['develop','elimina tabelle','inserisci tabelle','crea indici','crea join','reset users','info db'];
-const mezziChoices = ['mezzi urbani tte','ricerca per linea','ricerca per fermata','prossimo mezzo','avvisi linee', 'tariffe'];
+const mezziChoices = ['mezzi urbani tte','ricerca per linea','ricerca per fermata','prossimo mezzo','calcola percorso','avvisi linee', 'tariffe'];
 const scadenzeChoices = ['scadenze documenti','inserisci scadenza','modifica scadenza','elimina scadenza'];
 const mensaChoices = ['mensa vicina'];
 const avvisiChoices = ['avvisi dipartimenti','dicam','dii','cisca'];
@@ -139,6 +139,7 @@ function routeCommands (msg, id, connection) {
 							break;
 						case 'Fermata_F2_Name_F3':
 							urban.All_FF(bot, msg, con);
+                            break;
 					}
 				}
 				else if ((result.last_command).includes("Linea")) {
@@ -160,6 +161,7 @@ function routeCommands (msg, id, connection) {
 							break;
 						case 'Linea_F4_Location_F1':
 							urban.All_FF (bot, msg, con);
+                            break;
 					}
 				}
 				else if ((result.last_command).includes("Next")) {
@@ -181,6 +183,23 @@ function routeCommands (msg, id, connection) {
 							break;
 						case 'Next_F2_Location_F2':
 							urban.All_FF (bot, msg, con);
+                            break;
+					}
+				}
+                else if ((result.last_command).includes("Calcola")) {
+					switch (result.last_command) {
+						case 'CalcolaPercorso_F1':
+							urban.CalcolaPercorso_F2 (bot, msg, con);
+							break;
+						case 'CalcolaPercorso_F2':
+							urban.CalcolaPercorso_F3 (bot, msg, con);
+							break;
+						case 'CalcolaPercorso_F3':
+							urban.CalcolaPercorso_F4 (bot, msg, con);
+							break;
+						case 'CalcolaPercorso_F4':
+							urban.CalcolaPercorso_F5 (bot, msg, con);
+							break;
 					}
 				}
 				else if ((result.last_command).includes("Luoghi")) {
@@ -213,7 +232,7 @@ function routeCommands (msg, id, connection) {
                             break;
                         case 'Elimina_Scadenza':
                             dead.eliminaScadenza(bot, msg, con);
-                                break;
+                            break;
                     }
                 }
 			});
@@ -465,7 +484,7 @@ function Mezzi (msg) {
                     keyboard: [
                         ['Home'],
                         ['Ricerca per Linea','Ricerca per Fermata'],
-                        ['Prossimo Mezzo'],
+                        ['Prossimo Mezzo', 'Calcola Percorso'],
                         ['Avvisi Linee', 'Tariffe']
                     ],
                     one_time_keyboard: true,
@@ -483,6 +502,9 @@ function Mezzi (msg) {
             break;
         case 'prossimo mezzo':
             urban.Next_F1(bot, msg, databaseConnection);
+            break;
+        case 'calcola percorso':
+            urban.CalcolaPercorso_F1(bot, msg, databaseConnection);
             break;
         case 'avvisi linee':
             urban.Avvisi_Linee(bot, msg, databaseConnection);
@@ -997,7 +1019,7 @@ bot.on('text', function(msg) {
                 });
         }
     }
-    
+
 });
 
 bot.on('location', function(msg) {

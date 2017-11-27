@@ -1171,6 +1171,240 @@ function All_FF (bot, msg, connection) {
 		bot.sendMessage(msg.chat.id, "Valore non consentito, prima di effettuare un'altra ricerca fatti inviare la posizione della ricerca precedente!");
 }
 
+function CalcolaPercorso_F1 (bot, msg, connection) {
+	console.log("CalcolaPercorso_F1");
+	db.initiateConnection(connection)
+		.then((con) => {
+	        var text = "Prima di tutto dimmi il nome della fermata di partenza:";
+			checkID(msg.chat.id, 'CalcolaPercorso_F1', con)
+				.then((result) => {
+			        bot.sendMessage(msg.chat.id, text, createChoice(undefined, undefined, undefined, undefined, undefined));
+				})
+				.catch(err => {
+					console.error(err);
+				});
+		})
+		.catch(err => {
+			bot.sendMessage(msg.chat.id, err);
+		});
+}
+
+function CalcolaPercorso_F2 (bot, msg, connection) {
+	console.log("CalcolaPercorso_F2");
+	db.initiateConnection(connection)
+		.then((con) => {
+		    var fermata = msg.text;
+
+		    var query = "SELECT DISTINCT stop_name FROM stops";
+		    con.query(query, function (err, result) {
+		        if (err) throw err;
+
+		        var text = "Ho trovato queste fermate:";
+				var keyboard = createChoice(result, 2, 'stop_name', fermata, false);
+
+				var keyboardString = JSON.parse(keyboard.reply_markup).keyboard;
+				var stringKeyboard = [].concat.apply([], keyboardString);
+
+				query = "UPDATE users SET keyboard='" + JSON.stringify(stringKeyboard) + "' WHERE ChatID='" + msg.chat.id + "'";
+				con.query(query, function (err, result) {
+					if (err) throw err;
+
+					checkID(msg.chat.id, 'CalcolaPercorso_F2', con)
+						.then((result) => {
+							bot.sendMessage(msg.chat.id, text, keyboard);
+						})
+						.catch(err => {
+							console.error(err);
+						});
+				});
+			});
+		})
+		.catch(err => {
+			bot.sendMessage(msg.chat.id, err);
+		});
+}
+
+function CalcolaPercorso_F3 (bot, msg, connection) {
+	console.log("CalcolaPercorso_F3");
+	db.initiateConnection(connection)
+		.then((con) => {
+			var query = "SELECT * FROM users WHERE ChatID='" + msg.chat.id + "'";
+			con.query(query, function (err, result) {
+				if (err) throw err;
+
+				if(JSON.parse(result[0].keyboard).includes(msg.text)) {
+
+					var query = "SELECT * FROM stops WHERE stop_name='" + msg.text + "'";
+				    con.query(query, function (err, result) {
+				        if (err) throw err;
+
+						query = "UPDATE users SET lastResult='" + JSON.stringify({ start: result[0] }) + "' WHERE ChatID='" + msg.chat.id + "'";
+						con.query(query, function (err, result) {
+							if (err) throw err;
+
+							var text = "Ora dimmi il nome della fermata di arrivo:";
+							checkID(msg.chat.id, 'CalcolaPercorso_F3', con)
+								.then((result) => {
+							        bot.sendMessage(msg.chat.id, text, createChoice(undefined, undefined, undefined, undefined, undefined));
+								})
+								.catch(err => {
+									console.error(err);
+								});
+						});
+					});
+				} else {
+					checkID(msg.chat.id, '/start', con)
+						.then((result) => {
+							var text = "La fermata inserita non è stata riconosciuta!";
+
+							bot.sendMessage(msg.chat.id, text, db.createHome());
+						})
+						.catch(err => {
+							console.error(err);
+						});
+				}
+			});
+		})
+		.catch(err => {
+			bot.sendMessage(msg.chat.id, err);
+		});
+}
+
+function CalcolaPercorso_F4 (bot, msg, connection) {
+	console.log("CalcolaPercorso_F4");
+	db.initiateConnection(connection)
+		.then((con) => {
+		    var fermata = msg.text;
+
+		    var query = "SELECT DISTINCT stop_name FROM stops";
+		    con.query(query, function (err, result) {
+		        if (err) throw err;
+
+		        var text = "Ho trovato queste fermate:";
+				var keyboard = createChoice(result, 2, 'stop_name', fermata, false);
+
+				var keyboardString = JSON.parse(keyboard.reply_markup).keyboard;
+				var stringKeyboard = [].concat.apply([], keyboardString);
+
+				query = "UPDATE users SET keyboard='" + JSON.stringify(stringKeyboard) + "' WHERE ChatID='" + msg.chat.id + "'";
+				con.query(query, function (err, result) {
+					if (err) throw err;
+
+					checkID(msg.chat.id, 'CalcolaPercorso_F4', con)
+						.then((result) => {
+							bot.sendMessage(msg.chat.id, text, keyboard);
+						})
+						.catch(err => {
+							console.error(err);
+						});
+				});
+			});
+		})
+		.catch(err => {
+			bot.sendMessage(msg.chat.id, err);
+		});
+}
+
+function CalcolaPercorso_F5 (bot, msg, connection) {
+	console.log("CalcolaPercorso_F5");
+	db.initiateConnection(connection)
+		.then((con) => {
+			var query = "SELECT * FROM users WHERE ChatID='" + msg.chat.id + "'";
+			con.query(query, function (err, result) {
+				if (err) throw err;
+
+				var position = JSON.parse(result[0].lastResult);
+				if(JSON.parse(result[0].keyboard).includes(msg.text)) {
+					var query = "SELECT * FROM stops WHERE stop_name='" + msg.text + "'";
+				    con.query(query, function (err, result) {
+				        if (err) throw err;
+
+						position['end'] = result[0];
+						query = "UPDATE users SET lastResult='" + JSON.stringify(position) + "' WHERE ChatID='" + msg.chat.id + "'";
+						con.query(query, function (err, result) {
+							if (err) throw err;
+
+							var text = "Perfetto, sto elaborando...";
+							checkID(msg.chat.id, 'CalcolaPercorso_F5', con)
+								.then((result) => {
+							        bot.sendMessage(msg.chat.id, text).then(() => {
+										var query = "SELECT * FROM users WHERE ChatID='" + msg.chat.id + "'";
+										con.query(query, function (err, result) {
+											if (err) throw err;
+
+											const googleMapsClient = require('@google/maps').createClient({
+												key: 'AIzaSyAF4HQHn5WAq-I71yHRse42ferATYB3__U',
+												Promise: Promise
+											});
+
+											var elem = JSON.parse(result[0].lastResult);
+
+											var options = {
+												origin: [ elem['start'].stop_lat, elem['start'].stop_lon ],
+												destination: [ elem['end'].stop_lat, elem['end'].stop_lon ],
+												mode: 'transit',
+												transit_mode: 'bus',
+												language: 'it'
+											};
+
+											// Geocode an address with a promise
+											googleMapsClient.directions(options).asPromise()
+												.then((response) => {
+													response = response.json.routes[0].legs[0];
+
+													text = "Orario di partenza: " + response.departure_time.text + "\nOrario di arrivo: " + response.arrival_time.text;
+													text += "\nDurata: " + response.duration.text + "\nDistanza: " + response.distance.text;
+													text += "\nPartenza: " + response.start_address + "\nArrivo: " + response.end_address;
+													text += "\n\n";
+
+													response = response.steps;
+													for(let i = 0; i < response.length; i++) {
+														if(i != 0 && i != response.length -1) {
+															if(response[i].travel_mode == "TRANSIT") {
+																text += "\nDurata: " + response[i].duration.text + "\nDistanza: " + response[i].distance.text;
+																text += "\nPartenza: " + response[i].transit_details.departure_stop.name + "\nArrivo: " + response[i].transit_details.arrival_stop.name;
+
+																text += "\nLinea " + response[i].transit_details.line.short_name + " (" + response[i].transit_details.line.name + ")";
+																text += "\nDirezione: " + response[i].transit_details.headsign;
+																text += "\n\n";
+															} else {
+																text += "\n" + response[i].html_instructions;
+																text += "\n\n";
+															}
+														}
+													}
+
+													bot.sendMessage(msg.chat.id, text, db.createHome());
+												})
+												.catch((err) => {
+													console.log(err);
+												});
+										});
+									});
+								})
+								.catch(err => {
+									console.error(err);
+								});
+						});
+					});
+				} else {
+					checkID(msg.chat.id, '/start', con)
+						.then((result) => {
+							var text = "La fermata inserita non è stata riconosciuta!";
+
+							bot.sendMessage(msg.chat.id, text, db.createHome());
+						})
+						.catch(err => {
+							console.error(err);
+						});
+				}
+			});
+		})
+		.catch(err => {
+			bot.sendMessage(msg.chat.id, err);
+		});
+}
+
 function Avvisi_Linee (bot, msg, connection) {
 	console.log("Avvisi_Linee");
 	db.initiateConnection(connection)
@@ -1216,12 +1450,17 @@ exports.Linea_F3 = Linea_F3;
 exports.Linea_F4_Location_F1 = Linea_F4_Location_F1;
 exports.Linea_F4_Name_F1 = Linea_F4_Name_F1;
 
-
 exports.Next_F1 = Next_F1;
 exports.Next_F2_Location_F1 = Next_F2_Location_F1;
 exports.Next_F2_Location_F2 = Next_F2_Location_F2;
 exports.Next_F2_Name_F1 = Next_F2_Name_F1;
 exports.Next_F2_Name_F2 = Next_F2_Name_F2;
 exports.All_FF = All_FF;
+
+exports.CalcolaPercorso_F1 = CalcolaPercorso_F1;
+exports.CalcolaPercorso_F2 = CalcolaPercorso_F2;
+exports.CalcolaPercorso_F3 = CalcolaPercorso_F3;
+exports.CalcolaPercorso_F4 = CalcolaPercorso_F4;
+exports.CalcolaPercorso_F5 = CalcolaPercorso_F5;
 
 exports.Avvisi_Linee = Avvisi_Linee;
