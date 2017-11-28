@@ -22,10 +22,39 @@
 									<option value="howto">How To</option>
 									<option value="luoghiutili">Luoghi utili</option>
 									<option value="avvisi">Avvisi</option>
+									<option value="scadenze" callback="scadenze">Scadenze</option>
 								</select>
 								<div conv-fork="helpSelection">
 									<div conv-case="mezzi">
-										<input type="text" conv-question="Hai selezionato la sezione mezzi" no-answer="true">
+										<input type="text" conv-question="La sezione mezzi ti permette di: " no-answer="true">
+										<input type="text" conv-question="Cercare una fermata e vedere gli orari di quella fermata" no-answer="true">
+										<input type="text" conv-question="Cercare le informazioni di una linea" no-answer="true">
+										<input type="text" conv-question="Vedere solo i prossimi orari di una fermata" no-answer="true">
+										<input type="text" conv-question="Vedere gli avvisi del giorno per le linee che subiranno variazioni" no-answer="true">
+										<select name="sezzioneMezzi" conv-question="Cosa ti interessa?">
+		                                    <option value="fermata" callback="sezzioneMezzifermata">Fermata</option>
+		                                    <option value="linea" callback="sezzioneMezzilinea">Linea</option>
+											<option value="next" callback="sezzioneMezzinext">Prossimo autobus</option>
+											<option value="avvisi" callback="sezzioneMezziavvisi">Avvisi Linee</option>
+											<option value="prezzi" callback="sezzioneMezzitariffe">Tariffe</option>
+		                                </select>
+										<div conv-fork="sezioneAvvisi">
+		                                    <div conv-case="fermata">
+		                                        <input type="text" conv-question="Seleziona la fermata qui a destra per ottenere gli orari :) | Troverai i risultati qui sulla destra" no-answer="true">
+											</div>
+											<div conv-case="linea">
+		                                        <input type="text" conv-question="Seleziona la linea che ti interessa cercare qui a destra | Troverai le informazioni qui sulla destra | Spero tu posso trovare l'autobus che ti è più comodo qui sulla destra" no-answer="true">
+											</div>
+											<div conv-case="next">
+		                                        <input type="text" conv-question="Seleziona la fermata qui sulla destra per vedere i prossimi autobus che passeranno l&iacute;" no-answer="true">
+											</div>
+											<div conv-case="avvisi">
+		                                        <input type="text" conv-question="Sulla destra troverai gli avvisi del giorno, spero la tua linea non abbia subito variazioni" no-answer="true">
+											</div>
+											<div conv-case="tariffe">
+												<input type="text" conv-question="Sulla destra troverai tutte le tariffe offerte da TTE :)" no-answer="true">
+											</div>
+										</div>
 									</div>
 									<div conv-case="howto">
 										<input type="text" conv-question="Hai selezionato la sezione How to" no-answer="true">
@@ -81,9 +110,23 @@
 											<div conv-case="trasferimenti">
 												<select name="sezioneHowToTrasferimenti" conv-question="Le informazioni che cerchi cosa riguardano? | cosa stai cercando? | Dimmi come posso aiutarti :)">
 				                                    <option value="verso" callback="howTotrasferimentiverso">Trasferimento verso un altro ateneo</option>
-				                                    <option value="da" callback="howTotrasferimentida">Trasferimento da un altro ateneo</option>
+				                                    <option value="da">Trasferimento da un altro ateneo</option>
 				                                    <option value="daMagistrali" callback="howTotrasferimentidaMagistrali">Trasferimento da un altro ateneo magistrale</option>
 				                                </select>
+												<div conv-fork="sezioneHowToTrasferimenti">
+													<div conv-case="da">
+														<select name="sezioneHowToTrasferimentida" conv-question="Che facolt&agrave; stai cercando?">
+						                                    <option value="centro" callback="sezioneHowToTrasferimentidacentro">Lettere Giurisprudenza Filosofia Sociologia Economia</option>
+						                                    <option value="povo" callback="sezioneHowToTrasferimentidapovo">Matematica Fisica Ingegneria dell'informazione</option>
+															<option value="rovereto" callback="sezioneHowToTrasferimentidarovereto"> Psicologia Scienze Cognitive</option>
+						                                    <option value="cibio" callback="sezioneHowToTrasferimentidacibio">Cibio</option>
+															<option value="dii" callback="sezioneHowToTrasferimentidadii">Dii</option>
+						                                    <option value="enologia" callback="sezioneHowToTrasferimentidaenologia">Enologia</option>
+															<option value="dicam" callback="sezioneHowToTrasferimentidadicam">Dicam</option>
+						                                    <option value="edile" callback="sezioneHowToTrasferimentidaedile">Ingegneria edile ed Architettura</option>
+						                                </select>
+													</div>
+												</div>
 											</div>
 											<div conv-case="supporto">
 												<input type="text" conv-question="Qui a destra troverai le informazioni che cerchi :)" no-answer="true">
@@ -101,18 +144,93 @@
 													<option value="speciali" callback="HowToRinnovospeciali">Rinnovo iscrizione per studenti con bisogni particolari</option>
 				                                </select>
 											</div>
-											<!--<div conv-case="futuro">
+											<div conv-case="futuro">
 												<select name="sezioneHowToFuturo" conv-question="Le informazioni che cerchi cosa riguardano? | cosa stai cercando? | Dimmi come posso aiutarti :)">
-				                                    <option value="didattica" callback="HowToFuturodidattica">Didattica</option>
-													<option value="iscrizioni" callback="HowToFuturoiscrizioni">Iscrizioni</option>
-													<option value="orientamento" callback="HowToFuturoorientamento">Orientamento</option>
-				                                    <option value="agevolazioni" callback="HowToFuturoagevolazioni">Agevolazioni</option>
-													<option value="servizi" callback="HowToFuturoservizi">Serivizi</option>
-				                                    <option value="ateneo" callback="HowToFuturoateneo">Ateneo</option>
-													<option value="international" callback="HowToFuturointernational">Prospective International Student</option>
-													<option value="nonsolo" callback="HowToFuturononsolo">Non solo studio</option>
+				                                    <option value="didattica">Didattica</option>
+													<option value="iscrizioni">Iscrizioni</option>
+													<option value="orientamento">Orientamento</option>
+				                                    <option value="agevolazioni">Agevolazioni</option>
+													<option value="servizi">Serivizi</option>
+				                                    <option value="ateneo">Ateneo</option>
+													<option value="international">Prospective International Student</option>
+													<option value="nonsolo">Non solo studio</option>
 				                                </select>
-											</div>-->
+												<div conv-fork="sezioneHowToFuturo">
+													<div conv-case="didattica">
+														<select name="sezioneHowToFuturodidattica" conv-question="Le informazioni che cerchi cosa riguardano? | cosa stai cercando? | Dimmi come posso aiutarti :)">
+						                                    <option value="corsi" callback="HowToFuturodidatticacorsi">Corsi</option>
+															<option value="dottorati" callback="HowToFuturodidatticadottorati">Dottorati</option>
+															<option value="master" callback="HowToFuturodidatticamaster">Master</option>
+						                                </select>
+													</div>
+													<div conv-case="iscrizioni">
+														<select name="sezioneHowToFuturoiscrizioni" conv-question="Le informazioni che cerchi cosa riguardano? | cosa stai cercando? | Dimmi come posso aiutarti :)">
+						                                    <option value="ammissioni" callback="HowToFuturoiscrizioniammissioni">Ammissioni</option>
+															<option value="infostudenti" callback="HowToFuturoiscrizioniinfostudenti">Infostudenti</option>
+															<option value="riconoscimentotitolo" callback="HowToFuturoiscrizioniriconoscimentotitolo">Riconoscimento titolo</option>
+															<option value="tasse" callback="HowToFuturoiscrizionitasse">Tasse</option>
+						                                </select>
+													</div>
+													<div conv-case="orientamento">
+														<select name="sezioneHowToFuturoorientamento" conv-question="Le informazioni che cerchi cosa riguardano? | cosa stai cercando? | Dimmi come posso aiutarti :)">
+						                                    <option value="costo" callback="HowToFuturoorientamentocosto">Costo</option>
+															<option value="sitoorienta" callback="HowToFuturoorientamentositoorienta">Sito orientamento</option>
+															<option value="unitrentoorienta" callback="HowToFuturoorientamentounitrentoorienta">UniTrento orienta</option>
+						                                </select>
+													</div>
+													<div conv-case="agevolazioni">
+														<select name="sezioneHowToFuturoagevolazioni" conv-question="Le informazioni che cerchi cosa riguardano? | cosa stai cercando? | Dimmi come posso aiutarti :)">
+						                                    <option value="borse" callback="HowToFuturoagevolazioniborse">Borse di studio</option>
+															<option value="alloggi" callback="HowToFuturoagevolazioniallogi">Alloggi</option>
+															<option value="serviziopera" callback="HowToFuturoagevolazioniserviziopera">Servizi opera</option>
+															<option value="collegio" callback="HowToFuturoagevolazionicollegio">Collegio</option>
+						                                </select>
+													</div>
+													<div conv-case="servizi">
+														<select name="sezioneHowToFuturoservizi" conv-question="Le informazioni che cerchi cosa riguardano? | cosa stai cercando? | Dimmi come posso aiutarti :)">
+															<option value="biblioteca" callback="HowToFuturoservizibiblioteca">Biblioteca</option>
+															<option value="mense" callback="HowToFuturoservizimense">Mense</option>
+															<option value="alloggi" callback="HowToFuturoservizialloggi">Alloggi</option>
+															<option value="tutorato" callback="HowToFuturoservizitutorato">Tutorato</option>
+														    <option value="jobguidance" callback="HowToFuturoservizijobguidance">Job-guidance</option>
+														    <option value="cla" callback="HowToFuturoservizicla">Cla</option>
+															<option value="consulenza" callback="HowToFuturoserviziconsulenza">consulenza</option>
+															<option value="matlab" callback="HowToFuturoservizimatlab">matlab</option>
+															<option value="informatici" callback="HowToFuturoserviziinformatici">informatici</option>
+															<option value="civile" callback="HowToFuturoservizicivile">civile</option>
+														    <option value="bisognispeciali" callback="HowToFuturoservizibisognispeciali">Bisogni speciali</option>
+						                                </select>
+													</div>
+													<div conv-case="ateneo">
+														<select name="sezioneHowToFuturoateneo" conv-question="Le informazioni che cerchi cosa riguardano? | cosa stai cercando? | Dimmi come posso aiutarti :)">
+															<option value="presentazione" callback="HowToFuturoateneopresentazione">Presentazione</option>
+															<option value="strutture" callback="HowToFuturoateneostrutture">Strutture</option>
+															<option value="numeri" callback="HowToFuturoateneonumeri">Numeri</option>
+															<option value="rankings" callback="HowToFuturoateneorankings">Rankings</option>
+															<option value="trentinoetrento" callback="HowToFuturoateneotrentinoetrento">Trentino e Trento</option>
+															<option value="comeraggiungerci" callback="HowToFuturoateneocomeraggiungerci">Come raggiungerci</option>
+						                                </select>
+													</div>
+													<div conv-case="international">
+														<select name="sezioneHowToFuturointernational" conv-question="Le informazioni che cerchi cosa riguardano? | cosa stai cercando? | Dimmi come posso aiutarti :)">
+						                                    <option value="internationalintrento" callback="HowToFuturointernationalinternationalintrento">International in Trento</option>
+															<option value="studiarelavorare" callback="HowToFuturointernationalstudiarelavorare">Studiare e lavorare</option>
+						                                </select>
+													</div>
+													<div conv-case="nonsolo">
+														<select name="sezioneHowToFuturononsolo" conv-question="Le informazioni che cerchi cosa riguardano? | cosa stai cercando? | Dimmi come posso aiutarti :)">
+															<option value="apple" callback="HowToFuturononsoloapple">Apple</option>
+														    <option value="asociazionistudentesche" callback="HowToFuturononsoloasociazionistudentesche">Asociazioni studentesche</option>
+														    <option value="opera" callback="HowToFuturononsoloopera">Opera</option>
+															<option value="prestabici" callback="HowToFuturononsoloprestabici">Prestabici</option>
+															<option value="rappresentanti" callback="HowToFuturononsolorappresentanti">Rappresentanti</option>
+															<option value="associazioniuniversitarie" callback="HowToFuturononsoloassociazioniuniversitarie">Associazioni universitarie</option>
+															<option value="unisport" callback="HowToFuturononsolounisport">UniSport</option>
+														    <option value="linkgiovani" callback="HowToFuturononsololinkgiovani">Link giovani</option>
+						                                </select>
+													</div>
+												</div>
+											</div>
 										</div>
 									</div>
 									<div conv-case="luoghiutili">
@@ -224,6 +342,9 @@
 											</div>
 										</div>
 									</div>
+									<div conv-case="scadenze">
+										<input type="text" conv-question="Ecco a te le scadenze che attualmente conosco :)" no-answer="true">
+									</div>
 								</div>
 								<select conv-question="Mi spiace ma in questa sezione non ho altro da mostrarti, torniamo al menu principale, ok? :)">
                                     <option value="ok" callback="ricarica">Ok</option>
@@ -242,10 +363,33 @@
 		<script type="text/javascript" src="../js/chat/luoghiUtili/places.js"></script>
 		<script type="text/javascript" src="../js/chat/avvisi/avvisi.js"></script>
 		<script type="text/javascript" src="../js/chat/howTo/howTo.js"></script>
+		<script type="text/javascript" src="../js/chat/mezzi/mezzi.js"></script>
+		<script type="text/JavaScript" src="../js/chat/scadenze/scadenze.js"></script>
 
 		<script>
 			function ricarica() {
 				reload();
+			}
+
+			function scadenze() {
+				scadenza();
+			}
+
+			function sezzioneMezzifermata() {
+				mezzi("fermata","1",4);
+			}
+			function sezzioneMezzilinea() {
+				mezzi("linea","1",5);
+			}
+			function sezzioneMezzinext() {
+				mezzi("next","1",6);
+			}
+			function sezzioneMezziavvisi() {
+				mezzi("AvvisiLinee","",7);
+			}
+
+			function sezzioneMezzitariffe() {
+				mezziTariffe();
 			}
 
 			function HowToAmmissioniciclo() {
@@ -291,9 +435,32 @@
 			function howTotrasferimentiverso() {
 				howTo("trasferimenti","trasferimenti-verso","");
 			}
-			function howTotrasferimentida() {
-				howTo("trasferimenti","trasferimenti-da","");
+
+			function sezioneHowToTrasferimentidacentro(){
+				howTo("trasferimenti","trasferimenti-da","centro");
 			}
+			function sezioneHowToTrasferimentidapovo(){
+				howTo("trasferimenti","trasferimenti-da","povo");
+			}
+			function sezioneHowToTrasferimentidarovereto(){
+				howTo("trasferimenti","trasferimenti-da","rovereto");
+			}
+			function sezioneHowToTrasferimentidacibio(){
+				howTo("trasferimenti","trasferimenti-da","cibio");
+			}
+			function sezioneHowToTrasferimentidadii(){
+				howTo("trasferimenti","trasferimenti-da","dii");
+			}
+			function sezioneHowToTrasferimentidaenologia(){
+				howTo("trasferimenti","trasferimenti-da","enologia");
+			}
+			function sezioneHowToTrasferimentidadicam(){
+				howTo("trasferimenti","trasferimenti-da","dicam");
+			}
+			function sezioneHowToTrasferimentidaedile(){
+				howTo("trasferimenti","trasferimenti-da","edile");
+			}
+
 			function howTotrasferimentidaMagistrali() {
 				howTo("trasferimenti","trasferimenti-da-magistrale","");
 			}
@@ -320,29 +487,128 @@
 				howTo("rinnovi","rinnovo-bisogni-particolari","");
 			}
 
-			function HowToFuturodidattica() {
-				howTo("futuroStudente")
+			function HowToFuturodidatticacorsi() {
+				howTo("futuroStudente","didattica","corsi");
 			}
-			function HowToFuturoiscrizioni() {
-				howTo("futuroStudente")
+			function HowToFuturodidatticadottorati() {
+				howTo("futuroStudente","didattica","dottorati");
 			}
-			function HowToFuturoorientamento() {
-				howTo("futuroStudente")
+			function HowToFuturodidatticamaster() {
+				howTo("futuroStudente","didattica","master");
 			}
-			function HowToFuturoagevolazioni() {
-				howTo("futuroStudente")
+			function HowToFuturoiscrizioniammissioni() {
+				howTo("futuroStudente","iscrizioni","ammissioni");
 			}
-			function HowToFuturoservizi() {
-				howTo("futuroStudente")
+			function HowToFuturoiscrizioniinfostudenti() {
+				howTo("futuroStudente","iscrizioni","infostudenti");
 			}
-			function HowToFuturoateneo() {
-				howTo("futuroStudente")
+			function HowToFuturoiscrizioniriconoscimentotitolo() {
+				howTo("futuroStudente","iscrizioni","riconoscimento-titolo");
 			}
-			function HowToFuturointernational() {
-				howTo("futuroStudente")
+			function HowToFuturoiscrizionitasse() {
+				howTo("futuroStudente","iscrizioni","tasse");
 			}
-			function HowToFuturononsolo() {
-				howTo("futuroStudente")
+			function HowToFuturoorientamentocost() {
+				howTo("futuroStudente","orientamento","costo");
+			}
+			function HowToFuturoorientamentositoorienta() {
+				howTo("futuroStudente","orientamento","sito-orienta");
+			}
+			function HowToFuturoorientamentounitrentoorienta() {
+				howTo("futuroStudente","orientamento","unitrento-orienta");
+			}
+			function HowToFuturoagevolazioniborse() {
+				howTo("futuroStudente","agevolazioni","borse");
+			}
+			function HowToFuturoagevolazioniallogi() {
+				howTo("futuroStudente","agevolazioni","alloggi");
+			}
+			function HowToFuturoagevolazioniserviziopera() {
+				howTo("futuroStudente","agevolazioni","servizi-opera");
+			}
+			function HowToFuturoagevolazionicollegio() {
+				howTo("futuroStudente","agevolazioni","collegio");
+			}
+			function HowToFuturoservizibiblioteca() {
+				howTo("futuroStudente","servizi","biblioteca");
+			}
+			function HowToFuturoservizimense() {
+				howTo("futuroStudente","servizi","mense");
+			}
+			function HowToFuturoservizialloggi() {
+				howTo("futuroStudente","servizi","alloggi");
+			}
+			function HowToFuturoservizitutorato() {
+				howTo("futuroStudente","servizi","tutorato");
+			}
+			function HowToFuturoservizijobguidance() {
+				howTo("futuroStudente","servizi","job-guidance");
+			}
+			function HowToFuturoservizicla() {
+				howTo("futuroStudente","servizi","cla");
+			}
+			function HowToFuturoserviziconsulenza() {
+				howTo("futuroStudente","servizi","consulenza");
+			}
+			function HowToFuturoservizimatlab() {
+				howTo("futuroStudente","servizi","matlab");
+			}
+			function HowToFuturoserviziinformatici() {
+				howTo("futuroStudente","servizi","informatici");
+			}
+			function HowToFuturoservizicivile() {
+				howTo("futuroStudente","servizi","civile");
+			}
+			function HowToFuturoservizibisognispeciali() {
+				howTo("futuroStudente","servizi","bisogni-speciali");
+			}
+			function HowToFuturoateneopresentazione() {
+				howTo("futuroStudente","ateneo","presentazione");
+			}
+			function HowToFuturoateneostrutture() {
+				howTo("futuroStudente","ateneo","strutture");
+			}
+			function HowToFuturoateneonumeri() {
+				howTo("futuroStudente","ateneo","numeri");
+			}
+			function HowToFuturoateneorankings() {
+				howTo("futuroStudente","ateneo","rankings");
+			}
+			function HowToFuturoateneotrentinoetrento() {
+				howTo("futuroStudente","ateneo","trentino-e-trento");
+			}
+			function HowToFuturoateneocomeraggiungerci() {
+				howTo("futuroStudente","ateneo","come-raggiungerci");
+			}
+			function HowToFuturointernationalinternationalintrento() {
+				howTo("futuroStudente","pis","international-in-trento");
+			}
+			function HowToFuturointernationalstudiarelavorare() {
+				howTo("futuroStudente","pis","studiare-lavorare");
+			}
+			function HowToFuturononsoloapple() {
+				howTo("futuroStudente","non-solo-studio","apple");
+			}
+			function HowToFuturononsoloasociazionistudentesche() {
+				howTo("futuroStudente","non-solo-studio","asociazioni-studentesche");
+			}
+			function HowToFuturononsoloopera() {
+				howTo("futuroStudente","non-solo-studio","opera");
+			}
+			function HowToFuturononsoloprestabici() {
+				howTo("futuroStudente","non-solo-studio","prestabici");
+			}
+			function HowToFuturononsolorappresentanti() {
+				howTo("futuroStudente","non-solo-studio","rappresentanti");
+			}
+			function HowToFuturononsoloassociazioniuniversitarie() {
+				howTo("futuroStudente","non-solo-studio","associazioni-universitarie");
+			}
+			function HowToFuturononsolounisport() {
+				howTo("futuroStudente","non-solo-studio","unisport");
+			}
+			function HowToFuturononsololinkgiovani() {
+				howTo("futuroStudente","non-solo-studio","link-giovani");
 			}
 
 			function avvisiDicam() {

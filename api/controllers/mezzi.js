@@ -335,7 +335,7 @@ function Next_F2 (request, response) {
 				var weekday = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
 				var today = weekday[date.getDay()];
 
-				query = "SELECT MIN(arrival_time),stop_name,stop_lat,stop_lon,wheelchair_boarding,arrival_time,departure_time,trip_headsign,wheelchair_accessible,route_short_name,route_long_name,route_type FROM " + nameT1 + " where arrival_time>'" + clockNow + "' AND " + today + "='1' GROUP BY route_short_name,trip_headsign ORDER BY arrival_time ASC";
+				query = "SELECT stop_name,stop_lat,stop_lon,wheelchair_boarding,MIN(arrival_time) AS arrival_time,departure_time,trip_headsign,wheelchair_accessible,route_short_name,route_long_name,route_type FROM " + nameT1 + " where arrival_time>'" + clockNow + "' AND " + today + "='1' GROUP BY route_short_name,trip_headsign ORDER BY arrival_time ASC";
 				con.query(query, function (err, result, fields) {
 					if (err) throw err;
 

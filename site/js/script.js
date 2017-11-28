@@ -1,8 +1,14 @@
 var links = [
-    'page/luoghiUtili.html',
-	'page/avvisi.html',
-    'page/howTo.html',
-    'page/howToOpenDay.html'
+    'site/page/luoghiUtili.html',
+	'site/page/avvisi.html',
+    'site/page/howTo.html',
+    'site/page/howToOpenDay.html',
+    'site/page/mezzi/fermata.html',
+    'site/page/mezzi/linea.html',
+    'site/page/mezzi/next.html',
+    'site/page/mezzi/avvisi.html',
+    'site/page/mezzi/tariffe.html',
+    'site/page/scadenze.html'
 ];
 
 var one, two;
