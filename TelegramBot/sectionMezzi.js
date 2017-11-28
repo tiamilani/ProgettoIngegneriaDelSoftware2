@@ -1352,26 +1352,29 @@ function CalcolaPercorso_F5 (bot, msg, connection) {
 												.then((response) => {
 													response = response.json.routes[0].legs[0];
 
-													text = "Orario di partenza: " + response.departure_time.text + "\nOrario di arrivo: " + response.arrival_time.text;
-													text += "\nDurata: " + response.duration.text + "\nDistanza: " + response.distance.text;
+													text = "*RIASSUNTO*";
 													text += "\nPartenza: " + response.start_address + "\nArrivo: " + response.end_address;
-													text += "\n\n";
+													text += "\nOrario di partenza: " + response.departure_time.text + "\nOrario di arrivo: " + response.arrival_time.text;
+													text += "\nDurata: " + response.duration.text + "\nDistanza: " + response.distance.text;
+													text += "\n\n*DETTAGLI*\n\n";
 
 													response = response.steps;
 													for(let i = 0; i < response.length; i++) {
-														if(i != 0 && i != response.length -1) {
-															if(response[i].travel_mode == "TRANSIT") {
-																text += "\nDurata: " + response[i].duration.text + "\nDistanza: " + response[i].distance.text;
-																text += "\nPartenza: " + response[i].transit_details.departure_stop.name + "\nArrivo: " + response[i].transit_details.arrival_stop.name;
-
-																text += "\nLinea " + response[i].transit_details.line.short_name + " (" + response[i].transit_details.line.name + ")";
-																text += "\nDirezione: " + response[i].transit_details.headsign;
-																text += "\n\n";
-															} else {
-																text += "\n" + response[i].html_instructions;
-																text += "\n\n";
-															}
+														if(response[i].travel_mode == "TRANSIT") {
+															text += "\n*" + response[i].transit_details.line.vehicle.name + "*";
+															text += "\nLinea " + response[i].transit_details.line.short_name + " (" + response[i].transit_details.line.name + ")";
+															text += "\nDirezione: " + response[i].transit_details.headsign;
+															text += "\nPartenza: " + response[i].transit_details.departure_stop.name + "\nArrivo: " + response[i].transit_details.arrival_stop.name;
+															text += "\nOrario di partenza: " + response[i].transit_details.departure_time.text + "\nOrario di arrivo: " + response[i].transit_details.arrival_time.text;
+															text += "\nDurata: " + response[i].duration.text + "\nDistanza: " + response[i].distance.text;
+														} else {
+															if(i != 0 && i != response.length -1)
+																text += "\n*" + response[i].html_instructions + "*";
 														}
+
+														text += "\n\n";
+														text += "\nPer le indicazioni clicca qui:";
+														text += "\nhttps://www.google.com/maps/dir/?api=1&origin=" + elem['start'].stop_lat + "," + elem['start'].stop_lon + "&destination=" + elem['end'].stop_lat + "," + elem['end'].stop_lon + "&travelmode=transit";
 													}
 
 													bot.sendMessage(msg.chat.id, text, db.createHome());
