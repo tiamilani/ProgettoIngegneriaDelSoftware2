@@ -92,11 +92,13 @@ function createChoice (array, npr, argument, checkName, requestPosition) {
 }
 
 function printText (result) {
-	console.log("1");
     var text = "";
+	if(result.trip_headsign != undefined)
+		text += "*PRESTA ATTENZIONE ALLA DIREZIONE*";
+
     if(result.route_short_name != undefined)
-        text += "Linea " + result.route_short_name + " (" + result.route_long_name + ")";
-		console.log("2");
+        text += "\nLinea " + result.route_short_name + " (" + result.route_long_name + ")";
+
 	if(result.trip_headsign != undefined)
         text += "\nDirezione: *" + result.trip_headsign + "*";
 
@@ -956,7 +958,7 @@ function Next_F2_Location_F2 (bot, msg, connection) {
 							var weekday = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
 							var today = weekday[date.getDay()];
 
-		                    query = "SELECT MIN(arrival_time),stop_name,stop_lat,stop_lon,wheelchair_boarding,arrival_time,departure_time,trip_headsign,wheelchair_accessible,route_short_name,route_long_name,route_type FROM " + nameT1 + " where arrival_time>'" + clockNow + "' AND " + today + "='1' GROUP BY route_short_name ORDER BY arrival_time ASC";
+		                    query = "SELECT stop_name,stop_lat,stop_lon,wheelchair_boarding,MIN(arrival_time) AS arrival_time,MIN(departure_time) AS departure_time,trip_headsign,wheelchair_accessible,route_short_name,route_long_name,route_type FROM " + nameT1 + " where arrival_time>'" + clockNow + "' AND " + today + "='1' GROUP BY route_short_name,trip_headsign ORDER BY arrival_time ASC";
 		                    con.query(query, function (err, result, fields) {
 		                        if (err) throw err;
 								var res = result;
@@ -1069,7 +1071,7 @@ function Next_F2_Name_F2 (bot, msg, connection) {
 		                var weekday = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
 		                var today = weekday[date.getDay()];
 
-		                query = "SELECT stop_name,stop_lat,stop_lon,wheelchair_boarding,MIN(arrival_time) AS arrival_time,departure_time,trip_headsign,wheelchair_accessible,route_short_name,route_long_name,route_type FROM " + nameT1 + " where arrival_time>'" + clockNow + "' AND " + today + "='1' GROUP BY route_short_name,trip_headsign ORDER BY arrival_time ASC";
+		                query = "SELECT stop_name,stop_lat,stop_lon,wheelchair_boarding,MIN(arrival_time) AS arrival_time,MIN(departure_time) AS departure_time,trip_headsign,wheelchair_accessible,route_short_name,route_long_name,route_type FROM " + nameT1 + " where arrival_time>'" + clockNow + "' AND " + today + "='1' GROUP BY route_short_name,trip_headsign ORDER BY arrival_time ASC";
 		                con.query(query, function (err, result, fields) {
 		                    if (err) throw err;
 
@@ -1352,29 +1354,26 @@ function CalcolaPercorso_F5 (bot, msg, connection) {
 												.then((response) => {
 													response = response.json.routes[0].legs[0];
 
-													text = "*RIASSUNTO*";
-													text += "\nPartenza: " + response.start_address + "\nArrivo: " + response.end_address;
-													text += "\nOrario di partenza: " + response.departure_time.text + "\nOrario di arrivo: " + response.arrival_time.text;
+													text = "Orario di partenza: " + response.departure_time.text + "\nOrario di arrivo: " + response.arrival_time.text;
 													text += "\nDurata: " + response.duration.text + "\nDistanza: " + response.distance.text;
-													text += "\n\n*DETTAGLI*\n\n";
+													text += "\nPartenza: " + response.start_address + "\nArrivo: " + response.end_address;
+													text += "\n\n";
 
 													response = response.steps;
 													for(let i = 0; i < response.length; i++) {
-														if(response[i].travel_mode == "TRANSIT") {
-															text += "\n*" + response[i].transit_details.line.vehicle.name + "*";
-															text += "\nLinea " + response[i].transit_details.line.short_name + " (" + response[i].transit_details.line.name + ")";
-															text += "\nDirezione: " + response[i].transit_details.headsign;
-															text += "\nPartenza: " + response[i].transit_details.departure_stop.name + "\nArrivo: " + response[i].transit_details.arrival_stop.name;
-															text += "\nOrario di partenza: " + response[i].transit_details.departure_time.text + "\nOrario di arrivo: " + response[i].transit_details.arrival_time.text;
-															text += "\nDurata: " + response[i].duration.text + "\nDistanza: " + response[i].distance.text;
-														} else {
-															if(i != 0 && i != response.length -1)
-																text += "\n*" + response[i].html_instructions + "*";
-														}
+														if(i != 0 && i != response.length -1) {
+															if(response[i].travel_mode == "TRANSIT") {
+																text += "\nDurata: " + response[i].duration.text + "\nDistanza: " + response[i].distance.text;
+																text += "\nPartenza: " + response[i].transit_details.departure_stop.name + "\nArrivo: " + response[i].transit_details.arrival_stop.name;
 
-														text += "\n\n";
-														text += "\nPer le indicazioni clicca qui:";
-														text += "\nhttps://www.google.com/maps/dir/?api=1&origin=" + elem['start'].stop_lat + "," + elem['start'].stop_lon + "&destination=" + elem['end'].stop_lat + "," + elem['end'].stop_lon + "&travelmode=transit";
+																text += "\nLinea " + response[i].transit_details.line.short_name + " (" + response[i].transit_details.line.name + ")";
+																text += "\nDirezione: " + response[i].transit_details.headsign;
+																text += "\n\n";
+															} else {
+																text += "\n" + response[i].html_instructions;
+																text += "\n\n";
+															}
+														}
 													}
 
 													bot.sendMessage(msg.chat.id, text, db.createHome());
