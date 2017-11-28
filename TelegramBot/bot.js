@@ -32,7 +32,7 @@ var databaseConnection = undefined;
 
 const specialChoices = ['home','ilaria','giulia','virginia'];
 const developChoices = ['develop','elimina tabelle','inserisci tabelle','crea indici','crea join','reset users','info db'];
-const mezziChoices = ['mezzi urbani tte','ricerca per linea','ricerca per fermata','prossimo mezzo','calcola percorso','avvisi linee', 'tariffe'];
+const mezziChoices = ['mezzi urbani tte','prossimo mezzo','calcola percorso','ricerca per linea','ricerca per fermata','avvisi linee', 'tariffe'];
 const scadenzeChoices = ['scadenze documenti','inserisci scadenza','modifica scadenza','elimina scadenza'];
 const mensaChoices = ['mensa vicina'];
 const avvisiChoices = ['avvisi dipartimenti','dicam','dii','cisca'];
@@ -171,13 +171,13 @@ function routeCommands (msg, id, connection) {
 							urban.Next_F2_Name_F2 (bot, msg, con);
 							break;
 						case 'Next_F2_Name_F2':
-							urban.All_FF (bot, msg, con);
+							urban.All_FF_B (bot, msg, con);
 							break;
 						case 'Next_F2_Location_F1':
 							urban.Next_F2_Location_F2 (bot, msg, con);
 							break;
 						case 'Next_F2_Location_F2':
-							urban.All_FF (bot, msg, con);
+							urban.All_FF_B (bot, msg, con);
                             break;
 					}
 				}
@@ -480,8 +480,9 @@ function Mezzi (msg) {
                 reply_markup: JSON.stringify({
                     keyboard: [
                         ['Home'],
+                        ['Prossimo Mezzo'],
+                        ['Calcola Percorso'],
                         ['Ricerca per Linea','Ricerca per Fermata'],
-                        ['Prossimo Mezzo', 'Calcola Percorso'],
                         ['Avvisi Linee', 'Tariffe']
                     ],
                     one_time_keyboard: true,
@@ -937,7 +938,7 @@ function HowTo (msg) {
 }
 
 // ---------- INTERVALS ----------
-var j = cron.scheduleJob('0 0 * * 2', () => {
+var j = cron.scheduleJob({hour: 10, minute: 10, dayOfWeek: 3}, () => {
     bot.emit('funzioniDB');
 });
 
