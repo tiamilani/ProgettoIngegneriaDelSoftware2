@@ -24,119 +24,122 @@ function createChoice (array, argument, checkName) {
     return elements;
 }
 
-function Fermata_F1 (request, response) {
-	console.log("Fermata_F1");
-	response.writeHead(200, {"Content-Type": "application/json; charset=utf-8"});
+function Fermata_F1 (request) {
+    return new Promise((resolve, reject) => {
+    	console.log("Fermata_F1");
 
-	db.initiateConnection(databaseConnection)
-		.then((con) => {
-			databaseConnection = con;
-			var text = "Scegli la fermata dall'elenco:";
+    	db.initiateConnection(databaseConnection)
+    		.then((con) => {
+    			databaseConnection = con;
+    			var text = "Scegli la fermata dall'elenco:";
 
-			var query = "SELECT DISTINCT stop_name FROM stops";
-	        con.query(query, function (err, result) {
-	            if (err) throw err;
+    			var query = "SELECT DISTINCT stop_name FROM stops";
+    	        con.query(query, function (err, result) {
+    	            if (err) return reject(JSON.stringify({ Ask: err }));
 
-				var keyboard = createChoice(result, 'stop_name', undefined);
+    				var keyboard = createChoice(result, 'stop_name', undefined);
 
-				var json = JSON.stringify ({
-					Ask: text,
-					Choices: keyboard
-				});
+    				var json = JSON.stringify ({
+    					Ask: text,
+    					Choices: keyboard
+    				});
 
-				response.end(json);
-			});
-		})
-		.catch(err => {
-			response.end(JSON.stringify({ Ask: err }));
-		});
+    				return resolve(json);
+    			});
+    		})
+    		.catch(err => {
+    			return reject(JSON.stringify({ Ask: err }));
+    		});
+    });
 };
 
-function Fermata_F2 (request, response) {
-	console.log("Fermata_F2");
-	response.writeHead(200, {"Content-Type": "application/json; charset=utf-8"});
+function Fermata_F2 (request) {
+    return new Promise((resolve, reject) => {
+    	console.log("Fermata_F2");
 
-	db.initiateConnection(databaseConnection)
-		.then((con) => {
-			databaseConnection = con;
-			var fermata = request.query.name;
-	        var tmpF = fermata.replace(/[\W_]/g, '');
-	        var nameT1 = "fermata_" + tmpF;
+    	db.initiateConnection(databaseConnection)
+    		.then((con) => {
+    			databaseConnection = con;
+    			var fermata = request.query.name;
+    	        var tmpF = fermata.replace(/[\W_]/g, '');
+    	        var nameT1 = "fermata_" + tmpF;
 
-			var query = "CREATE TABLE IF NOT EXISTS " + nameT1 + " AS SELECT * FROM time_table WHERE stop_name='" + fermata + "'";
-	        con.query(query, function (err, result) {
-	            if (err) throw err;
+    			var query = "CREATE TABLE IF NOT EXISTS " + nameT1 + " AS SELECT * FROM time_table WHERE stop_name='" + fermata + "'";
+    	        con.query(query, function (err, result) {
+    	            if (err) return reject(JSON.stringify({ Ask: err }));
 
-	            query = "SELECT DISTINCT route_short_name FROM " + nameT1 + " ORDER BY length(route_short_name) ASC, route_short_name ASC";
-	            con.query(query, function (err, result, fields) {
-	                if (err) throw err;
+    	            query = "SELECT DISTINCT route_short_name FROM " + nameT1 + " ORDER BY length(route_short_name) ASC, route_short_name ASC";
+    	            con.query(query, function (err, result, fields) {
+    	                if (err) return reject(JSON.stringify({ Ask: err }));
 
-	                var text = "Seleziona la linea:";
-					var keyboard = createChoice(result, 'route_short_name', undefined);
+    	                var text = "Seleziona la linea:";
+    					var keyboard = createChoice(result, 'route_short_name', undefined);
 
-					var json = JSON.stringify ({
-						nameT: nameT1,
-						Ask: text,
-						Choices: keyboard
-					});
+    					var json = JSON.stringify ({
+    						nameT: nameT1,
+    						Ask: text,
+    						Choices: keyboard
+    					});
 
-					response.end(json);
-				});
-			});
-		})
-		.catch(err => {
-			response.end(JSON.stringify({ Ask: err }));
-		});
+    					return resolve(json);
+    				});
+    			});
+    		})
+    		.catch(err => {
+    			return reject(JSON.stringify({ Ask: err }));
+    		});
+    });
 };
 
 function Fermata_F3 (request, response) {
-	console.log("Fermata_F3");
-	response.writeHead(200, {"Content-Type": "application/json; charset=utf-8"});
+    return new Promise((resolve, reject) => {
+    	console.log("Fermata_F3");
 
-	db.initiateConnection(databaseConnection)
-		.then((con) => {
-			databaseConnection = con;
-			var linea = request.query.name;
-			var index = linea.indexOf("/");
-			var tmpL;
-			if(index == -1)
-				tmpL = linea;
-			else
-				tmpL = linea.substr(0, index) + '$' + linea.substr(index + 1);
+    	db.initiateConnection(databaseConnection)
+    		.then((con) => {
+    			databaseConnection = con;
+    			var linea = request.query.name;
+    			var index = linea.indexOf("/");
+    			var tmpL;
+    			if(index == -1)
+    				tmpL = linea;
+    			else
+    				tmpL = linea.substr(0, index) + '$' + linea.substr(index + 1);
 
-			var date = new Date();
-			var clockNow = date.toTimeString();
-			clockNow = clockNow.split(' ')[0];
+    			var date = new Date();
+    			var clockNow = date.toTimeString();
+    			clockNow = clockNow.split(' ')[0];
 
-			var weekday = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
-			var today = weekday[date.getDay()];
+    			var weekday = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
+    			var today = weekday[date.getDay()];
 
-			var nameT1 = request.query.nameT;
-			var nameT2 = nameT1 + "_linea_" + tmpL;
+    			var nameT1 = request.query.nameT;
+    			var nameT2 = nameT1 + "_linea_" + tmpL;
 
-			var query = "CREATE TABLE IF NOT EXISTS " + nameT2 + " AS SELECT * FROM " + nameT1 + " WHERE route_short_name='" + linea + "'";
-			con.query(query, function (err, result, fields) {
-				if (err) throw err;
+    			var query = "CREATE TABLE IF NOT EXISTS " + nameT2 + " AS SELECT * FROM " + nameT1 + " WHERE route_short_name='" + linea + "'";
+    			con.query(query, function (err, result, fields) {
+    				if (err) return reject(JSON.stringify({ Ask: err }));
 
-				query = "SELECT * FROM " + nameT2 + " WHERE arrival_time>'" + clockNow + "' AND " + today + "='1' ORDER BY arrival_time ASC";
-				con.query(query, function (err, result, fields) {
-					if (err) throw err;
+    				query = "SELECT * FROM " + nameT2 + " WHERE arrival_time>'" + clockNow + "' AND " + today + "='1' ORDER BY arrival_time ASC";
+    				con.query(query, function (err, result, fields) {
+    					if (err) return reject(JSON.stringify({ Ask: err }));
 
-					if(result.length > 0) {
-						var json = JSON.stringify ({
-							Choices: result
-						});
+    					if(result.length > 0) {
+    						var json = JSON.stringify ({
+    							Choices: result
+    						});
 
-						response.end(json);
-					}
-					else
-						response.end(JSON.stringify({ Ask: "La linea selezionata ha terminato le corse che passano per la fermata selezionata per oggi"}));
-				});
-			});
-		})
-		.catch(err => {
-			response.end(JSON.stringify({ Ask: err }));
-		});
+    						return resolve(json);
+    					}
+    					else
+    						return reject(JSON.stringify({ Ask: "La linea selezionata ha terminato le corse che passano per la fermata selezionata per oggi"}));
+    				});
+    			});
+    		})
+    		.catch(err => {
+    			return reject(JSON.stringify({ Ask: err }));
+    		});
+    });
 };
 
 function Linea_F1 (request, response) {
@@ -391,21 +394,39 @@ function Avvisi_Linee (request, response) {
 }
 
 function switchFermata (request, response) {
-	var fase = request.query.fase;
+    return new Promise((resolve, reject) => {
+        response.writeHead(200, {"Content-Type": "application/json; charset=utf-8"});
 
-	switch (parseInt(fase)) {
-		case 1:
-			Fermata_F1 (request, response);
-			break;
-		case 2:
-			Fermata_F2 (request, response);
-			break;
-		case 3:
-			Fermata_F3 (request, response);
-			break;
-		default:
-			response.end(JSON.stringify({ Ask: "Fase della ricerca per Fermata non esistente"}));
-	}
+    	var fase = request.query.fase;
+    	switch (parseInt(fase)) {
+    		case 1:
+    			Fermata_F1 (request)
+                    .then((json) => {
+                        response.end(json);
+                        return resolve();
+                    })
+                    .catch((err) => { return reject(JSON.stringify({ Ask: err })); });
+    			break;
+    		case 2:
+    			Fermata_F2 (request)
+                    .then((json) => {
+                        response.end(json);
+                        return resolve();
+                    })
+                    .catch((err) => { return reject(JSON.stringify({ Ask: err })); });
+    			break;
+    		case 3:
+    			Fermata_F3 (request)
+                    .then((json) => {
+                        response.end(json);
+                        return resolve();
+                    })
+                    .catch((err) => { return reject(JSON.stringify({ Ask: err })); });
+    			break;
+    		default:
+    			return reject(JSON.stringify({ Ask: "Fase della ricerca per Fermata non esistente"}));
+    	}
+    });
 }
 
 function switchLinea (request, response) {
