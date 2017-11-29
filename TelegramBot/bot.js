@@ -7,6 +7,7 @@ const place = require ('./sectionLuoghiUtili.js');
 const eat = require ('./sectionMensa.js');
 const how = require ('./sectionHowto.js');
 const cron = require('node-schedule');
+const emoji = require('node-emoji');
 
 const TelegramBot = require('node-telegram-bot-api');
 
@@ -278,20 +279,20 @@ function Special (msg) {
         case 'home':
             BackHome(msg)
                 .then((result) => {
-                    bot.sendMessage(msg.chat.id, "Torno alla Home...", db.createHome());
+                    bot.sendMessage(msg.chat.id, emoji.emojify("Torno alla Home :house:"), db.createHome());
                 })
                 .catch(err => {
                     console.error(err);
                 });
             break;
         case 'ilaria':
-            bot.sendMessage(msg.chat.id, "Ti Amo <3");
+            bot.sendMessage(msg.chat.id, emoji.emojify("Ti Amo :heart:"));
             break;
         case 'giulia':
-            bot.sendMessage(msg.chat.id, "Ti Amo <3");
+            bot.sendMessage(msg.chat.id, emoji.emojify("Ti Amo :heart:"));
             break;
         case 'virginia':
-            bot.sendMessage(msg.chat.id, "Ti Amo <3");
+            bot.sendMessage(msg.chat.id, emoji.emojify("Ti Amo :heart:"));
             break;
     }
 }
@@ -475,7 +476,7 @@ function Develop (msg) {
 function Mezzi (msg) {
     switch (msg.text.toLowerCase()) {
         case 'mezzi urbani tte':
-            var text = "In questa sezione puoi ottenere informazioni riguardanti i mezzi di trasporto!";
+            var text = "In questa sezione puoi ottenere informazioni sugli orari dei mezzi di trasporto urbani di Trento!";
             var keyboard = {
                 reply_markup: JSON.stringify({
                     keyboard: [
@@ -493,21 +494,27 @@ function Mezzi (msg) {
             bot.sendMessage(msg.chat.id, text, keyboard);
             break;
         case 'ricerca per linea':
+            bot.sendMessage(msg.chat.id, "Se vuoi sapere le informazioni di una linea specifica sei nel posto giusto!");
             urban.Linea_F1(bot, msg, databaseConnection);
             break;
         case 'ricerca per fermata':
+            bot.sendMessage(msg.chat.id, "Se vuoi sapere le informazioni di una fermata specifica sei nel posto giusto!");
             urban.Fermata_F1(bot, msg, databaseConnection);
             break;
         case 'prossimo mezzo':
+            bot.sendMessage(msg.chat.id, "Se vuoi sapere quando passerà il tuo prossimo autobus sei nel posto giusto!");
             urban.Next_F1(bot, msg, databaseConnection);
             break;
         case 'calcola percorso':
+            bot.sendMessage(msg.chat.id, "Se vuoi le indicazioni su come raggiungere una specifica fermata sei nel posto giusto!");
             urban.CalcolaPercorso_F1(bot, msg, databaseConnection);
             break;
         case 'avvisi linee':
+            bot.sendMessage(msg.chat.id, "Se vuoi sapere quali linee potrebbero subire variazioni oggi sei nel posto giusto!");
             urban.Avvisi_Linee(bot, msg, databaseConnection);
             break;
         case 'tariffe':
+            bot.sendMessage(msg.chat.id, "Se vuoi sapere le tariffe dei biglietti urbani di Trento sei nel posto giusto!");
             var text = "*TARIFFE URBANE DI TRENTO*\n\t*Cartaceo*\n\t\t`€1,20 ->` 70 minuti\n\t\t`€1,50 ->` 120 minuti\n\t\t`€3,00 ->` Giornaliero\n\t*OpenMove*\n\t\t`€1,10 ->` 70 minuti\n\t\t`€1,40 ->` 120 minuti\n\t\t`€2,80 ->` Giornaliero\n\t*A Bordo*\n\t\t`€2,00 ->` Corsa Singola";
 
             bot.sendMessage(msg.chat.id, text, db.createHome()).then(() => {
@@ -984,10 +991,10 @@ bot.on('text', function(msg) {
                     bot.sendMessage(msg.chat.id, err);
                 });
         } else {
-            var text = "Sto preparando il bot per soddisfare le tue richieste!\nAttendi un attimo...";
-        	bot.sendMessage(msg.chat.id, text);
+            //var text = "Sto preparando il bot per soddisfare le tue richieste!\nAttendi un attimo...";
+        	//bot.sendMessage(msg.chat.id, text);
 
-            text = "Benvenuto " + msg.from.first_name + "!\nUniTN Help Center è un bot sviluppato per aiutare attuali e/o futuri studenti dell'Università degli Studi di Trento in vari ambiti della propria vita quotidiana!";
+            var text = emoji.emojify("Benvenuto " + msg.from.first_name + " :blush:\n*UniTN Help Center* è un bot sviluppato per aiutare attuali/futuri studenti e turisti di Trento in vari ambiti della loro vita quotidiana :pencil: :video_camera:");
             db.initConnectionLess(databaseConnection)
                 .then((con) => {
                     databaseConnection = con;

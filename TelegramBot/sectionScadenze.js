@@ -55,7 +55,7 @@ function mostraScadenze (bot, id, connection) {
                     bot.sendMessage(id, text, {parse_mode: "Markdown"});
                 }
                 else {
-                    bot.sendMessage(id, "Non ci sono scadenze attualmente!");
+                    bot.sendMessage(id, "Attualmente non ci sono scadenze!");
                 }
             });
         })

@@ -22,6 +22,7 @@
     "express": "^4.16.2",
     "fs": "0.0.1-security",
     "htmlparser2": "^3.9.2",
+    "node-emoji": "^1.8.1",
     "node-telegram-bot-api": "^0.28.0",
     "path": "^0.12.7",
     "rimraf": "^2.6.2",
