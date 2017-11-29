@@ -5,6 +5,12 @@ const tte = require('download-file');
 const unzip = require('adm-zip');
 const csv = require('fast-csv');
 
+//Export users & deadline tables:
+//	/Applications/MAMP/Library/bin/mysqldump --host=db4free.net -uandreafadi -pfabioCasati ttesercizio users deadline > table_backup.sql
+
+//Import users & deadline tables (after modify):
+//	/Applications/MAMP/Library/bin/mysql --host=andreafadi.ddns.net -uandreafadi -pfabioCasati tte_urbano < table_backup.sql
+
 function homeKeyboard () {
 	return {
 		parse_mode: "Markdown",
@@ -29,10 +35,10 @@ function connectToDatabaseInit (connection) {
 		if(connection == undefined || connection.state === 'disconnected') {
 			console.log("Connetto");
 			var con = mysql.createConnection({
-				host: "db4free.net",
-				user: "andreafadi",
-				password: "fabioCasati",
-				database: "ttesercizio",
+				host: 'db4free.net',
+				user: 'andreafadi',
+				password: 'fabioCasati',
+				database: 'ttesercizio',
 				multipleStatements: true
 			});
 
@@ -54,10 +60,10 @@ function connectToDatabase (connection) {
 		if(connection == undefined || connection.state === 'disconnected') {
 			console.log("Connetto");
 			var con = mysql.createConnection({
-				host: "db4free.net",
-				user: "andreafadi",
-				password: "fabioCasati",
-				database: "ttesercizio",
+				host: 'db4free.net',
+				user: 'andreafadi',
+				password: 'fabioCasati',
+				database: 'ttesercizano',
 				multipleStatements: true
 			});
 
@@ -284,8 +290,8 @@ function createTables (connection) {
 
 function createTableSupport (dirFile, file, nameFile, con) {
 	return new Promise((resolve, reject) => {
-	    let create = "";
-	    let insert = "";
+	    var create = "";
+	    var insert = "";
 	    let headers = [];
 	    let c = 0;
 

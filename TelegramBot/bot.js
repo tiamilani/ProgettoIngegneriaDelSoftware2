@@ -7,6 +7,7 @@ const place = require ('./sectionLuoghiUtili.js');
 const eat = require ('./sectionMensa.js');
 const how = require ('./sectionHowto.js');
 const cron = require('node-schedule');
+const emoji = require('node-emoji');
 
 const TelegramBot = require('node-telegram-bot-api');
 
@@ -278,20 +279,20 @@ function Special (msg) {
         case 'home':
             BackHome(msg)
                 .then((result) => {
-                    bot.sendMessage(msg.chat.id, "Torno alla Home...", db.createHome());
+                    bot.sendMessage(msg.chat.id, emoji.emojify("Torno alla Home :house:"), db.createHome());
                 })
                 .catch(err => {
                     console.error(err);
                 });
             break;
         case 'ilaria':
-            bot.sendMessage(msg.chat.id, "Ti Amo <3");
+            bot.sendMessage(msg.chat.id, emoji.emojify("Ti Amo :heart:"));
             break;
         case 'giulia':
-            bot.sendMessage(msg.chat.id, "Ti Amo <3");
+            bot.sendMessage(msg.chat.id, emoji.emojify("Ti Amo :heart:"));
             break;
         case 'virginia':
-            bot.sendMessage(msg.chat.id, "Ti Amo <3");
+            bot.sendMessage(msg.chat.id, emoji.emojify("Ti Amo :heart:"));
             break;
     }
 }
@@ -338,8 +339,9 @@ function Develop (msg) {
                     db.isAdmin(bot, msg, databaseConnection)
                         .then((result) => {
                             if(result)
-                                db.eliminaDati(bot, msg.chat.id, databaseConnection)
+                                db.eliminaDati(databaseConnection)
                                     .then((res) => {
+                                        console.log(res);
                                         bot.sendMessage(msg.chat.id, res);
                                     })
                                     .catch(err => {
@@ -363,7 +365,7 @@ function Develop (msg) {
                     db.isAdmin(bot, msg, databaseConnection)
                         .then((result) => {
                             if(result)
-                                db.inserisciDati(bot, msg.chat.id, databaseConnection)
+                                db.inserisciDati(databaseConnection)
                                     .then((res) => {
                                         bot.sendMessage(msg.chat.id, res);
                                     })
@@ -407,7 +409,7 @@ function Develop (msg) {
                     db.isAdmin(bot, msg, databaseConnection)
                         .then((result) => {
                             if(result)
-                                db.verificaDati(bot, msg.chat.id, databaseConnection)
+                                db.verificaDati(databaseConnection)
                                     .then((res) => {
                                         bot.sendMessage(msg.chat.id, res);
                                     })
@@ -432,7 +434,7 @@ function Develop (msg) {
                     db.isAdmin(bot, msg, databaseConnection)
                         .then((result) => {
                             if(result)
-                                db.prepareMain(bot, msg.chat.id, databaseConnection)
+                                db.prepareMain(databaseConnection)
                                     .then((res) => {
                                         bot.sendMessage(msg.chat.id, res);
                                     })
@@ -938,7 +940,7 @@ function HowTo (msg) {
 }
 
 // ---------- INTERVALS ----------
-var j = cron.scheduleJob({hour: 10, minute: 10, dayOfWeek: 3}, () => {
+var j = cron.scheduleJob({hour: 19, minute: 07, dayOfWeek: 3}, () => {
     bot.emit('funzioniDB');
 });
 

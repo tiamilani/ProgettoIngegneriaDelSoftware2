@@ -313,7 +313,10 @@ function Location_Init (bot, msg, con, stato, result) {
 
 			checkID(msg.chat.id, stato, con)
 				.then((result) => {
-					bot.sendMessage(msg.chat.id, printText(res[0], false, undefined), getPagination(1, res.length));
+					printText(res[0], false, undefined)
+						.then((testo) => {
+							bot.sendMessage(msg.chat.id, testo, getPagination(1, res.length));
+						});
 				})
 				.catch(err => {
 					console.error(err);
@@ -364,46 +367,49 @@ function Fermata_F2_Location_F2 (bot, msg, connection) {
 					res = JSON.parse(res.lastResult);
 
 			        if(msg.data == 'loc') {
-						bot.editMessageText(printText(res[prevChoice-1], false, undefined), {chat_id: msg.message.chat.id, message_id: msg.message.message_id, parse_mode: "Markdown"});
-			            bot.sendLocation(msg.message.chat.id, res[prevChoice-1].stop_lat, res[prevChoice-1].stop_lon);
+						printText(res[prevChoice-1], false, undefined)
+							.then((testo) => {
+								bot.editMessageText(testo, {chat_id: msg.message.chat.id, message_id: msg.message.message_id, parse_mode: "Markdown"});
+					            bot.sendLocation(msg.message.chat.id, res[prevChoice-1].stop_lat, res[prevChoice-1].stop_lon);
 
-						var query = "UPDATE users SET prevChoice='1' WHERE ChatID='" + msg.message.chat.id + "'";
-						con.query(query, function (err, result) {
-							if (err) throw err;
+								var query = "UPDATE users SET prevChoice='1' WHERE ChatID='" + msg.message.chat.id + "'";
+								con.query(query, function (err, result) {
+									if (err) throw err;
 
-				            var fermata = res[prevChoice-1].stop_name;
-				            var tmpF = fermata.replace(/[\W_]/g, '');
-				            var nameT1 = "fermata_" + tmpF;
+						            var fermata = res[prevChoice-1].stop_name;
+						            var tmpF = fermata.replace(/[\W_]/g, '');
+						            var nameT1 = "fermata_" + tmpF;
 
-				            query = "CREATE TABLE IF NOT EXISTS " + nameT1 + " AS SELECT * FROM time_table WHERE stop_name='" + fermata + "'";
-				            con.query(query, function (err, result) {
-				                if (err) throw err;
+						            query = "CREATE TABLE IF NOT EXISTS " + nameT1 + " AS SELECT * FROM time_table WHERE stop_name='" + fermata + "'";
+						            con.query(query, function (err, result) {
+						                if (err) throw err;
 
-				                query = "SELECT DISTINCT route_short_name FROM " + nameT1 + " ORDER BY length(route_short_name) ASC, route_short_name ASC";
-				                con.query(query, function (err, result, fields) {
-				                    if (err) throw err;
+						                query = "SELECT DISTINCT route_short_name FROM " + nameT1 + " ORDER BY length(route_short_name) ASC, route_short_name ASC";
+						                con.query(query, function (err, result, fields) {
+						                    if (err) throw err;
 
-				                    var text = "Seleziona la linea:";
-									var keyboard = createChoice(result, 5, 'route_short_name', undefined, false);
+						                    var text = "Seleziona la linea:";
+											var keyboard = createChoice(result, 5, 'route_short_name', undefined, false);
 
-									var keyboardString = JSON.parse(keyboard.reply_markup).keyboard;
-									var stringKeyboard = [].concat.apply([], keyboardString);
+											var keyboardString = JSON.parse(keyboard.reply_markup).keyboard;
+											var stringKeyboard = [].concat.apply([], keyboardString);
 
-									var query = "UPDATE users SET NameT='" + nameT1 + "',keyboard='" + JSON.stringify(stringKeyboard) + "' WHERE ChatID='" + msg.message.chat.id + "'";
-									con.query(query, function (err, result) {
-										if (err) throw err;
+											var query = "UPDATE users SET NameT='" + nameT1 + "',keyboard='" + JSON.stringify(stringKeyboard) + "' WHERE ChatID='" + msg.message.chat.id + "'";
+											con.query(query, function (err, result) {
+												if (err) throw err;
 
-										checkID(msg.message.chat.id, 'Fermata_F2_Location_F2', con)
-											.then((result) => {
-				                				bot.sendMessage(msg.message.chat.id, text, keyboard);
-											})
-											.catch(err => {
-												console.error(err);
+												checkID(msg.message.chat.id, 'Fermata_F2_Location_F2', con)
+													.then((result) => {
+						                				bot.sendMessage(msg.message.chat.id, text, keyboard);
+													})
+													.catch(err => {
+														console.error(err);
+													});
 											});
+										});
 									});
 								});
 							});
-						});
 					} else {
 						if(prevChoice != parseInt(msg.data)) {
 							prevChoice = parseInt(msg.data);
@@ -416,7 +422,10 @@ function Fermata_F2_Location_F2 (bot, msg, connection) {
 				            con.query(query, function (err, result) {
 				                if (err) throw err;
 
-								bot.editMessageText(printText(res[prevChoice-1], false, undefined), options);
+								printText(res[prevChoice-1], false, undefined)
+									.then((testo) => {
+										bot.editMessageText(testo, options);
+									});
 							});
 						}
 					}
@@ -472,7 +481,10 @@ function Fermata_F2_Location_F3 (bot, msg, nameT1, connection) {
 
 									checkID(msg.chat.id, 'Fermata_F2_Location_F3', con)
 										.then((result) => {
-				                    		bot.sendMessage(msg.chat.id, printText(res[0], false, undefined), getPaginationFull(1, res.length));
+											printText(res[0], false, undefined)
+												.then((testo) => {
+				                    				bot.sendMessage(msg.chat.id, testo, getPaginationFull(1, res.length));
+												});
 										})
 										.catch(err => {
 											console.error(err);
@@ -650,7 +662,10 @@ function Fermata_F2_Name_F3 (bot, msg, nameT1, connection) {
 
 									checkID(msg.chat.id, 'Fermata_F2_Name_F3', con)
 										.then((result) => {
-					                    	bot.sendMessage(msg.chat.id, printText(res[0], false, undefined), getPaginationFull(1, res.length));
+											printText(res[0], false, undefined)
+												.then((testo) => {
+					                    			bot.sendMessage(msg.chat.id, testo, getPaginationFull(1, res.length));
+												});
 										})
 										.catch(err => {
 											console.error(err);
@@ -913,7 +928,10 @@ function Linea_F4_Name_F1 (bot, msg, nameT2, connection) {
 
 								checkID(msg.chat.id, 'Linea_F4_Name_F1', con)
 									.then((result) => {
-										bot.sendMessage(msg.chat.id, printText(res[0], false, undefined), getPaginationFull(1, res.length));
+										printText(res[0], false, undefined)
+											.then((testo) => {
+												bot.sendMessage(msg.chat.id, testo, getPaginationFull(1, res.length));
+											});
 									})
 									.catch(err => {
 										console.error(err);
@@ -998,58 +1016,61 @@ function Next_F2_Location_F2 (bot, msg, connection) {
 					res = JSON.parse(res.lastResult);
 
 		            if(msg.data == 'loc') {
-						bot.editMessageText(printText(res[prevChoice-1], false, undefined), {chat_id: msg.message.chat.id, message_id: msg.message.message_id, parse_mode: "Markdown"});
-						bot.sendLocation(msg.message.chat.id, res[prevChoice-1].stop_lat, res[prevChoice-1].stop_lon);
+						printText(res[prevChoice-1], false, undefined)
+							.then((testo) => {
+								bot.editMessageText(testo, {chat_id: msg.message.chat.id, message_id: msg.message.message_id, parse_mode: "Markdown"});
+								bot.sendLocation(msg.message.chat.id, res[prevChoice-1].stop_lat, res[prevChoice-1].stop_lon);
 
-		                var fermata = res[prevChoice-1].stop_name;
-		                var tmpF = fermata.replace(/[\W_]/g, '');
-		                var nameT1 = "fermata_" + tmpF;
+				                var fermata = res[prevChoice-1].stop_name;
+				                var tmpF = fermata.replace(/[\W_]/g, '');
+				                var nameT1 = "fermata_" + tmpF;
 
-		                query = "CREATE TABLE IF NOT EXISTS " + nameT1 + " AS SELECT * FROM time_table WHERE stop_name='" + fermata + "'";
-		                con.query(query, function (err, result) {
-		                    if (err) throw err;
+				                query = "CREATE TABLE IF NOT EXISTS " + nameT1 + " AS SELECT * FROM time_table WHERE stop_name='" + fermata + "'";
+				                con.query(query, function (err, result) {
+				                    if (err) throw err;
 
-							var date = new Date();
-							var clockNow = date.toTimeString();
-							clockNow = clockNow.split(' ')[0];
+									var date = new Date();
+									var clockNow = date.toTimeString();
+									clockNow = clockNow.split(' ')[0];
 
-							var weekday = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
-							var today = weekday[date.getDay()];
+									var weekday = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
+									var today = weekday[date.getDay()];
 
-		                    query = "SELECT stop_name,stop_lat,stop_lon,wheelchair_boarding,MIN(arrival_time) AS arrival_time,MIN(departure_time) AS departure_time,trip_headsign,wheelchair_accessible,route_short_name,route_long_name,route_type FROM " + nameT1 + " where arrival_time>'" + clockNow + "' AND " + today + "='1' GROUP BY route_short_name,trip_headsign ORDER BY arrival_time ASC";
-		                    con.query(query, function (err, result, fields) {
-		                        if (err) throw err;
-								var res = result;
+				                    query = "SELECT stop_name,stop_lat,stop_lon,wheelchair_boarding,MIN(arrival_time) AS arrival_time,MIN(departure_time) AS departure_time,trip_headsign,wheelchair_accessible,route_short_name,route_long_name,route_type FROM " + nameT1 + " where arrival_time>'" + clockNow + "' AND " + today + "='1' GROUP BY route_short_name,trip_headsign ORDER BY arrival_time ASC";
+				                    con.query(query, function (err, result, fields) {
+				                        if (err) throw err;
+										var res = result;
 
-		                        if(result.length > 0) {
-									var query = "UPDATE users SET prevChoice='1',lastResult='" + JSON.stringify(res) + "' WHERE ChatID='" + msg.message.chat.id + "'";
-									con.query(query, function (err, result) {
-										if (err) throw err;
+				                        if(result.length > 0) {
+											var query = "UPDATE users SET prevChoice='1',lastResult='" + JSON.stringify(res) + "' WHERE ChatID='" + msg.message.chat.id + "'";
+											con.query(query, function (err, result) {
+												if (err) throw err;
 
-										checkID(msg.message.chat.id, 'Next_F2_Location_F2', con)
-											.then((status) => {
-												printText(res[0], true, con)
-													.then((testo) => {
-														bot.sendMessage(msg.message.chat.id, testo, getPaginationFull(1, res.length));
+												checkID(msg.message.chat.id, 'Next_F2_Location_F2', con)
+													.then((status) => {
+														printText(res[0], true, con)
+															.then((testo) => {
+																bot.sendMessage(msg.message.chat.id, testo, getPaginationFull(1, res.length));
+															});
+													})
+													.catch(err => {
+														console.error(err);
 													});
-											})
-											.catch(err => {
-												console.error(err);
 											});
-									});
-								} else {
-									checkID(msg.message.chat.id, '/start', con)
-										.then((result) => {
-											var text = "Mi dispiace ma per oggi sono terminate le corse in questa fermata, oppure non lavora oggi...";
+										} else {
+											checkID(msg.message.chat.id, '/start', con)
+												.then((result) => {
+													var text = "Mi dispiace ma per oggi sono terminate le corse in questa fermata, oppure non lavora oggi...";
 
-											bot.sendMessage(msg.message.chat.id, text, db.createHome());
-										})
-										.catch(err => {
-											console.error(err);
-										});
-						        }
+													bot.sendMessage(msg.message.chat.id, text, db.createHome());
+												})
+												.catch(err => {
+													console.error(err);
+												});
+								        }
+									});
+								});
 							});
-						});
 					} else {
 						if(prevChoice != parseInt(msg.data)) {
 							prevChoice = parseInt(msg.data);
@@ -1062,7 +1083,10 @@ function Next_F2_Location_F2 (bot, msg, connection) {
 				            con.query(query, function (err, result) {
 				                if (err) throw err;
 
-			                	bot.editMessageText(printText(res[prevChoice-1], true, con), options);
+								printText(res[prevChoice-1], false, undefined)
+									.then((testo) => {
+			                			bot.editMessageText(testo, options);
+									});
 							});
 						}
 					}
@@ -1202,9 +1226,12 @@ function All_FF (bot, msg, connection) {
 	                if(msg.data == 'loc') {
 						checkID(msg.message.chat.id, '/start', con)
 							.then((result) => {
-								bot.editMessageText(printText(res[prevChoice-1], true, con), {chat_id: msg.message.chat.id,message_id: msg.message.message_id,parse_mode: "Markdown"});
-								bot.sendMessage(msg.message.chat.id, "Ecco la posizione selezionata!", db.createHome());
-					            bot.sendLocation(msg.message.chat.id, res[prevChoice-1].stop_lat, res[prevChoice-1].stop_lon);
+								printText(res[prevChoice-1], false, undefined)
+									.then((testo) => {
+										bot.editMessageText(testo, {chat_id: msg.message.chat.id,message_id: msg.message.message_id,parse_mode: "Markdown"});
+										bot.sendMessage(msg.message.chat.id, "Ecco la posizione selezionata!", db.createHome());
+							            bot.sendLocation(msg.message.chat.id, res[prevChoice-1].stop_lat, res[prevChoice-1].stop_lon);
+									});
 							})
 							.catch(err => {
 								console.error(err);
@@ -1221,7 +1248,10 @@ function All_FF (bot, msg, connection) {
 				            con.query(query, function (err, result) {
 				                if (err) throw err;
 
-			                	bot.editMessageText(printText(res[prevChoice-1], true, con), options);
+								printText(res[prevChoice-1], false, undefined)
+									.then((testo) => {
+			                			bot.editMessageText(testo, options);
+									});
 							});
 						}
 	                }
