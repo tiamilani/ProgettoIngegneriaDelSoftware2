@@ -15,8 +15,7 @@ module.exports = function(app) {
 		.post(controller.function);
 
 	app.route("/localizza")
-		.get(place.luoghiUtili)
-		.post(place.luoghiUtili);
+		.get(place.luoghiUtili);
 
 	app.route('/howto')
 		.get(howto.base)
