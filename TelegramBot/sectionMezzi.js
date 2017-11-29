@@ -127,11 +127,11 @@ function getFermate (res, con) {
 						if(result[i].stop_name == res.stop_name && result[i].arrival_time == res.arrival_time) {
 							find = true;
 							var text = "\n\n*FERMATE*";
-							text += emoji.emojify("\n:point_right: :clock3: " + result[i].arrival_time + " -> :busstop: " + result[i].stop_name);
+							text += emoji.emojify("\n:point_right: :clock2: " + result[i].arrival_time + " -> :busstop: " + result[i].stop_name);
 						}
 					} else {
 						if(result[i].stop_sequence != 1)
-							text += emoji.emojify("\n:clock3: " + result[i].arrival_time + " -> :busstop: " + result[i].stop_name);
+							text += emoji.emojify("\n:clock2: " + result[i].arrival_time + " -> :busstop: " + result[i].stop_name);
 						else
 							out = true;
 					}
@@ -150,26 +150,26 @@ function printText (item, fermate, con) {
 			text += "*PRESTA ATTENZIONE ALLA DIREZIONE*";
 
 	    if(item.route_short_name != undefined)
-	        text += "\nLinea " + item.route_short_name + " (" + item.route_long_name + ")";
+	        text += emoji.emojify("\n:bus: " + item.route_short_name + " (" + item.route_long_name + ")");
 
 		if(item.trip_headsign != undefined)
-	        text += "\nDirezione: *" + item.trip_headsign + "*";
+	        text += emoji.emojify("\n:arrow_right: " + item.trip_headsign);
 
 	    if(item.stop_name != undefined)
 	        text += emoji.emojify("\n:busstop: " + item.stop_name);
 
 	    if(item.distance != undefined)
-	        text += "\nDistanza: *" + Math.round(item.distance) + "* metri";
+	        text += emoji.emojify("\n:footprints: " + Math.round(item.distance) + " metri");
 
 	    if(item.arrival_time != undefined) {
 	        if(item.arrival_time === item.departure_time)
-	            text += emoji.emojify("\n:clock3: " + item.arrival_time);
+	            text += emoji.emojify("\n:clock2: " + item.arrival_time);
 	        else {
 	            var t2 = fun.convertDate(item.arrival_time, "h:m:s");
 	            var t1 = fun.convertDate(item.departure_time, "h:m:s")
 
 	            let diff = parseInt((t1-t2)/(60*1000));
-	            text += emoji.emojify("\n:clock3: " + item.arrival_time + ", ma partirà " + diff + " minuti dopo!");
+	            text += emoji.emojify("\n:clock2: " + item.arrival_time + ", ma partirà " + diff + " minuti dopo!");
 	        }
 	    }
 
@@ -1499,24 +1499,27 @@ function CalcolaPercorso_F5 (bot, msg, connection) {
 												.then((response) => {
 													response = response.json.routes[0].legs[0];
 
-													text = "Orario di partenza: " + response.departure_time.text + "\nOrario di arrivo: " + response.arrival_time.text;
-													text += "\nDurata: " + response.duration.text + "\nDistanza: " + response.distance.text;
-													text += "\nPartenza: " + response.start_address + "\nArrivo: " + response.end_address;
+													var text = "*RIASSUNTO DEL VIAGGIO*";
+													text += emoji.emojify("\n:clock2: " + response.departure_time.text + " ~ " + response.arrival_time.text);
+													text += "\nDistanza: " + response.distance.text + "\nDurata: " + response.duration.text;
+													//text += "\nPartenza: " + response.start_address + "\nArrivo: " + response.end_address;
 													text += "\n\n";
 
 													response = response.steps;
 													for(let i = 0; i < response.length; i++) {
-														if(i != 0 && i != response.length -1) {
+														if(i == 0)
+															text += "\n*DETTAGLI DEL VIAGGIO*";
+														else {
 															if(response[i].travel_mode == "TRANSIT") {
-																text += "\nDurata: " + response[i].duration.text + "\nDistanza: " + response[i].distance.text;
-																text += "\nPartenza: " + response[i].transit_details.departure_stop.name + "\nArrivo: " + response[i].transit_details.arrival_stop.name;
+																text += emoji.emojify("\n:clock2: " + response[i].duration.text + " ~ " + response[i].distance.text);
+																text += emoji.emojify("\n:waving_white_flag: " + response[i].transit_details.departure_stop.name + "\n:checkered_flag: " + response[i].transit_details.arrival_stop.name);
 
-																text += "\nLinea " + response[i].transit_details.line.short_name + " (" + response[i].transit_details.line.name + ")";
-																text += "\nDirezione: " + response[i].transit_details.headsign;
-																text += "\n\n";
+																text += emoji.emojify("\n:bus: " + response[i].transit_details.line.short_name + " (" + response[i].transit_details.line.name + ")");
+																text += emoji.emojify("\n:arrow_right: " + response[i].transit_details.headsign);
+																text += "\n";
 															} else {
-																text += "\n" + response[i].html_instructions;
-																text += "\n\n";
+																text += emoji.emojify("\n:footprints: " + response[i].html_instructions);
+																text += "\n";
 															}
 														}
 													}
