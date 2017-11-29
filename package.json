@@ -39,9 +39,5 @@
   },
   "devDependencies": {
     "jest": "^21.2.1"
-  },
-  "jest": {
-    "verbose": true,
-    "collectCoverage": true
   }
 }

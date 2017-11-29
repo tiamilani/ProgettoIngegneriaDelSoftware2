@@ -1,1 +1,0 @@
-dominio = "http://www.ing.unitn.it/";

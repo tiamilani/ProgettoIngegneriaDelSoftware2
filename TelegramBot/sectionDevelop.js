@@ -63,7 +63,7 @@ function connectToDatabase (connection) {
 				host: 'db4free.net',
 				user: 'andreafadi',
 				password: 'fabioCasati',
-				database: 'ttesercizano',
+				database: 'ttesercizio',
 				multipleStatements: true
 			});
 
