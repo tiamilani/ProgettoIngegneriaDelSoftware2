@@ -4,7 +4,9 @@
   "description": "UniTN Help Center Bot",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
+    "rootDir": "Test/",
+    "verbose": "true",
     "start": "node --optimize_for_size --max_old_space_size=460 --gc_interval=100 index.js"
   },
   "repository": {
@@ -28,10 +30,14 @@
     "mysql": "^2.15.0",
     "node-emoji": "^1.8.1",
     "node-geocoder": "^3.21.1",
+    "node-mocks-http": "^1.6.6",
     "node-schedule": "^1.2.5",
     "node-telegram-bot-api": "^0.28.0",
     "path": "^0.12.7",
     "rimraf": "^2.6.2",
     "website-scraper": "^3.3.2"
+  },
+  "devDependencies": {
+    "jest": "^21.2.1"
   }
 }

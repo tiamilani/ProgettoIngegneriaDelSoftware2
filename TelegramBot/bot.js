@@ -339,8 +339,9 @@ function Develop (msg) {
                     db.isAdmin(bot, msg, databaseConnection)
                         .then((result) => {
                             if(result)
-                                db.eliminaDati(bot, msg.chat.id, databaseConnection)
+                                db.eliminaDati(databaseConnection)
                                     .then((res) => {
+                                        console.log(res);
                                         bot.sendMessage(msg.chat.id, res);
                                     })
                                     .catch(err => {
@@ -364,7 +365,7 @@ function Develop (msg) {
                     db.isAdmin(bot, msg, databaseConnection)
                         .then((result) => {
                             if(result)
-                                db.inserisciDati(bot, msg.chat.id, databaseConnection)
+                                db.inserisciDati(databaseConnection)
                                     .then((res) => {
                                         bot.sendMessage(msg.chat.id, res);
                                     })
@@ -408,7 +409,7 @@ function Develop (msg) {
                     db.isAdmin(bot, msg, databaseConnection)
                         .then((result) => {
                             if(result)
-                                db.verificaDati(bot, msg.chat.id, databaseConnection)
+                                db.verificaDati(databaseConnection)
                                     .then((res) => {
                                         bot.sendMessage(msg.chat.id, res);
                                     })
@@ -433,7 +434,7 @@ function Develop (msg) {
                     db.isAdmin(bot, msg, databaseConnection)
                         .then((result) => {
                             if(result)
-                                db.prepareMain(bot, msg.chat.id, databaseConnection)
+                                db.prepareMain(databaseConnection)
                                     .then((res) => {
                                         bot.sendMessage(msg.chat.id, res);
                                     })
@@ -945,7 +946,7 @@ function HowTo (msg) {
 }
 
 // ---------- INTERVALS ----------
-var j = cron.scheduleJob({hour: 10, minute: 10, dayOfWeek: 3}, () => {
+var j = cron.scheduleJob({hour: 19, minute: 07, dayOfWeek: 3}, () => {
     bot.emit('funzioniDB');
 });
 
