@@ -1,18 +1,12 @@
-const httpMocks = require('node-mocks-http');
-const controllerAvvisi = require('./../api/controllers/avvisi');
 const section = require('./../TelegramBot/sectionAvvisi');
-
-
 const fs = require('fs');
+const dw = require('website-scraper');
+const fun = require('./../TelegramBot/functions.js');
 
-/* - = ToDo , + = Done
- Funzioni da testare:
- + parseHTMLFile(fileToParse, stringaDaConfrontare)
- + readHTMLFile(path, bot, msg)
- + setURL(dipartimento)
- + function downloadAvvisi(dipartimentoRichiesto, bot, msg)
-*/
-
+var stringaDaConfrontare;
+var textFileDICAM;
+var textFileDII;
+var textFileCISCA;
 
 /*--- UTILITY ---*/
 function getCompareString()
@@ -30,14 +24,38 @@ function getFileText(filePath)
     return fs.readFileSync(filePath, 'latin1');
 };
 
+beforeAll(() => {
+    return new Promise (
+        function (resolve, reject) {
+            Promise.all([fun.deleteFolderRecursive("./Avvisi")]).then(values => {
+            let options = { urls: 'http://www.science.unitn.it/avvisiesami/dicam/avvisi.php', directory: './Avvisi/DICAM' };
+            dw(options).then(x => {
+                options = { urls: 'http://www.science.unitn.it/avvisiesami/dii-cibio/visualizzare_avvisi.php', directory: './Avvisi/DII' };
+                dw(options).then(y => {
+                    options = { urls: 'http://www.science.unitn.it/cisca/avvisi/avvisi.php', directory: './Avvisi/CISCA' };
+                    dw(options).then(z => {
+                        stringaDaConfrontare = getCompareString();
+                        textFileDICAM = getFileText("./Avvisi/DICAM/index.html");
+                        textFileDII = getFileText("./Avvisi/DII/index.html");
+                        textFileCISCA = getFileText("./Avvisi/CISCA/index.html");
+
+                        console.log("Download file completato");
+                        resolve("Download file completato");
+                    }).catch(error => { console.log(error); } );
+                }).catch(error => { console.log(error); } );
+            }).catch(error => { console.log(error); } );
+        }).catch(error => { console.log(error); } );
+    });
+});
+
+afterAll(() => {
+    Promise.all([fun.deleteFolderRecursive("./Avvisi"), fs.rmdirSync("./Avvisi")])
+        .then(values => { console.log("Eliminazione file completata"); })
+        .catch(error => { console.log(error); } );
+});
+
 /*--- PARSE HTML FILE ---*/
 describe('Test della funzione "parseHTMLFile"', () => {
-
-    const stringaDaConfrontare = getCompareString();
-    const textFileDICAM = getFileText("./Avvisi/DICAM/index.html");
-    const textFileDII = getFileText("./Avvisi/DII/index.html");
-    const textFileCISCA = getFileText("./Avvisi/CISCA/index.html");
-
     test('Parsing del testo del file nella cartella "DICAM"', () => {
         return section.parseHTMLFile(textFileDICAM, stringaDaConfrontare).then(values => {
             expect(values).toBeDefined();
