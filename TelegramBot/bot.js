@@ -32,7 +32,7 @@ console.log('BOT STARTED webHook: ' + `${url}/bot${TOKEN}`);
 var databaseConnection = undefined;
 
 const specialChoices = ['home','ilaria','giulia','virginia'];
-const developChoices = ['develop','elimina tabelle','inserisci tabelle','crea indici','crea join','reset users','info db'];
+const developChoices = ['develop','annuncio','elimina tabelle','inserisci tabelle','crea indici','crea join','reset users'];
 const mezziChoices = ['mezzi urbani tte','prossimo mezzo','calcola percorso','ricerca per linea','ricerca per fermata','avvisi linee', 'tariffe'];
 const scadenzeChoices = ['scadenze documenti','inserisci scadenza','modifica scadenza','elimina scadenza'];
 const mensaChoices = ['mensa vicina'];
@@ -231,6 +231,13 @@ function routeCommands (msg, id, connection) {
                             break;
                     }
                 }
+                else if ((result.last_command).includes("Annuncio")) {
+                    switch (result.last_command) {
+                        case 'Annuncio_F1':
+                            db.Annuncio_F2 (bot, msg, con);
+                            break;
+                    }
+                }
                 else
                     bot.sendMessage(id, "Comando non riconosciuto!");
 			});
@@ -311,9 +318,10 @@ function Develop (msg) {
                                     reply_markup: JSON.stringify({
                                         keyboard: [
                                             ['Home'],
+                                            ['Annuncio'],
                                             ['Elimina Tabelle','Inserisci Tabelle'],
                                             ['Crea Indici','Crea Join'],
-                                            ['Reset Users','Info DB']
+                                            ['Reset Users']
                                         ],
                                         resize_keyboard: true
                                     })
@@ -321,6 +329,31 @@ function Develop (msg) {
 
                                 bot.sendMessage(msg.chat.id, text, keyboard);
                             }
+                            else
+                                bot.sendMessage(msg.chat.id, "Non sei autorizzato ad accedere!\nSei stato segnalato agli amministratori!");
+                        })
+                        .catch(err => {
+                            bot.sendMessage(msg.chat.id, err);
+                        });
+                })
+                .catch(err => {
+                    bot.sendMessage(msg.chat.id, err);
+                });
+            break;
+        case 'annuncio':
+            db.initConnectionLess(databaseConnection)
+                .then((con) => {
+                    databaseConnection = con;
+                    db.isAdmin(bot, msg, databaseConnection)
+                        .then((result) => {
+                            if(result)
+                                db.Annuncio_F1(bot, msg, databaseConnection)
+                                    .then((res) => {
+                                        //bot.sendMessage(msg.chat.id, res);
+                                    })
+                                    .catch(err => {
+                                        bot.sendMessage(msg.chat.id, err);
+                                    });
                             else
                                 bot.sendMessage(msg.chat.id, "Non sei autorizzato ad accedere!\nSei stato segnalato agli amministratori!");
                         })
@@ -441,25 +474,6 @@ function Develop (msg) {
                                     .catch(err => {
                                         bot.sendMessage(msg.chat.id, err);
                                     });
-                            else
-                                bot.sendMessage(msg.chat.id, "Non sei autorizzato ad accedere!\nSei stato segnalato agli amministratori!");
-                        })
-                        .catch(err => {
-                            bot.sendMessage(msg.chat.id, err);
-                        });
-                })
-                .catch(err => {
-                    bot.sendMessage(msg.chat.id, err);
-                });
-            break;
-        case 'info db':
-            db.initConnectionLess(databaseConnection)
-                .then((con) => {
-                    databaseConnection = con;
-                    db.isAdmin(bot, msg, databaseConnection)
-                        .then((result) => {
-                            if(result)
-                                db.dbInfo(bot, msg.chat.id, databaseConnection);
                             else
                                 bot.sendMessage(msg.chat.id, "Non sei autorizzato ad accedere!\nSei stato segnalato agli amministratori!");
                         })
@@ -963,6 +977,24 @@ bot.on('funzioniHowTo', HowTo);
 
 bot.on('text', function(msg) {
     if(msg.from.is_bot == false) {
+        db.initConnectionLess(databaseConnection)
+            .then((con) => {
+                databaseConnection = con;
+                var query = "UPDATE users SET is_active=1 WHERE ChatID=" + msg.chat.id;
+                con.query(query, function (err, result) {
+                    if (err) throw err;
+
+                    //  OK
+                });
+            })
+            .catch((err) => {
+                bot.sendMessage(msg.chat.id, err);
+            });
+    }
+})
+
+bot.on('text', function(msg) {
+    if(msg.from.is_bot == false) {
         var testoUtente = msg.text.toLowerCase();
 
         if(testoUtente != '/start') {
@@ -1011,7 +1043,7 @@ bot.on('text', function(msg) {
 
                             query +=" WHERE ChatID='" + msg.chat.id + "'";
 							con.query(query, function (err, result) {
-								if (err) return reject(err);
+								if (err) throw err;
 
 								bot.sendMessage(msg.chat.id, text, db.createHome());
 							});
