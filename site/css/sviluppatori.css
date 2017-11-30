@@ -8,6 +8,10 @@ and open the template in the editor.
     Author     : damiano
 */
 
+h1{
+  font-family: 'Roboto', sans-serif;
+}
+
 .description{
     text-align: center;
     margin-bottom: 1.5em;
@@ -15,7 +19,7 @@ and open the template in the editor.
 
 .description h1{
     text-align: center;
-    font-family: 'Cookie', cursive;
+    font-family: 'Roboto', Open Sans;
     margin-bottom: 0.5em;
     margin-top: 1em;
 }
@@ -42,4 +46,16 @@ a{
 
 div .col{
     padding: 0;
+}
+
+#profile{
+  margin-bottom: 1em;
+  border-radius: 5px;
+}
+
+footer {
+	position: fixed;
+    bottom: 0;
+    width: 100%;
+	background-color: #232b2b;
 }
