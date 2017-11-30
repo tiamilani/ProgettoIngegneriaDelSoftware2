@@ -275,7 +275,8 @@ var downloadPageTasse = function (link, dir, bot, msg, action){
             bot.sendMessage(msg.chat.id, link_tasse.explain_iseeIT + "\n\n" + link_tasse.iseeIT);
             bot.sendMessage(msg.chat.id, link_tasse.explain_iseeEX + "\n\n" + link_tasse.iseeEX);
           }
-        });
+        })
+				.catch((err) => {console.log(err); });
     })
     .catch((err) => {console.log(err); });
 
@@ -296,7 +297,8 @@ var downloadPageAmmissioni = function (link, dir, bot, msg, action){
           }else if(action == 'ammissioni_magistrali'){
             bot.sendMessage(msg.chat.id, link_ammissioni.explain_magistrale + "\n\n" + link_ammissioni.magistrale);
           }
-        });
+        })
+				.catch((err) => {console.log(err); });
     })
     .catch((err) => {console.log(err); });
 
@@ -317,7 +319,8 @@ var downloadPageImmatricolazioni = function (link, dir, bot, msg, action){
           }else if(action == 'immatricolazioni_magistrali'){
             bot.sendMessage(msg.chat.id, link_immatricolazioni.explain_magistrale + "\n\n" + link_immatricolazioni.magistrale);
           }
-        });
+        })
+				.catch((err) => {console.log(err); });
     })
     .catch((err) => {console.log(err); });
 
@@ -340,7 +343,8 @@ var downloadPageRinnovi = function (link, dir, bot, msg, action){
           }else if(action == 'rinnovi_particolari'){
             bot.sendMessage(msg.chat.id, link_rinnovi.explain_particolari + "\n\n" + link_rinnovi.particolari)
           }
-        });
+        })
+				.catch((err) => {console.log(err); });
     })
     .catch((err) => {console.log(err); });
 
@@ -365,7 +369,8 @@ var downloadPageBorse = function(link, dir, bot, msg, action){
           }else if(action == 'libera_circolazione'){
             bot.sendMessage(msg.chat.id, link_borse.explain_circolazione + "\n\n" + link_borse.circolazione);
           }
-        });
+        })
+				.catch((err) => {console.log(err); });
     })
     .catch((err) => {console.log(err); });
 
@@ -420,7 +425,8 @@ var downloadPageSupporto = function(link, dir, bot, msg, action){
       readInfoFiles(dir, file, bot, msg, 'supporto', link_supporto)
         .then(() => {
           bot.sendMessage(msg.chat.id, link_supporto.explain_prenotazione + "\n\n" + link_supporto.prenotazione);
-        });
+        })
+				.catch((err) => {console.log(err); });
     })
     .catch((err) => {console.log(err); });
 
@@ -451,7 +457,8 @@ var downloadPageOpenDay = function (link, dir, bot, msg, action){
                       "\n\nInoltre, per poter partecipare, è necessaria la registrazione \n\n" + prenotazioni;
 
         bot.sendMessage(msg.chat.id, message);
-      });
+      })
+			.catch((err) => {console.log(err); });
     })
     .catch((err) => {console.log(err); });
 
