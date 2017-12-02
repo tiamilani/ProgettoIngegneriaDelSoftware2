@@ -8,42 +8,29 @@ and open the template in the editor.
     Author     : damiano
 */
 
+h1{
+  font-family: 'Roboto', sans-serif;
+}
+
 .description{
     text-align: center;
-    margin-bottom: 1.5em;
 }
 
 .description h1{
     text-align: center;
-    font-family: 'Cookie', cursive;
-    margin-bottom: 0.5em;
-    margin-top: 1em;
+    font-family: 'Roboto', sans-serif;
 }
 
-.card-title{
-    font-family: 'Lato', Open Sans;
-    font-style: italic;
-    font-weight: bold;
+.container-fluid {
+    margin: 1em;
+    background-color: white;
+    border-radius: 10px;
 }
 
-.rounded-circle{
-    width: 200px;
-    height: auto;
-    margin: 0.5em;
-}
-
-/*div .card{
-    border: none;
-}*/
-
-.card-subtitle{
-    font-style: italic;
-    font-family: 'Lato', Open Sans;
-}
-
-.card-social{
-    display: table;
-    margin: 0 auto 1em auto;
+.inner {
+    background-color: #ffffff;
+    border-radius:10px;
+    padding:10px;
 }
 
 a{
@@ -56,4 +43,20 @@ a{
 
 div .col{
     padding: 0;
+}
+
+#profile{
+  margin-bottom: 1em;
+  border-radius: 5px;
+}
+
+footer {
+	position: fixed;
+    bottom: 0;
+    width: 100%;
+	background-color: #232b2b;
+}
+
+.navbar-header img{
+  margin-top: 5px;
 }
