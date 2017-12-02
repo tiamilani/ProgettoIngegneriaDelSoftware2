@@ -1,14 +1,14 @@
 var links = [
-    'page/luoghiUtili.html',
-	   'page/avvisi.html',
-    'page/howTo.html',
-    'page/howToOpenDay.html',
-    'page/mezzi/fermata.html',
-    'page/mezzi/linea.html',
-    'page/mezzi/next.html',
-    'page/mezzi/avvisi.html',
-    'page/mezzi/tariffe.html',
-    'page/scadenze.html'
+    'site/page/luoghiUtili.html',
+	'site/page/avvisi.html',
+    'site/page/howTo.html',
+    'site/page/howToOpenDay.html',
+    'site/page/mezzi/fermata.html',
+    'site/page/mezzi/linea.html',
+    'site/page/mezzi/next.html',
+    'site/page/mezzi/avvisi.html',
+    'site/page/mezzi/tariffe.html',
+    'site/page/scadenze.html'
 ];
 
 var one, two;
