@@ -1,6 +1,6 @@
 var links = [
     'page/luoghiUtili.html',
-	'page/avvisi.html',
+	   'page/avvisi.html',
     'page/howTo.html',
     'page/howToOpenDay.html',
     'page/mezzi/fermata.html',
