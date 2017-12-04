@@ -977,30 +977,28 @@ bot.on('funzioniHowTo', HowTo);
 
 bot.on('text', function(msg) {
     if(msg.from.is_bot == false) {
+        var testoUtente = msg.text.toLowerCase();
+
+        //  BEGIN TODELETE SECTION
+        //if(testoUtente == '/start') {
+        if(databaseConnection == undefined || databaseConnection.state === 'disconnected') {
+            var text = "Sto preparando il bot per soddisfare le tue richieste!\nAttendi un attimo...";
+            bot.sendMessage(msg.chat.id, text);
+        }
+        //  END TODELETE SECTION
+
         db.initConnectionLess(databaseConnection)
             .then((con) => {
                 databaseConnection = con;
+
                 var query = "UPDATE users SET is_active=1 WHERE ChatID=" + msg.chat.id;
                 con.query(query, function (err, result) {
                     if (err) throw err;
 
                     //  OK
                 });
-            })
-            .catch((err) => {
-                bot.sendMessage(msg.chat.id, err);
-            });
-    }
-})
 
-bot.on('text', function(msg) {
-    if(msg.from.is_bot == false) {
-        var testoUtente = msg.text.toLowerCase();
-
-        if(testoUtente != '/start') {
-            db.initConnectionLess(databaseConnection)
-                .then((con) => {
-                    databaseConnection = con;
+                if(testoUtente != '/start') {
                     if(specialChoices.includes(testoUtente))
                         bot.emit('funzioniSpeciali', msg);
                     else if(developChoices.includes(testoUtente))
@@ -1019,18 +1017,8 @@ bot.on('text', function(msg) {
                         bot.emit('funzioniHowTo', msg);
                     else
                         routeCommands(msg, msg.chat.id, con);
-                })
-                .catch((err) => {
-                    bot.sendMessage(msg.chat.id, err);
-                });
-        } else {
-            //var text = "Sto preparando il bot per soddisfare le tue richieste!\nAttendi un attimo...";
-        	//bot.sendMessage(msg.chat.id, text);
-
-            var text = emoji.emojify("Benvenuto " + msg.from.first_name + " :blush:\n*UniTN Help Center* è un bot sviluppato per aiutare attuali/futuri studenti e turisti di Trento in vari ambiti della loro vita quotidiana :pencil: :video_camera:");
-            db.initConnectionLess(databaseConnection)
-                .then((con) => {
-                    databaseConnection = con;
+                } else {
+                    var text = emoji.emojify("Benvenuto " + msg.from.first_name + " :blush:\n*UniTN Help Center* è un bot sviluppato per aiutare attuali/futuri studenti e turisti di Trento in vari ambiti della loro vita quotidiana :pencil: :video_camera:");
                     BackHome(msg)
                         .then((result) => {
                             var query = "UPDATE users SET nome='" + msg.from.first_name + "',is_bot=" + msg.from.is_bot;
@@ -1051,11 +1039,11 @@ bot.on('text', function(msg) {
                         .catch((err) => {
                             console.error(err);
                         });
-                })
-                .catch((err) => {
-                    bot.sendMessage(msg.chat.id, err);
-                });
-        }
+                }
+            })
+            .catch((err) => {
+                bot.sendMessage(msg.chat.id, err);
+            });
     }
 
 });
