@@ -156,7 +156,7 @@ function downloadAvvisi(dipartimentoRichiesto, bot, msg) {
 											urlDipartimento: options['urls'],
 											avvisiDelGiorno: res
 										});
-										resolve(json.toString());
+										resolve(json);
 									})
 									.catch((err) => { console.log(err.message); reject(null); });
 							})
