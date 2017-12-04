@@ -1,4 +1,4 @@
-/*--- LAST UPDATE: 2017-11-16 ---*/
+/*--- LAST UPDATE: 2017-12-04 ---*/
 
 const alert = require('../../TelegramBot/sectionAvvisi.js');
 
@@ -10,7 +10,9 @@ exports.dwAvvisi = function(request, response)
 	{
 		alert.richiestaAvvisi(dipartimentoRichiesto, null, null)
 			.then(values => {
-				if(values['urlDipartimento'] === "URL non valido")
+				var x = JSON.parse(values);
+
+				if(x['urlDipartimento'] === "URL non valido")
 				{
 					response.writeHead(404, {"Content-Type": "application/json; charset=utf-8"});
 					response.end(values);
