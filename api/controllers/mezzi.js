@@ -368,7 +368,6 @@ function Next_F2 (request) {
 function Avvisi_Linee (request, response) {
     return new Promise((resolve, reject) => {
     	console.log("Avvisi_Linee");
-    	response.writeHead(200, {"Content-Type": "application/json; charset=utf-8"});
 
     	db.initiateConnection(databaseConnection)
     		.then((con) => {
@@ -380,6 +379,7 @@ function Avvisi_Linee (request, response) {
     	        var query = "SELECT route_long_name, route_short_name FROM time_table NATURAL JOIN calendar_dates where exception_type='2' AND date='" + dateNow + "' GROUP BY route_short_name";
     	        con.query(query, function (err, result, fields) {
     	            if (err) {
+                        response.writeHead(404, {"Content-Type": "application/json; charset=utf-8"});
                         response.end(JSON.stringify({ Ask: err }));
                         return reject();
                     }
@@ -392,16 +392,19 @@ function Avvisi_Linee (request, response) {
     						Choices: result
     					});
 
+                        response.writeHead(200, {"Content-Type": "application/json; charset=utf-8"});
     					response.end(json);
                         return resolve();
     	            }
     	            else {
+                        response.writeHead(404, {"Content-Type": "application/json; charset=utf-8"});
     					response.end(JSON.stringify({ Ask: "Oggi non ci sono variazioni di orario in alcuna linea"}));
                         return reject();
                     }
     	        });
     		})
     		.catch(err => {
+                response.writeHead(404, {"Content-Type": "application/json; charset=utf-8"});
     			response.end(JSON.stringify({ Ask: err }));
                 return reject();
     		});
@@ -410,35 +413,49 @@ function Avvisi_Linee (request, response) {
 
 function switchFermata (request, response) {
     return new Promise((resolve, reject) => {
-        response.writeHead(200, {"Content-Type": "application/json; charset=utf-8"});
-
     	var fase = request.query.fase;
     	switch (parseInt(fase)) {
     		case 1:
     			Fermata_F1 (request)
                     .then((json) => {
+                        response.writeHead(200, {"Content-Type": "application/json; charset=utf-8"});
                         response.end(json);
                         return resolve();
                     })
-                    .catch((err) => { response.end(JSON.stringify({ Ask: err })); return reject()});
+                    .catch((err) => {
+                        response.writeHead(404, {"Content-Type": "application/json; charset=utf-8"});
+                        response.end(JSON.stringify({ Ask: err }));
+                        return reject();
+                    });
     			break;
     		case 2:
     			Fermata_F2 (request)
                     .then((json) => {
+                        response.writeHead(200, {"Content-Type": "application/json; charset=utf-8"});
                         response.end(json);
                         return resolve();
                     })
-                    .catch((err) => { response.end(JSON.stringify({ Ask: err })); return reject()});
+                    .catch((err) => {
+                        response.writeHead(404, {"Content-Type": "application/json; charset=utf-8"});
+                        response.end(JSON.stringify({ Ask: err }));
+                        return reject();
+                    });
     			break;
     		case 3:
     			Fermata_F3 (request)
                     .then((json) => {
+                        response.writeHead(200, {"Content-Type": "application/json; charset=utf-8"});
                         response.end(json);
                         return resolve();
                     })
-                    .catch((err) => { response.end(JSON.stringify({ Ask: err })); return reject()});
+                    .catch((err) => {
+                        response.writeHead(404, {"Content-Type": "application/json; charset=utf-8"});
+                        response.end(JSON.stringify({ Ask: err }));
+                        return reject();
+                    });
     			break;
     		default:
+                response.writeHead(404, {"Content-Type": "application/json; charset=utf-8"});
                 response.end(JSON.stringify({ Ask: "Fase della ricerca per Fermata non esistente" }));
     			return reject();
     	}
@@ -447,43 +464,62 @@ function switchFermata (request, response) {
 
 function switchLinea (request, response) {
     return new Promise((resolve, reject) => {
-        response.writeHead(200, {"Content-Type": "application/json; charset=utf-8"});
     	var fase = request.query.fase;
-
     	switch (parseInt(fase)) {
     		case 1:
     			Linea_F1 (request)
                     .then((json) => {
+                        response.writeHead(200, {"Content-Type": "application/json; charset=utf-8"});
                         response.end(json);
                         return resolve();
                     })
-                    .catch((err) => { response.end(JSON.stringify({ Ask: err })); return reject()});
+                    .catch((err) => {
+                        response.writeHead(404, {"Content-Type": "application/json; charset=utf-8"});
+                        response.end(JSON.stringify({ Ask: err }));
+                        return reject();
+                    });
     			break;
     		case 2:
     			Linea_F2 (request)
                     .then((json) => {
+                        response.writeHead(200, {"Content-Type": "application/json; charset=utf-8"});
                         response.end(json);
                         return resolve();
                     })
-                    .catch((err) => { response.end(JSON.stringify({ Ask: err })); return reject()});
+                    .catch((err) => {
+                        response.writeHead(404, {"Content-Type": "application/json; charset=utf-8"});
+                        response.end(JSON.stringify({ Ask: err }));
+                        return reject();
+                    });
     			break;
     		case 3:
     			Linea_F3 (request)
                     .then((json) => {
+                        response.writeHead(200, {"Content-Type": "application/json; charset=utf-8"});
                         response.end(json);
                         return resolve();
                     })
-                    .catch((err) => { response.end(JSON.stringify({ Ask: err })); return reject()});
+                    .catch((err) => {
+                        response.writeHead(404, {"Content-Type": "application/json; charset=utf-8"});
+                        response.end(JSON.stringify({ Ask: err }));
+                        return reject();
+                    });
     			break;
     		case 4:
     			Linea_F4 (request)
                     .then((json) => {
+                        response.writeHead(200, {"Content-Type": "application/json; charset=utf-8"});
                         response.end(json);
                         return resolve();
                     })
-                    .catch((err) => { response.end(JSON.stringify({ Ask: err })); return reject()});
+                    .catch((err) => {
+                        response.writeHead(404, {"Content-Type": "application/json; charset=utf-8"});
+                        response.end(JSON.stringify({ Ask: err }));
+                        return reject();
+                    });
     			break;
     		default:
+                response.writeHead(404, {"Content-Type": "application/json; charset=utf-8"});
                 response.end(JSON.stringify({ Ask: "Fase della ricerca per Linea non esistente" }));
                 return reject();
     	}
@@ -492,27 +528,36 @@ function switchLinea (request, response) {
 
 function switchNext (request, response) {
     return new Promise((resolve, reject) => {
-        response.writeHead(200, {"Content-Type": "application/json; charset=utf-8"});
     	var fase = request.query.fase;
-
     	switch (parseInt(fase)) {
     		case 1:
     			Next_F1 (request)
                     .then((json) => {
+                        response.writeHead(200, {"Content-Type": "application/json; charset=utf-8"});
                         response.end(json);
                         return resolve();
                     })
-                    .catch((err) => { response.end(JSON.stringify({ Ask: err })); return reject()});
+                    .catch((err) => {
+                        response.writeHead(404, {"Content-Type": "application/json; charset=utf-8"});
+                        response.end(JSON.stringify({ Ask: err }));
+                        return reject();
+                    });
     			break;
     		case 2:
     			Next_F2 (request)
                     .then((json) => {
+                        response.writeHead(200, {"Content-Type": "application/json; charset=utf-8"});
                         response.end(json);
                         return resolve();
                     })
-                    .catch((err) => { response.end(JSON.stringify({ Ask: err })); return reject()});
+                    .catch((err) => {
+                        response.writeHead(404, {"Content-Type": "application/json; charset=utf-8"});
+                        response.end(JSON.stringify({ Ask: err }));
+                        return reject();
+                    });
     			break;
     		default:
+                response.writeHead(404, {"Content-Type": "application/json; charset=utf-8"});
                 response.end(JSON.stringify({ Ask: "Fase della ricerca per Next non esistente" }));
                 return reject();
     	}
