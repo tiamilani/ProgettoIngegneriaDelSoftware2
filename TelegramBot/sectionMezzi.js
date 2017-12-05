@@ -305,7 +305,7 @@ function Location_Init (bot, msg, con, stato, result) {
 
 	if(nearest.length > 0) {
 		nearest.sort(compareDistance);
-		var res = nearest.slice(0, 3);
+		var res = nearest.slice(0, 5);
 
 		var query = "UPDATE users SET lastResult='" + JSON.stringify(res) + "' WHERE ChatID='" + msg.chat.id + "'";
 		con.query(query, function (err, result) {
@@ -340,7 +340,7 @@ function Fermata_F2_Location_F1 (bot, msg, connection) {
 	console.log("Fermata_F2_Location_F1");
 	db.initiateConnection(connection)
 		.then((con) => {
-	        var query = "SELECT * FROM stops";
+	        var query = "SELECT * FROM stops GROUP BY stop_name";
 	        con.query(query, function (err, result, fields) {
 	            if (err) throw err;
 
@@ -989,7 +989,7 @@ function Next_F2_Location_F1 (bot, msg, connection) {
 	console.log("Next_F2_Location_F1");
 	db.initiateConnection(connection)
 		.then((con) => {
-			var query = "SELECT * FROM stops";
+			var query = "SELECT * FROM stops GROUP BY stop_name";
 			con.query(query, function (err, result, fields) {
 				if (err) throw err;
 

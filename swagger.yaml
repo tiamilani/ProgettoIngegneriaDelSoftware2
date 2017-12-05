@@ -2,7 +2,7 @@ swagger: "2.0"
 info:
   version: 1.0.0
   title: "UniTNHelpBot"
-  description: API che consento l'utilizzo di UniTNHelpBot, queste api rappresentano le richeiste che si possono effettuare alla nostra applicazione su heroku
+  description: API che consento l'utilizzo di UniTNHelpBot, queste api rappresentano le richieste che si possono effettuare alla nostra applicazione su heroku
   contact:
     name: Mattia Milani
     email: mattia.milani@studenti.unitn.it
@@ -19,13 +19,15 @@ paths:
   /localizza:
     get:
       description: |
-        Attraveso questa API è possibile ottenre una lista di luoghi che vengono restituiti, Alcuni luoghi sono considerati direttamente dall'api mentre ricerche più generiche possono essere effettuate ma potrebbero risultare più instabili.
-        
+        Attraveso questa API è possibile ottenere una lista di luoghi che vengono restituiti.
+
+        Alcuni luoghi sono considerati direttamente dall'api mentre ricerche più generiche possono essere effettuate ma potrebbero risultare più instabili.
+
         Richieste per Trento,Mesiano,Povo vengono intercettate e l'api utilizza direttamente la posizione di queste città e si ha un raggio di riceca specifico in base al luogo.
-        
-        Anche tra i tipi di luoghi cercati ve ne sono di specifici gestiti direttamente dall'api, biblioteche, mense, facolta e copisterie vengono gestite direttamente con alcune personalizzazioni fatte direttamente a livello di api (ad esempio le facoltà di povo su google maps non appartengono al type university)
-        
-        Altre ricerche che non utilizzano uno dei campi precendenti verranno gesite ma si avrà un raggio di ricerca prefissato e non verrà selezzionato un type ed in più non vi sarà un filtraggio dei risultati
+
+        Anche tra i tipi di luoghi cercati ve ne sono di specifici gestiti direttamente dall'api, biblioteche, mense, facoltà e copisterie vengono gestite direttamente con alcune personalizzazioni fatte direttamente a livello di api (ad esempio le facoltà di povo su google maps non appartengono al type university)
+
+        Altre ricerche che non utilizzano uno dei campi precendenti verranno gestite ma si avrà un raggio di ricerca prefissato e non verrà selezionato un type ed in più non vi sarà un filtraggio dei risultati
       operationId: LuoghiUtili
       parameters:
         - name: name
@@ -60,7 +62,7 @@ paths:
   /avvisi:
     get:
       description: |
-        Attraverso questa API sarà possibile ottenre la lista degli avvisi del giorno che sono stati inseriti fino ad ora all'interno di alcuni dipartimenti dell'ateneo trentino
+        Attraverso questa API sarà possibile ottenere la lista degli avvisi del giorno che sono stati inseriti fino ad ora all'interno di alcuni dipartimenti dell'ateneo trentino
       operationId: avvisi
       parameters:
         - name: dipartimento
@@ -88,7 +90,7 @@ paths:
   /Fermata:
     get:
       description: |
-        Attraverso questa api è possibile ottenre gli autobus che passeranno per una determinata fermata
+        Attraverso questa api è possibile ottenere gli autobus che passeranno per una determinata fermata
       operationId: fermata
       parameters:
         - name: fase
@@ -130,9 +132,13 @@ paths:
     get:
       description: |
         Questa api permette di ottenere le informazioni su di una specifica linea, anche questa api però si sviluppa in fasi, come l'api per le fermate.
-        La fase uno restituisce la lista delle linee disponibili,
-        La fase due una volta scelta una linea permette di ottenre le direzioni che si possono raggiungere tramite quella linea
+
+        La fase uno restituisce la lista delle linee disponibili
+
+        La fase due una volta scelta una linea permette di ottenere le direzioni che si possono raggiungere tramite quella linea
+
         La fase tre una volta fornito il nameT, e la direzione scelta restituisce la lista di fermate effettuate da quella linea per quella direzione
+
         La fase quattro una volta fornito il nameT, e la fermata che si desidera si ottengono le informazioni per gli autobus di quella linea che passeranno in quella fermata con la direzione prescelta
       operationId: linea
       parameters:
@@ -174,8 +180,10 @@ paths:
   /next:
     get:
       description: |
-        Questa api permette di ottenre il prossimo mezzo urbano che passa per una determinata fermata, senza considerare la direzione
+        Questa api permette di ottenere il prossimo mezzo urbano che passa per una determinata fermata, senza considerare la direzione
+
         Nella fase 1 si ottiene la lista delle fermate da cui scegliere
+
         Nella fase 2 indicando la fermata si ottengono le informazioni riguardanti i prossimi autobus che passeranno per quella fermata (1 per direzione)
       operationId: next
       parameters:
@@ -210,7 +218,7 @@ paths:
   /AvvisiLinee:
     get:
       description: |
-        questa api permette di ottenre gli avvisi che sono stati pubblicati dalla TTE per le linee urbane  
+        Questa api permette di ottenere gli avvisi che sono stati pubblicati dalla TTE per le linee urbane
       operationId: AvvisiLinee
       responses:
         200:
@@ -226,11 +234,11 @@ paths:
   /howto:
     get:
       description: |
-        Attraverso questa api è possibile ottenre le informazioni che vengono fornite dall'università per quanto riguarda diversi settori.
-        
-        Tra le sezioni vi è ad esempio quella per i futuri studenti, oppure quella per le tasse, ecc ecc.
-        
-        L'api funziona come un wrapper sulla pagina, restituisce i contenuti ed una descrizione che riesce ad ottenre dei vari contenuti, in più restituisce il link per accedere alla pagina indicata
+        Attraverso questa api è possibile ottenere le informazioni che vengono fornite dall'università per quanto riguarda diversi settori.
+
+        Tra le sezioni vi è ad esempio quella per i futuri studenti, oppure quella per le tasse, ecc.
+
+        L'api funziona come un wrapper sulla pagina, restituisce i contenuti ed una descrizione che riesce ad ottenere dei vari contenuti, in più restituisce il link per accedere alla pagina indicata
       operationId: howto
       parameters:
         - name: section
@@ -312,7 +320,7 @@ paths:
   /lesstabledb:
     delete:
       description: |
-        Api utilizata per eliminare le tabelle temporanee che si creano man mano che gli utenti utilizzano il bot
+        Api utilizzata per eliminare le tabelle temporanee che si creano man mano che gli utenti utilizzano il bot
       operationId: lesstabledb
       responses:
         200:
@@ -342,7 +350,7 @@ paths:
             type: object
             $ref: '#/definitions/lesstabledbError'
   /bot{token}:
-    get:
+    post:
       description: Utilizzato da telegram per effettuare le richieste al nostro bot
       operationId: botTelegram
       parameters:
@@ -448,7 +456,7 @@ definitions:
         description: Stringa che identifica la sezione cercata
       subsection:
         type: string
-        description: Identifica la sotto sezione scelta, non vi sarà questa riga se la sezione scelta non ha una subsection 
+        description: Identifica la sotto sezione scelta, non vi sarà questa riga se la sezione scelta non ha una subsection
   fermata:
     type: object
     properties:
