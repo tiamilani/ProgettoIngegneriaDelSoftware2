@@ -1,0 +1,598 @@
+swagger: "2.0"
+info:
+  version: 1.0.0
+  title: "UniTNHelpBot"
+  description: API che consento l'utilizzo di UniTNHelpBot, queste api rappresentano le richeiste che si possono effettuare alla nostra applicazione su heroku
+  contact:
+    name: Mattia Milani
+    email: mattia.milani@studenti.unitn.it
+  license:
+    name: MIT
+    url: http://github.com/gruntjs/grunt/blob/master/LICENSE-MIT
+host: unitnhelpbot.herokuapp.com
+basePath: /
+schemes:
+  - http
+produces:
+  - application/json
+paths:
+  /localizza:
+    get:
+      description: |
+        Attraveso questa API è possibile ottenre una lista di luoghi che vengono restituiti, Alcuni luoghi sono considerati direttamente dall'api mentre ricerche più generiche possono essere effettuate ma potrebbero risultare più instabili.
+        
+        Richieste per Trento,Mesiano,Povo vengono intercettate e l'api utilizza direttamente la posizione di queste città e si ha un raggio di riceca specifico in base al luogo.
+        
+        Anche tra i tipi di luoghi cercati ve ne sono di specifici gestiti direttamente dall'api, biblioteche, mense, facolta e copisterie vengono gestite direttamente con alcune personalizzazioni fatte direttamente a livello di api (ad esempio le facoltà di povo su google maps non appartengono al type university)
+        
+        Altre ricerche che non utilizzano uno dei campi precendenti verranno gesite ma si avrà un raggio di ricerca prefissato e non verrà selezzionato un type ed in più non vi sarà un filtraggio dei risultati
+      operationId: LuoghiUtili
+      parameters:
+        - name: name
+          in: query
+          description: nome del luogo da cercare
+          required: false
+          type: string
+          default: ""
+          uniqueItems: true
+          allowEmptyValue: true
+          items:
+            type: string
+            enum: [biblioteca, mansa, facolta, copisteria, userPreferences]
+        - name: place
+          in: query
+          description: citta in cui cercare il luogo
+          required: true
+          type: string
+          uniqueItems: true
+          allowEmptyValue: false
+          items:
+            type: string
+            enum: [trento, mesiano, povo, userPreferences]
+      responses:
+        200:
+          description: Lista dei luoghi trovati
+          schema:
+            type: object
+            $ref: '#/definitions/localizza'
+        404:
+          description: pagina non disponibile, è stata fatta una richiesta senza specificare place
+  /avvisi:
+    get:
+      description: |
+        Attraverso questa API sarà possibile ottenre la lista degli avvisi del giorno che sono stati inseriti fino ad ora all'interno di alcuni dipartimenti dell'ateneo trentino
+      operationId: avvisi
+      parameters:
+        - name: dipartimento
+          in: query
+          description: Dipartimeno da cui ottenere gli avvisi
+          required: false
+          type: string
+          default: ""
+          uniqueItems: true
+          allowEmptyValue: true
+          items:
+            type: string
+            enum: [DICAM, DII, CISCA]
+      responses:
+        200:
+          description: JSON con i valori di risposta ed il vettore con gli avvisi
+          schema:
+            type: object
+            $ref: '#/definitions/avvisi'
+        404:
+          description: JSON con gli stessi valori, ma testo di errore
+          schema:
+            type: object
+            $ref: '#/definitions/avvisiErrore'
+  /Fermata:
+    get:
+      description: |
+        Attraverso questa api è possibile ottenre gli autobus che passeranno per una determinata fermata
+      operationId: fermata
+      parameters:
+        - name: fase
+          in: query
+          description: fase di ricerca in cui si è attualmente, la fase 1 non prevede altri parametri, la fase 2 prevede che vi sia il parametro name, la fase 3 prevede che vi siano i parametri nameT e name
+          required: true
+          type: string
+          uniqueItems: true
+          allowEmptyValue: false
+          items:
+            type: number
+            enum: [1, 2, 3]
+        - name: name
+          in: query
+          description: Questo parametro può essere utilizzato solo nella fase 2 e 3, nella fase 2 sarà utilizzato per indicare il nome della fermata scelta, nella fase 3 per indicare la linea che si desidera
+          required: false
+          type: string
+          uniqueItems: true
+          allowEmptyValue: false
+        - name: nameT
+          in: query
+          description: Questo parametro può essere utilizzato solo nella fase 3, è un parametro che si ottiene dalla fase 2 e va restituito alle api per permettere di ottenre gli autobus di una determinata linea ad una detemrinata fermata
+          required: false
+          type: string
+          uniqueItems: true
+          allowEmptyValue: false
+      responses:
+        200:
+          description: JSON con i valori di risposta, il json dipenderà dalla fase in cui ci si trova
+          schema:
+            type: object
+            $ref: '#/definitions/fermata'
+        404:
+          description: JSON con testo di errore
+          schema:
+            type: object
+            $ref: '#/definitions/fermataErrore'
+  /Linea:
+    get:
+      description: |
+        Questa api permette di ottenere le informazioni su di una specifica linea, anche questa api però si sviluppa in fasi, come l'api per le fermate.
+        La fase uno restituisce la lista delle linee disponibili,
+        La fase due una volta scelta una linea permette di ottenre le direzioni che si possono raggiungere tramite quella linea
+        La fase tre una volta fornito il nameT, e la direzione scelta restituisce la lista di fermate effettuate da quella linea per quella direzione
+        La fase quattro una volta fornito il nameT, e la fermata che si desidera si ottengono le informazioni per gli autobus di quella linea che passeranno in quella fermata con la direzione prescelta
+      operationId: linea
+      parameters:
+        - name: fase
+          in: query
+          description: fase di ricerca in cui si è attualmente, la fase 1 non prevede altri parametri, la fase 2 prevede che vi sia il parametro name, la fase 3 prevede che vi siano i parametri nameT e name, la fase 4 prevede che vi siano i parametri nameT e name
+          required: true
+          type: string
+          uniqueItems: true
+          allowEmptyValue: false
+          items:
+            type: number
+            enum: [1, 2, 3, 4]
+        - name: name
+          in: query
+          description: Questo parametro può essere utilizzato solo nella fase 2, 3 e 4, nella fase 2 sarà utilizzato per indicare il nome della linea scelta, nella fase 3 per indicare la direzione che si desidera, e nella fase 4 per indicare la fermata di cui si desiderano le informazioni
+          required: false
+          type: string
+          uniqueItems: true
+          allowEmptyValue: false
+        - name: nameT
+          in: query
+          description: Questo parametro può essere utilizzato solo nella fase 3 e 4, è un parametro che si ottiene dalla fase 2 e 3 e va restituito alle api per permettere di ottenre le informazioni desiderate, serve per ricordare le scelte precedenti
+          required: false
+          type: string
+          uniqueItems: true
+          allowEmptyValue: false
+      responses:
+        200:
+          description: JSON con i valori di risposta, il json dipenderà dalla fase in cui ci si trova
+          schema:
+            type: object
+            $ref: '#/definitions/linea'
+        404:
+          description: JSON con testo di errore
+          schema:
+            type: object
+            $ref: '#/definitions/lineaErrore'
+  /next:
+    get:
+      description: |
+        Questa api permette di ottenre il prossimo mezzo urbano che passa per una determinata fermata, senza considerare la direzione
+        Nella fase 1 si ottiene la lista delle fermate da cui scegliere
+        Nella fase 2 indicando la fermata si ottengono le informazioni riguardanti i prossimi autobus che passeranno per quella fermata (1 per direzione)
+      operationId: next
+      parameters:
+        - name: fase
+          in: query
+          description: fase di ricerca in cui si è attualmente, la fase 1 non prevede altri parametri, la fase 2 prevede che vi sia il parametro name
+          required: true
+          type: string
+          uniqueItems: true
+          allowEmptyValue: false
+          items:
+            type: number
+            enum: [1, 2]
+        - name: name
+          in: query
+          description: Questo parametro può essere utilizzato solo nella fase 2
+          required: false
+          type: string
+          uniqueItems: true
+          allowEmptyValue: false
+      responses:
+        200:
+          description: JSON con i valori di risposta, il json dipenderà dalla fase in cui ci si trova
+          schema:
+            type: object
+            $ref: '#/definitions/next'
+        404:
+          description: JSON con testo di errore
+          schema:
+            type: object
+            $ref: '#/definitions/nextErrore'
+  /AvvisiLinee:
+    get:
+      description: |
+        questa api permette di ottenre gli avvisi che sono stati pubblicati dalla TTE per le linee urbane  
+      operationId: AvvisiLinee
+      responses:
+        200:
+          description: JSON con i valori di risposta
+          schema:
+            type: object
+            $ref: '#/definitions/avvisiLinee'
+        404:
+          description: JSON con testo di errore
+          schema:
+            type: object
+            $ref: '#/definitions/avvisiLineeErrore'
+  /howto:
+    get:
+      description: |
+        Attraverso questa api è possibile ottenre le informazioni che vengono fornite dall'università per quanto riguarda diversi settori.
+        
+        Tra le sezioni vi è ad esempio quella per i futuri studenti, oppure quella per le tasse, ecc ecc.
+        
+        L'api funziona come un wrapper sulla pagina, restituisce i contenuti ed una descrizione che riesce ad ottenre dei vari contenuti, in più restituisce il link per accedere alla pagina indicata
+      operationId: howto
+      parameters:
+        - name: section
+          in: query
+          description: Sezione di HowTo che si desidera vedere
+          required: true
+          type: string
+          uniqueItems: true
+          allowEmptyValue: false
+          items:
+            type: string
+            enum: [ammissioni,immatricolazioni,tasseUniversitarie,borse,trasferimenti,supporto,liberaCircolazione,openDay,rinnovi,futuroStudente]
+        - name: sub
+          in: query
+          description: Valore richiesto solo per alcune section, e ne indentifica la sotto categoria |
+            I seguenti parametri sono utilizzabili solo per la sezione ammissioni -> ammisioni-triennali o ammissioni-magistrali
+            I seguenti parametri sono utilizzabili solo per la sezione immatricolazioni -> immatricolazioni-triennali o immatricolazioni-magistrali
+            I seguenti parametri sono utilizzabili solo per la sezione tasseUniversitarie -> rimborsi o pagamenti o tasse o isee
+            I seguenti parametri sono utilizzabili solo per la sezione borse -> bisogni-speciali o attesa-di-laurea o libera-circolazione o borsa-e-alloggio
+            I seguenti parametri sono utilizzabili solo per la sezione trasferimenti -> trasferimenti-verso o trasferimenti-da o trasferimenti-da-magistrale
+            I seguenti parametri sono utilizzabili solo per la sezione supporto -> non necessita di sub
+            I seguenti parametri sono utilizzabili solo per la sezione liberaCircolazione -> non necessita di sub
+            I seguenti parametri sono utilizzabili solo per la sezione openDay -> non necessita di sub
+            I seguenti parametri sono utilizzabili solo per la sezione rinnovi -> rinnovo-e-tasse o rinnovo-e-borse o rinnovo-bisogni-particolari
+            I seguenti parametri sono utilizzabili solo per la sezione futuroStudente -> didattica o iscrizioni o orientamento o agevolazioni o servizi o ateneo o pis o non-solo-studio
+          required: true
+          type: string
+          uniqueItems: true
+          allowEmptyValue: false
+          items:
+            type: string
+            enum: [ammisioni-triennali, ammissioni-magistrali, immatricolazioni-triennali, immatricolazioni-magistrali, rimborsi, pagamenti, tasse, isee, bisogni-speciali, attesa-di-laurea, libera-circolazione, borsa-e-alloggio, trasferimenti-verso, trasferimenti-da, trasferimenti-da-magistrale, rinnovo-e-tasse, rinnovo-e-borse, rinnovo-bisogni-particolari, didattica, iscrizioni, orientamento, agevolazioni, servizi, ateneo, pis, non-solo-studio]
+        - name: detail
+          in: query
+          description: alcune sotto sezioni presentano a loro volta delle divisioni, che vanno esplicitate |
+            per la sub isee -> residenti o non-residenti
+            per la sub didattica -> corsi o dottorati o master
+            per la sub iscrizioni -> ammissioni o infostudenti o riconoscimento-titolo o tasse
+            per la sub orientamento -> costo o sito-orienta o unitrento-orienta
+            per la sub agevolazioni -> borse o alloggi o servizi-opera o collegio
+            per la sub servizi -> biblioteca o mense o alloggi o job-guidance o cla o consulenza o matlab o informatici o civile o bisogni-speciali o tutorato
+            per la sub ateneo -> presentazione o strutture o numeri o rankings o trentino-e-trento o come-raggiungerci
+            per la sub pis -> international-in-trento o studiare-lavorare
+            per la sub non-solo-studio -> apple o asociazioni-studentesche o opera o prestabici o rappresentanti o associazioni-universitarie o unisport o link-giovani
+          required: true
+          type: string
+          uniqueItems: true
+          allowEmptyValue: false
+          items:
+            type: string
+            enum: [residenti, non-residenti, corsi, dottorati, master, ammissioni, infostudenti, riconoscimento-titolo, tasse, costo, sito-orienta, unitrento-orienta, borse, alloggi, servizi-opera, collegio, biblioteca, mense, lloggi, job-guidance, cla, consulenza, matlab, informatici, civile, bisogni-speciali, tutorato, presentazione, strutture, numeri, rankings, trentino-e-trento, come-raggiungerci, international-in-trento, studiare-lavorare, apple, asociazioni-studentesche, opera, prestabici, rappresentanti, associazioni-universitarie, unisport, link-giovan]
+      responses:
+        200:
+          description: JSON con i valori di risposta
+          schema:
+            type: object
+            $ref: '#/definitions/howto'
+        400:
+          description: Messaggio di bad request nel body
+          schema:
+            type: string
+            description: Bad Request! There is an error in your request, please check for mispelled or incorrect parameters
+  /updatedb:
+    put:
+      description: |
+        Api utilizzata per aggiornare il database, forza l'eliminazione di tutte le tabelle dal db e le ricarica dai file csv di trentino trasporti scaricandoli direttamente dal sito
+      operationId: updateDb
+      responses:
+        200:
+          description: JSON con i valori di risposta
+          schema:
+            type: object
+            $ref: '#/definitions/updateDb'
+        404:
+          description: Messaggio di errore
+          schema:
+            type: object
+            $ref: '#/definitions/updateDbError'
+  /lesstabledb:
+    delete:
+      description: |
+        Api utilizata per eliminare le tabelle temporanee che si creano man mano che gli utenti utilizzano il bot
+      operationId: lesstabledb
+      responses:
+        200:
+          description: JSON con il valore di risposta
+          schema:
+            type: object
+            $ref: '#/definitions/lesstabledb'
+        404:
+          description: Messaggio di errore
+          schema:
+            type: object
+            $ref: '#/definitions/lesstabledbError'
+  /scadenze:
+    get:
+      description: |
+        Api che ottiene le attuali scadenze che sono presenti nel database
+      operationId: scadenze
+      responses:
+        200:
+          description: JSON con il valore di risposta
+          schema:
+            type: object
+            $ref: '#/definitions/scadenze'
+        404:
+          description: Messaggio di errore
+          schema:
+            type: object
+            $ref: '#/definitions/lesstabledbError'
+  /bot{token}:
+    get:
+      description: Utilizzato da telegram per effettuare le richieste al nostro bot
+      operationId: botTelegram
+      parameters:
+        - name: token
+          in: path
+          description: Token of the bot
+          required: true
+          type: string
+      responses:
+        200:
+          description: La richiesta al bot è andata a buon fine
+definitions:
+  localizza:
+    type: object
+    properties:
+      response:
+        type: array
+        items:
+          type: object
+          $ref: '#/definitions/googleLocation'
+        description: Array contenente gli elementi ottenuti dalla ricerca
+      place:
+        type: object
+        description: Contiene latitudine e longitudine della città cercata.
+  googleLocation:
+    type: object
+    properties:
+      geometry:
+        type: object
+        description: Contiene le informazioni sulla geolocalizzazione di questo posto
+      icon:
+        type: string
+        description: Icona del tipo di luogo
+      id:
+        type: string
+        description: Codice identificativo del luogo
+      name:
+        type: string
+        description: Nome del luogo
+      opening_hours:
+        type: object
+        description: Oggetto che contiene le informazioni riguardanti gli orari di apertura
+      photos:
+        type: array
+        description: Array che contiene informazioni sulle foto di questo luogo
+      place_id:
+        type: string
+        description: Codice identificativo univoco del luogo
+      rating:
+        type: number
+        description: Valutazione del luogo
+      reference:
+        type: string
+        description: Un'altro codice identificativo univoco per il luogo
+      scope:
+        type: string
+        description: visibilità del luogo (APP o GOOGLE)
+      types:
+        type: array
+        description: Contiene i tipi che sono stati associati all'edificio
+      vicinity:
+        type: string
+        description: Indirizzo semplificato del luogo
+  avvisiErrore:
+    type: object
+    properties:
+      dipartimento:
+        type: string
+        description: Stringa vuota a causa dell'errore
+      urlDipartimento:
+        type: string
+        description: Contiene \"URL non valido\"
+      avvisiDelGiorno:
+        type: array
+        items:
+          type: string
+        description: Contiene un solo elemento \"Dipartimento non riconosciuto, si prega di riprovare\"
+  avvisi:
+    type: object
+    properties:
+      dipartimento:
+        type: string
+        description: Ricapitola il dipartimento cercato
+      urlDipartimento:
+        type: string
+        description: Indica l'url da cui sono stati ottenuti gli avvisi
+      avvisiDelGiorno:
+        type: array
+        items:
+          type: string
+        description: Array contenente gli avvisi del giorno in stringa
+  howto:
+    type: object
+    properties:
+      explain:
+        type: string
+        description: Spiegazione della sezione in cui si è entrati, testo ottenuto dalla pagine dell'università
+      link:
+        type: string
+        description: Link di riferimento alla pagina cercata
+      section:
+        type: string
+        description: Stringa che identifica la sezione cercata
+      subsection:
+        type: string
+        description: Identifica la sotto sezione scelta, non vi sarà questa riga se la sezione scelta non ha una subsection 
+  fermata:
+    type: object
+    properties:
+      nameT:
+        type: string
+        description: componente che contiene un dato da restituire al db per la fase successiva è presente solo nella fase 2
+      ask:
+        type: string
+        description: Indica il testo che dovrebbe essere mostrato ad un utente per procedere alla fase successiva, non presente nella risposta della fase 3 che contiene solo i risultati
+      choices:
+        type: array
+        items:
+          type: string
+        description: Array contenente tutte le fermate Oppure nella fase due con le linee disponibili in quella fermata oppure nella fase 3 sarà un array di oggetti per le corse disponibili
+  fermataErrore:
+    type: object
+    properties:
+      ask:
+        type: string
+        description: Stringa in cui comunico l'errore
+  linea:
+    type: object
+    properties:
+      nameT:
+        type: string
+        description: componente che contiene un dato da restituire al db per la fase successiva è presente solo nella fase 2 e 3
+      ask:
+        type: string
+        description: Indica il testo che dovrebbe essere mostrato ad un utente per procedere alla fase successiva, non presente nella risposta della fase 4 che contiene solo i risultati
+      choices:
+        type: array
+        items:
+          type: string
+        description: Array contenente tutte le linee Oppure nella fase 2 con le direzioni disponibili per quella linea oppure nella fase 3 sarà la lista delle fermate della linea considerando la direzione, nella fase 4 sarà un array di oggetti per le corse disponibili
+  lineaErrore:
+    type: object
+    properties:
+      ask:
+        type: string
+        description: Stringa in cui comunico l'errore
+  next:
+    type: object
+    properties:
+      ask:
+        type: string
+        description: Indica il testo che dovrebbe essere mostrato ad un utente per procedere alla fase successiva, non presente nella risposta della fase 2 che contiene solo i risultati
+      choices:
+        type: array
+        items:
+          type: string
+        description: Array contenente le fermate nella fase 1 Oppure nella fase 2 gli oggetti che danno le informazioni sui prossimi autobus disponibili
+  nextErrore:
+    type: object
+    properties:
+      ask:
+        type: string
+        description: Stringa in cui comunico l'errore
+  avvisiLinee:
+    type: object
+    properties:
+      ask:
+        type: string
+        description: Indica il testo che dovrebbe essere mostrato ad un utente
+      choices:
+        type: array
+        items:
+          type: object
+          $ref: '#/definitions/oggettoAvviso'
+        description: Array contenente gli elementi ottenuti dalla ricerca
+  oggettoAvviso:
+    type: object
+    properties:
+      route_long_name:
+        type: string
+        description: Nome lungo della linea (\'Costa Corso Rosmini S.Giorgio\' ecc..)
+      route_short_name:
+        type: string
+        description: Nome ristretto della linea (5,8,13....)
+  avvisiLineeErrore:
+    type: object
+    properties:
+      ask:
+        type: string
+        description: Stringa in cui comunico l'errore
+  updateDb:
+    type: object
+    properties:
+      fase1:
+        type: string
+        description: Indica il superamento della fase1
+      fase2:
+        type: string
+        description: Indica il superamento della fase2
+      fase3:
+        type: string
+        description: Indica il superamento della fase3
+      fase4:
+        type: string
+        description: Indica il superamento della fase4
+      fase5:
+        type: string
+        description: Indica il superamento della fase5
+      fase6:
+        type: string
+        description: Indica il superamento della fase6
+  updateDbError:
+    type: object
+    properties:
+      error:
+        type: string
+        description: Indica lerrore che è avvenuto, ed interrompe la sequenza di fasi, ad esempio se avviene un errore nella fase 3 avremo nell'oggetto fase1,fase2,error
+  lesstabledb:
+    type: object
+    properties:
+      ask:
+        type: string
+        description: contiene un messaggio di risposta positivo
+  lesstabledbError:
+    type: object
+    properties:
+      ask:
+        type: string
+        description: contiene un messaggio di errore
+  scadenze:
+    type: object
+    properties:
+      Ask:
+        type: string
+        description: riga di intestazione per gli utenti
+      choices:
+        type: array
+        items:
+          type: object
+          $ref: '#/definitions/oggettoScadenze'
+        description: Array contenente gli elementi ottenuti dalla ricerca
+  oggettoScadenze:
+    type: object
+    properties:
+      Argomento:
+        type: string
+        description: Testo della scadenza
+      DataFine:
+        type: string
+        description: Data termine della scadenza
+      DataInizio:
+        type: string
+        description: Data di inizio della scadenza
