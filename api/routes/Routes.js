@@ -13,6 +13,9 @@ module.exports = function(app) {
 	app.route('/updatedb')
 		.put(db.UpdateDB);
 
+	app.route('/lesstabledb')
+		.delete(db.LessTableDB);
+
 	app.route('/example')
 		.get(controller.function);
 

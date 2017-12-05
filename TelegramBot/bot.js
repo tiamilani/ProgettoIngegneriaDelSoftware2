@@ -32,7 +32,7 @@ console.log('BOT STARTED webHook: ' + `${url}/bot${TOKEN}`);
 var databaseConnection = undefined;
 
 const specialChoices = ['home','ilaria','giulia','virginia'];
-const developChoices = ['develop','annuncio','elimina tabelle','inserisci tabelle','crea indici','crea join','reset users'];
+const developChoices = ['develop','annuncio','elimina tabelle','elimina tabelle tmp','inserisci tabelle','crea indici','crea join','reset users'];
 const mezziChoices = ['mezzi urbani tte','prossimo mezzo','calcola percorso','ricerca per linea','ricerca per fermata','avvisi linee', 'tariffe'];
 const scadenzeChoices = ['scadenze documenti','inserisci scadenza','modifica scadenza','elimina scadenza'];
 const mensaChoices = ['mensa vicina'];
@@ -321,7 +321,7 @@ function Develop (msg) {
                                             ['Annuncio'],
                                             ['Elimina Tabelle','Inserisci Tabelle'],
                                             ['Crea Indici','Crea Join'],
-                                            ['Reset Users']
+                                            ['Reset Users','Elimina Tabelle TMP']
                                         ],
                                         resize_keyboard: true
                                     })
@@ -374,7 +374,31 @@ function Develop (msg) {
                             if(result)
                                 db.eliminaDati(databaseConnection)
                                     .then((res) => {
-                                        console.log(res);
+                                        bot.sendMessage(msg.chat.id, res);
+                                    })
+                                    .catch(err => {
+                                        bot.sendMessage(msg.chat.id, err);
+                                    });
+                            else
+                                bot.sendMessage(msg.chat.id, "Non sei autorizzato ad accedere!\nSei stato segnalato agli amministratori!");
+                        })
+                        .catch(err => {
+                            bot.sendMessage(msg.chat.id, err);
+                        });
+                })
+                .catch(err => {
+                    bot.sendMessage(msg.chat.id, err);
+                });
+            break;
+        case 'elimina tabelle tmp':
+            db.initConnectionLess(databaseConnection)
+                .then((con) => {
+                    databaseConnection = con;
+                    db.isAdmin(bot, msg, databaseConnection)
+                        .then((result) => {
+                            if(result)
+                                db.eliminaDatiTmp(databaseConnection)
+                                    .then((res) => {
                                         bot.sendMessage(msg.chat.id, res);
                                     })
                                     .catch(err => {
