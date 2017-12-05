@@ -290,6 +290,36 @@ function deleteTables (connection) {
 	});
 }
 
+function deleteTablesTmp (connection) {
+	return new Promise((resolve, reject) => {
+		console.log("deleteTablesTmp");
+		connectToDatabaseInit(connection)
+			.then((con) => {
+				con.query("SHOW TABLES", function (err, result) {
+					if (err) return reject(err);
+
+					if(result.length > 10) {
+						var notDelete = ['calendar','calendar_dates','deadline','routes','stop_times','stops','time_table','transfers','trips','users'];
+						var query = "";
+						for(let i = 0; i < result.length; i++)
+							if(!notDelete.includes(result[i].Tables_in_ttesercizio))
+								query += ("DROP TABLE " + result[i].Tables_in_ttesercizio + ";");
+
+						con.query(query, function (err, result) {
+							if (err) throw err;
+
+							return resolve("Tabelle Eliminate");
+						});
+					} else
+						return resolve("Tabelle già eliminate");
+				});
+			})
+			.catch(err => {
+				return reject(err);
+			});
+	});
+}
+
 function createTables (connection) {
 	return new Promise((resolve, reject) => {
 		console.log("createTables");
@@ -526,6 +556,7 @@ exports.Annuncio_F2 = userAlerts;
 exports.isAdmin = checkAdmins;
 exports.couldScadenze = checkAdminsLess;
 exports.eliminaDati = deleteTables;
+exports.eliminaDatiTmp = deleteTablesTmp;
 exports.inserisciDati = createTables;
 exports.inizializzaUtenti = resetTableUsers;
 exports.verificaDati = alterTable;

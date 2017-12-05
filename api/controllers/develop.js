@@ -60,4 +60,51 @@ function UpdateDB (request, response) {
 	});
 }
 
+function LessTableDB (request, response) {
+	return new Promise((resolve, reject) => {
+	    db.initConnectionLess(databaseConnection)
+	        .then((con) => {
+	            databaseConnection = con;
+				var notDelete = ['calendar','calendar_dates','deadline','routes','stop_times','stops','time_table','transfers','trips','users'];
+
+				con.query("SHOW TABLES", function (err, result) {
+					if (err) {
+						response.writeHead(404, {"Content-Type": "application/json; charset=utf-8"});
+						response.end(JSON.stringify({ Ask: err }));
+						return reject();
+					}
+
+					if(result.length > 10) {
+						var query = "";
+						for(let i = 0; i < result.length; i++)
+							if(!notDelete.includes(result[i].Tables_in_ttesercizio))
+								query += ("DROP TABLE " + result[i].Tables_in_ttesercizio + ";");
+
+						con.query(query, function (err, result) {
+							if (err) {
+								response.writeHead(404, {"Content-Type": "application/json; charset=utf-8"});
+								response.end(JSON.stringify({ Ask: err }));
+								return reject();
+							}
+
+							response.writeHead(200, {"Content-Type": "application/json; charset=utf-8"});
+							response.end(JSON.stringify({ Ask: "Tabelle temporanee eliminate!" }));
+							return resolve();
+						});
+					} else {
+						response.writeHead(200, {"Content-Type": "application/json; charset=utf-8"});
+						response.end(JSON.stringify({ Ask: "Tabelle temporanee già eliminate!" }));
+						return resolve();
+					}
+	            });
+	        })
+	        .catch(err => {
+				response.writeHead(404, {"Content-Type": "application/json; charset=utf-8"});
+				response.end(JSON.stringify({ Ask: err }));
+				return reject();
+	        });
+	});
+}
+
 exports.UpdateDB = UpdateDB;
+exports.LessTableDB = LessTableDB;
