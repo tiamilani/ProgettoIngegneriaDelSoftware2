@@ -960,7 +960,7 @@ function HowTo (msg) {
 }
 
 // ---------- INTERVALS ----------
-var j = cron.scheduleJob({hour: 19, minute: 07, dayOfWeek: 3}, () => {
+var j = cron.scheduleJob({hour: 14, minute: 10, dayOfWeek: 2}, () => {
     bot.emit('funzioniDB');
 });
 
