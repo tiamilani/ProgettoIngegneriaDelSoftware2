@@ -26,12 +26,13 @@ var saved = false;
 
 exports.base = function(req, resp){
 
-  console.log('Switch per verificare la richiesta in corso');
-	resp.writeHead(200, {"Content-Type": "application/json"});
-
   var section = req.query.section;
   var subsection = req.query.sub;
   var detail = req.query.detail;
+
+
+  console.log('Switch per verificare la richiesta in corso');
+  //resp.writeHead(200, {"Content-Type": "application/json"});
 
   switch (section) {
     case 'ammissioni':
@@ -64,6 +65,11 @@ exports.base = function(req, resp){
       break;
     case 'futuroStudente':
                           futuroStudente('http://www.unitn.it/futuro-studente', './Futuro_Studente', resp, section, subsection, detail);
+      break;
+    case null:
+    case undefined:
+    case "":
+              resp.status(400).send("Bad Request! There is an error in your request, please check for mispelled or incorrect parameters");
       break;
     default: break;
   }
@@ -335,8 +341,13 @@ var ammissioni = function(link, dir, page, oggetto, resp, section, subsection){
       .then(() => {
         ammissioniSaving(section, subsection)
         .then((json) => {
-          console.log("terzo promise");
+          resp.writeHead(200, {"Content-Type": "application/json"});
+          console.log("terzo promise -> parametri forniti corretti, invio la risposta");
           resp.end(json);
+        })
+        .catch((err) => {
+          console.log("Bad request format: missing subsection");
+          resp.status(400).send("Bad Request! There is an error in your request, please check for mispelled or incorrect parameters");
         });
       });
     })
@@ -366,6 +377,11 @@ function ammissioniSaving(section, subsection){
                                     });
                                     resolve(json);
       break;
+      case null:
+      case undefined:
+      case "":
+              reject();
+      break;
     }
 
   });
@@ -386,8 +402,13 @@ var immatricolazioni = function(link, dir, page, oggetto, resp, section, subsect
         .then((json) => {
           console.log("terzo promise");
           resp.end(json);
+        })
+        .catch((err) => {
+          console.log("Bad request format: missing subsection");
+          resp.status(400).send("Bad Request! There is an error in your request, please check for mispelled or incorrect parameters");
         });
-      });
+      })
+      .catch((err) => {console.log(err); });
     })
     .catch((err) => {console.log(err); });
 }
@@ -416,6 +437,11 @@ function immatricolazioniSaving(section, subsection){
                                     });
                                     resolve(json);
       break;
+      case null:
+      case undefined:
+      case "":
+              reject();
+      break;
 
     }
 
@@ -438,7 +464,10 @@ var tasseUniversitarie = function(link, dir, page, oggetto, resp, section, subse
           console.log("terzo promise");
           resp.end(json);
         })
-        .catch((err) => {console.log(err); });
+        .catch((err) => {
+          console.log("Bad request format: missing subsection or detail parameters");
+          resp.status(400).send("Bad Request! There is an error in your request, please check for mispelled or incorrect parameters");
+        });
       })
       .catch((err) => {console.log(err); });
     })
@@ -504,7 +533,17 @@ function tasseUniversitarieSaving(section, subsection, detail){
                                               resolve(json);
 
                       break;
+                      case null:
+                      case undefined:
+                      case "":
+                              reject();
+                      break;
                     }
+      break;
+      case null:
+      case undefined:
+      case "":
+              reject();
       break;
     }
   });
@@ -526,7 +565,10 @@ var borseDiStudio = function(link, dir, page, oggetto, resp, section, subsection
           console.log("terzo promise");
           resp.end(json);
         })
-        .catch((err) => {console.log(err); });
+        .catch((err) => {
+          console.log("Bad request format: missing subsection");
+          resp.status(400).send("Bad Request! There is an error in your request, please check for mispelled or incorrect parameters");
+        });
       })
       .catch((err) => {console.log(err); });
     })
@@ -577,6 +619,11 @@ function borseDiStudioSaving(section, subsection){
                     });
                     resolve(json);
       break;
+      case null:
+      case undefined:
+      case "":
+              reject();
+      break;
     }
   });
 }
@@ -597,7 +644,10 @@ var trasferimenti = function(link, dir, page, oggetto, resp, section, subsection
           console.log("terzo promise");
           resp.end(json);
         })
-        .catch((err) => {console.log(err); });
+        .catch((err) => {
+          console.log("Bad request format: missing subsection or detail parameters");
+          resp.status(400).send("Bad Request! There is an error in your request, please check for mispelled or incorrect parameters");
+        });
       })
       .catch((err) => {console.log(err); });
     })
@@ -705,6 +755,11 @@ function trasferimentiSaving(section, subsection, detail){
                                           });
                                           resolve(json);
                           break;
+                          case null:
+                          case undefined:
+                          case "":
+                                  reject();
+                          break;
                         }
       break;
 
@@ -716,6 +771,11 @@ function trasferimentiSaving(section, subsection, detail){
                       subsection: subsection
                     });
                     resolve(json);
+      break;
+      case null:
+      case undefined:
+      case "":
+              reject();
       break;
     }
   });
@@ -775,7 +835,10 @@ var rinnovoIscrizioni = function(link, dir, page, oggetto, resp, section, subsec
           console.log(" -> terzo promise");
           resp.end(json);
         })
-        .catch((err) => {console.log(err); });
+        .catch((err) => {
+          console.log("Bad request format: missing subsection or detail parameters");
+          resp.status(400).send("Bad Request! There is an error in your request, please check for mispelled or incorrect parameters");
+        });
       })
       .catch((err) => {console.log(err); });
     })
@@ -815,6 +878,11 @@ function rinnovoIscrizioniSaving(section, subsection){
                       subsection: subsection
                     });
                     resolve(json);
+      break;
+      case null:
+      case undefined:
+      case "":
+              reject();
       break;
     }
   });
@@ -1198,7 +1266,10 @@ var futuroStudente = function(link, dir, resp, section, subsection, detail){
           console.log(" -> terzo promise");
           resp.end(json);
         })
-        .catch((err) => {console.log(err); });
+        .catch((err) => {
+          console.log("Bad request format: missing subsection or detail parameters");
+          resp.status(400).send("Bad Request! There is an error in your request, please check for mispelled or incorrect parameters");
+        });
       })
       .catch((err) => {console.log(err); });
     })
@@ -1241,6 +1312,11 @@ var futuroStudenteSaving = function(section, subsection, detail){
                                               detail: detail
                                             });
                                             resolve(json);
+                            break;
+                            case null:
+                            case undefined:
+                            case "":
+                                    reject();
                             break;
                           }
         break;
@@ -1286,6 +1362,11 @@ var futuroStudenteSaving = function(section, subsection, detail){
                                             });
                                             resolve(json);
                               break;
+                              case null:
+                              case undefined:
+                              case "":
+                                      reject();
+                              break;
                             }
         break;
         case('orientamento'):
@@ -1319,6 +1400,11 @@ var futuroStudenteSaving = function(section, subsection, detail){
                                                             detail: detail
                                                           });
                                                           resolve(json);
+                                break;
+                                case null:
+                                case undefined:
+                                case "":
+                                        reject();
                                 break;
                               }
         break;
@@ -1363,6 +1449,11 @@ var futuroStudenteSaving = function(section, subsection, detail){
                                                   detail: detail
                                                 });
                                                 resolve(json);
+                              break;
+                              case null:
+                              case undefined:
+                              case "":
+                                      reject();
                               break;
                             }
         break;
@@ -1478,6 +1569,11 @@ var futuroStudenteSaving = function(section, subsection, detail){
                                                 });
                                                 resolve(json);
                               break;
+                              case null:
+                              case undefined:
+                              case "":
+                                      reject();
+                              break;
                             }
         break;
         case('ateneo'):
@@ -1542,6 +1638,11 @@ var futuroStudenteSaving = function(section, subsection, detail){
                                                         });
                                                         resolve(json);
                               break;
+                              case null:
+                              case undefined:
+                              case "":
+                                      reject();
+                              break;
                             }
         break;
         case('pis'):
@@ -1565,6 +1666,11 @@ var futuroStudenteSaving = function(section, subsection, detail){
                                                           detail: detail
                                                         });
                                                         resolve(json);
+                              break;
+                              case null:
+                              case undefined:
+                              case "":
+                                      reject();
                               break;
                             }
         break;
@@ -1650,7 +1756,17 @@ var futuroStudenteSaving = function(section, subsection, detail){
                                                     });
                                                     resolve(json);
                               break;
+                              case null:
+                              case undefined:
+                              case "":
+                                      reject();
+                              break;
                             }
+        break;
+        case null:
+        case undefined:
+        case "":
+                reject();
         break;
         default: break;
       }
