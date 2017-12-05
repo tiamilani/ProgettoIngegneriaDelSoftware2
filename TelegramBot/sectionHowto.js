@@ -24,31 +24,6 @@ var international = {titolo: "", diretto: "", link: [] };
 var nonSoloStudio = {titolo: "", diretto: "", link: [] };
 var saved = false;
 
-/*function getPaginationFull( current, maxpage ) {
-    var buttons = [];
-
-    if (current > 1)
-        buttons.push( { text: '«1', callback_data: '1' } );
-
-    if (current > 2)
-        buttons.push( { text: `‹${current-1}`, callback_data: (current - 1).toString() + " - howto" } );
-
-    buttons.push( { text: `-${current}-`, callback_data: current.toString() + " - howto"} );
-
-    if (current < maxpage-1)
-        buttons.push( { text: `${current+1}›`, callback_data: (current + 1).toString() + " - howto"} );
-
-    if (current < maxpage)
-        buttons.push( { text: `${maxpage}»`, callback_data: maxpage.toString() + " - howto"} );
-
-    return {
-        parse_mode: 'Markdown',
-        reply_markup: JSON.stringify({
-            inline_keyboard: [ buttons ]
-        })
-    };
-}*/
-
 var deleteFolderAndFile = function (path, estensione) {
 	if (fs.existsSync(path)) {
 		fs.readdirSync(path).forEach(function(file, index){
@@ -844,6 +819,17 @@ function controlAssign(title, link, bot, msg, node, $){
   }
 }
 
+
+exports.getLinkTasse = function(){
+	return link_tasse;
+}
+
+//--------- FUNZIONI ESPORTATE DA UTILIZZARE NEI TEST ------------
+exports.openDayFolder = openDayFolder;
+exports.infoFolder = infoFolder;
+exports.studentFolder = studentFolder;
+
+//--------- FUNZIONI DA ESPORTARE DA UTILIZZARE COME API ------------
 exports.homeTasse = downloadPageTasse;
 exports.homeAmmissioni = downloadPageAmmissioni;
 exports.homeImmatricolazioni = downloadPageImmatricolazioni;

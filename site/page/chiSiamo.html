@@ -4,10 +4,7 @@
 
 	<head>
 		<title>HCUniTn</title>
-		<link rel="stylesheet" href="../css/content.css">
-
 		<script type="text/javascript" src="../js/jquery-1.12.3.min.js"></script>
-		<link rel="stylesheet" href="../css/sviluppatori.css">
 		<!-- Latest compiled and minified CSS -->
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
@@ -16,6 +13,11 @@
 
 		<!-- Latest compiled and minified JavaScript -->
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+		<link href="https://afeld.github.io/emoji-css/emoji.css" rel="stylesheet">
+		<link rel="stylesheet" href="../css/sviluppatori.css">
+		<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+
 	</head>
 
 	<body style="background-color: aquamarine;">
@@ -25,38 +27,99 @@
 				<div class="container">
 					<div class="navbar-header">
 						<img src="../img/UniTNHelpCenter.png" alt="LOGO" height="50" width="50">
-						<a class="navbar-brand" href="../index.html">UniTn Help Center</a>
+						<a class="navbar-brand" href="../../index.html">UniTn Help Center</a>
 					</div>
-					<div id="navbar" class="collapse navbar-collapse">
+					<div id="navbar">
 						<ul class="nav navbar-nav">
 							<li><a href="cosaSoFare.html">Cosa posso fare</a></li>
 							<li><a href="#">Chi siamo?</a></li>
-							<li><a href="contattaci.html">Contattaci</a></li>
+						</ul>
+						<ul class="nav navbar-nav navbar-right">
+							<p class="navbar-btn">
+				              	<a href="https://t.me/UniTNHelp_bot" target="_blank" class="btn btn-primary">Telegram Bot</a>
+				            </p>
 						</ul>
 					</div>
 				</div>
 			</nav>
 		</div>
 
-		<div class="container-fluid" id="container-fluid">
+		<div class="container-fluid" id="ciao">
 			<div class="row">
-		        <div class="col-6 description">
+		        <div class="col-md-12 description">
 		            <h1>Ciao</h1>
 		            <p>
-		                Siamo un gruppo di studenti di Informatica all'UniversitÃ  degli Studi di Trento.<br>
-		                Benvenuto nel nostro nuovo bot
+		                Siamo un gruppo di studenti di Informatica all'Universit&aacute;  degli Studi di Trento.<br>
+		                Benvenuto nel nostro bot<br>
+										Speriamo possa esserti utile <i class="em em-stuck_out_tongue_winking_eye"></i>
 		            </p>
 		        </div>
 		    </div>
+		</div>
 
-		    <div>
-		        <div class="row justify-content-center">
-		            <div class="col-6 description">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-3">
+					<div class="inner">
+						<div class="description">
+							<h1>Mattia</h1>
+								<img id="profile" src="../img/Mattia_Milani.jpg" alt="Mattia" height="200" width="200">
+
+								<p>
+		                Sviluppatore della sezione Luoghi Utili e della chat web
+		            </p>
+								<a href="http://web.telegram.org/#/im?p=@tiamilani" class="fa fa-telegram"> @tiamilani </a>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-3">
+					<div class="inner">
+						<div class="description">
+							<h1>Andrea</h1>
+								<img id="profile" src="../img/Andrea_Fadi.jpg" alt="Mattia" height="200" width="200">
+								<p>
+		                Sviluppatore della sezione Mezzi e del database
+		            </p>
+								<a href="http://web.telegram.org/#/im?p=@iAndrea96" class="fa fa-telegram"> @iAndrea96 </a>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-3">
+					<div class="inner">
+						<div class="description">
+							<h1>Damiano</h1>
+								<img id="profile" src="../img/Damiano_Sartori.jpg" alt="Mattia" height="200" width="200">
+								<p>
+		                Sviluppatore della sezione How To e delle pagine web di presentazione
+		            </p>
+								<a href="http://web.telegram.org/#/im?p=@das_96" class="fa fa-telegram"> @das_96 </a>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-3">
+					<div class="inner">
+						<div class="description">
+							<h1>Federico</h1>
+								<img id="profile" src="../img/Federico_Brugiolo.jpg" alt="Mattia" height="200" width="200">
+								<p>
+		                Sviluppatore della sezione Avvisi e dei casi di test
+		            </p>
+								<a href="http://web.telegram.org/#/im?p=@Brugix" class="fa fa-telegram"> @Brugix </a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="container-fluid" id="mappa">
+		    <div class="backElement">
+		        <div class="row">
+		            <div class="col-md-12 description">
 		                <h1 id="findUs">Dove Trovarci</h1>
 		            </div>
 		        </div>
-		        <div class="row justify-content-around">
-		            <div id="mapObject" style="height: 400px; width: 600px"></div>
+		        <div class="row center-block">
+		            <div id="mapObject" class="center-block" style="height: 400px; width: 600px"></div>
 		        </div>
 		    </div>
 
@@ -86,11 +149,10 @@
 
 		<footer class="footer footer-fixed-bottom">
 			<div class="container">
-				<p class="text-muted">Questo bot punta ad aiutare la vita di tutti gli studenti di Trento, &egrave; ancora in test, ma pu&ograve; gi&agrave; fornirti molte delle risposte che ti servono :)</p>
+				<p class="text-muted center-block">Questo bot punta ad aiutare la vita di tutti gli studenti di Trento, &egrave; ancora in test, ma pu&ograve; gi&agrave; fornirti molte delle risposte che ti servono :)</p>
 			</div>
-	    </footer>
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-		<script src="../js/script.js"></script>
+    </footer>
+	<script src="../js/scriptWho.js"></script>
 	</body>
 
 </html>

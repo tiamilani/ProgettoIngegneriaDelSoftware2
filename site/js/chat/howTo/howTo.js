@@ -3,7 +3,7 @@ var howToOpenDay;
 
 howTo = function(section,sub,detail)
 {
-	var url="https://unitnhelpcenter.herokuapp.com/howto?section=";
+	var url="https://unitnhelpbot.herokuapp.com/howto?section=";
 	url += section;
     if(sub != ""){
         url += "&sub=";
@@ -24,7 +24,7 @@ howTo = function(section,sub,detail)
 
 howToOpenDay = function(section)
 {
-	var url="https://unitnhelpcenter.herokuapp.com/howto?section=";
+	var url="https://unitnhelpbot.herokuapp.com/howto?section=";
 	url += section;
 	console.log("URL: " + url);
 

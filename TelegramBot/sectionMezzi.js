@@ -1,6 +1,7 @@
 // ---------- REQUIRE ----------
-const fun = require ('./functions.js');
-const db = require('./sectionDevelop.js');
+const fun 	= 	require ('./functions.js');
+const db	= 	require ('./sectionDevelop.js');
+const emoji	= 	require ('node-emoji');
 
 // ---------- FUNCTIONS ----------
 function checkID (id, lastCommand, connection) {
@@ -91,63 +92,122 @@ function createChoice (array, npr, argument, checkName, requestPosition) {
     };
 }
 
-function printText (result) {
-	console.log("1");
-    var text = "";
-    if(result.route_short_name != undefined)
-        text += "Linea " + result.route_short_name + " (" + result.route_long_name + ")";
-		console.log("2");
-	if(result.trip_headsign != undefined)
-        text += "\nDirezione: *" + result.trip_headsign + "*";
+function getFermate (res, con) {
+	return new Promise((resolve, reject) => {
+		var date = fun.convertDate(res.arrival_time, "h:m:s");
+		date.setMinutes(date.getMinutes() - 5);
+		var preOrario = date.toTimeString();
+		preOrario = preOrario.split(' ')[0];
 
-    if(result.stop_name != undefined)
-        text += "\nFermata: *" + result.stop_name + "*";
+		date = fun.convertDate(res.arrival_time, "h:m:s");
+		date.setHours(date.getHours() + 2);
+		var postOrario = date.toTimeString();
+		postOrario = postOrario.split(' ')[0];
 
-    if(result.distance != undefined)
-        text += "\nDistanza: *" + Math.round(result.distance) + "* metri";
+		var tmpD = (res.trip_headsign).replace(/[\W_]/g, '');
+		var tmpL;
+		if((res.route_short_name).indexOf("/") == -1)
+			tmpL = res.route_short_name;
+		else
+			tmpL = (res.route_short_name).substr(0, index) + '$' + (res.route_short_name).substr(index + 1);
 
-    if(result.arrival_time != undefined) {
-        if(result.arrival_time === result.departure_time)
-            text += "\nOrario: *" + result.arrival_time + "*";
-        else {
-            var t2 = fun.convertDate(result.arrival_time, "h:m:s");
-            var t1 = fun.convertDate(result.departure_time, "h:m:s")
+		var nameT1 = "filtro_" + tmpL + "_" + tmpD;
 
-            let diff = parseInt((t1-t2)/(60*1000));
-            text += "\nOrario: *" + result.arrival_time + "*, ma partirà " + diff + " minuti dopo!";
-        }
-    }
+		var query = "CREATE TABLE IF NOT EXISTS " + nameT1 + " AS SELECT * FROM time_table WHERE route_short_name='" + res.route_short_name + "' AND trip_headsign='" + res.trip_headsign + "'";
+		con.query(query, function (err, result) {
+			if (err) throw err;
 
-    if(result.wheelchair_boarding != undefined) {
-        text += "\n\nDisabilità";
-        switch(parseInt(result.wheelchair_boarding)) {
-            case 0:
-                text += "\n- Fermata attrezzata: Info non presente";
-                break;
-            case 1:
-                text += "\n- Fermata attrezzata: Si, ma non per tutti i mezzi";
-                break;
-            case 2:
-                text += "\n- Fermata attrezzata: No";
-                break;
-        }
-    }
+			query = "SELECT * FROM " + nameT1 + " WHERE arrival_time>'" + preOrario + "' AND arrival_time<'" + postOrario + "'";
+			con.query(query, function (err, result, fields) {
+				if (err) throw err;
 
-    if(result.wheelchair_accessible != undefined) {
-        switch(parseInt(result.wheelchair_accessible)) {
-            case 0:
-                text += "\n- Veicolo attrezzato: Info non presente";
-                break;
-            case 1:
-                text += "\n- Veicolo attrezzato: Si, al massimo 1 passeggero";
-                break;
-            case 2:
-                text += "\n- Veicolo attrezzato: No";
-                break;
-        }
-    }
+				var find = false, out = false;
+				for(let i = 0; i < result.length && out == false; i++) {
+					if(find == false) {
+						if(result[i].stop_name == res.stop_name && result[i].arrival_time == res.arrival_time) {
+							find = true;
+							var text = "\n\n*FERMATE*";
+							text += emoji.emojify("\n:point_right: :clock2: " + result[i].arrival_time + " -> :busstop: " + result[i].stop_name);
+						}
+					} else {
+						if(result[i].stop_sequence != 1)
+							text += emoji.emojify("\n:clock2: " + result[i].arrival_time + " -> :busstop: " + result[i].stop_name);
+						else
+							out = true;
+					}
+				}
 
-    return text;
+				return resolve(text);
+			});
+		});
+	});
+}
+
+function printText (item, fermate, con) {
+	return new Promise((resolve, reject) => {
+	    var text = "";
+		if(item.trip_headsign != undefined)
+			text += "*PRESTA ATTENZIONE ALLA DIREZIONE*";
+
+	    if(item.route_short_name != undefined)
+	        text += emoji.emojify("\n:bus: " + item.route_short_name + " (" + item.route_long_name + ")");
+
+		if(item.trip_headsign != undefined)
+	        text += emoji.emojify("\n:arrow_right: " + item.trip_headsign);
+
+	    if(item.stop_name != undefined)
+	        text += emoji.emojify("\n:busstop: " + item.stop_name);
+
+	    if(item.distance != undefined)
+	        text += emoji.emojify("\n:footprints: " + Math.round(item.distance) + " metri");
+
+	    if(item.arrival_time != undefined) {
+	        if(item.arrival_time === item.departure_time)
+	            text += emoji.emojify("\n:clock2: " + item.arrival_time);
+	        else {
+	            var t2 = fun.convertDate(item.arrival_time, "h:m:s");
+	            var t1 = fun.convertDate(item.departure_time, "h:m:s")
+
+	            let diff = parseInt((t1-t2)/(60*1000));
+	            text += emoji.emojify("\n:clock2: " + item.arrival_time + ", ma partirà " + diff + " minuti dopo!");
+	        }
+	    }
+
+		if(item.wheelchair_boarding != undefined) {
+	        switch(parseInt(item.wheelchair_boarding)) {
+	            /*case 0:
+	                text += "\n- Fermata attrezzata: Info non presente";
+	                break;*/
+	            case 1:
+	                text += emoji.emojify("\n:wheelchair: Fermata attrezzata");
+	                break;
+	            case 2:
+	                text += emoji.emojify("\n:wheelchair: Fermata *non* attrezzata");
+	                break;
+	        }
+	    }
+
+	    if(item.wheelchair_accessible != undefined) {
+	        switch(parseInt(item.wheelchair_accessible)) {
+	            /*case 0:
+	                text += "\n- Veicolo attrezzato: Info non presente";
+	                break;*/
+	            case 1:
+	                text += emoji.emojify("\n:wheelchair: Veicolo attrezzato (Max 1)");
+	                break;
+	            case 2:
+	                text += emoji.emojify("\n:wheelchair: Veicolo *non* attrezzato");
+	                break;
+	        }
+	    }
+
+		if(fermate == true) {
+			getFermate(item, con).then((res) => {
+				text += res;
+				return resolve(text);
+			});
+		} else { return resolve(text); }
+	});
 }
 
 function getPaginationFull( current, maxpage ) {
@@ -202,7 +262,7 @@ function Fermata_F1 (bot, msg, connection) {
 	console.log("Fermata_F1");
 	db.initiateConnection(connection)
 		.then((con) => {
-		    var text = "Prima di tutto mandami la posizione o scrivimi il nome della fermata che ti interessa:";
+		    var text = "Inviami la tua posizione o scrivi specifica il nome di una fermata:";
 		    var keyboard = createChoice(undefined, undefined, undefined, undefined, true);
 
 			checkID(msg.chat.id, 'Fermata_F1', con)
@@ -253,7 +313,10 @@ function Location_Init (bot, msg, con, stato, result) {
 
 			checkID(msg.chat.id, stato, con)
 				.then((result) => {
-					bot.sendMessage(msg.chat.id, printText(res[0]), getPagination(1, res.length));
+					printText(res[0], false, undefined)
+						.then((testo) => {
+							bot.sendMessage(msg.chat.id, testo, getPagination(1, res.length));
+						});
 				})
 				.catch(err => {
 					console.error(err);
@@ -263,7 +326,7 @@ function Location_Init (bot, msg, con, stato, result) {
 	else {
 		checkID(msg.chat.id, '/start', con)
 			.then((result) => {
-				var text = "Sei troppo lontano, cerca di avvicinarti...";
+				var text = emoji.emojify("Sei troppo lontano, cerca di avvicinarti :disappointed_relieved:");
 
 				bot.sendMessage(msg.chat.id, text, db.createHome());
 			})
@@ -304,46 +367,49 @@ function Fermata_F2_Location_F2 (bot, msg, connection) {
 					res = JSON.parse(res.lastResult);
 
 			        if(msg.data == 'loc') {
-						bot.editMessageText(printText(res[prevChoice-1]), {chat_id: msg.message.chat.id, message_id: msg.message.message_id, parse_mode: "Markdown"});
-			            bot.sendLocation(msg.message.chat.id, res[prevChoice-1].stop_lat, res[prevChoice-1].stop_lon);
+						printText(res[prevChoice-1], false, undefined)
+							.then((testo) => {
+								bot.editMessageText(testo, {chat_id: msg.message.chat.id, message_id: msg.message.message_id, parse_mode: "Markdown"});
+					            bot.sendLocation(msg.message.chat.id, res[prevChoice-1].stop_lat, res[prevChoice-1].stop_lon);
 
-						var query = "UPDATE users SET prevChoice='1' WHERE ChatID='" + msg.message.chat.id + "'";
-						con.query(query, function (err, result) {
-							if (err) throw err;
+								var query = "UPDATE users SET prevChoice='1' WHERE ChatID='" + msg.message.chat.id + "'";
+								con.query(query, function (err, result) {
+									if (err) throw err;
 
-				            var fermata = res[prevChoice-1].stop_name;
-				            var tmpF = fermata.replace(/[\W_]/g, '');
-				            var nameT1 = "fermata_" + tmpF;
+						            var fermata = res[prevChoice-1].stop_name;
+						            var tmpF = fermata.replace(/[\W_]/g, '');
+						            var nameT1 = "fermata_" + tmpF;
 
-				            query = "CREATE TABLE IF NOT EXISTS " + nameT1 + " AS SELECT * FROM time_table WHERE stop_name='" + fermata + "'";
-				            con.query(query, function (err, result) {
-				                if (err) throw err;
+						            query = "CREATE TABLE IF NOT EXISTS " + nameT1 + " AS SELECT * FROM time_table WHERE stop_name='" + fermata + "'";
+						            con.query(query, function (err, result) {
+						                if (err) throw err;
 
-				                query = "SELECT DISTINCT route_short_name FROM " + nameT1 + " ORDER BY length(route_short_name) ASC, route_short_name ASC";
-				                con.query(query, function (err, result, fields) {
-				                    if (err) throw err;
+						                query = "SELECT DISTINCT route_short_name FROM " + nameT1 + " ORDER BY length(route_short_name) ASC, route_short_name ASC";
+						                con.query(query, function (err, result, fields) {
+						                    if (err) throw err;
 
-				                    var text = "Seleziona la linea:";
-									var keyboard = createChoice(result, 5, 'route_short_name', undefined, false);
+						                    var text = "Seleziona la linea:";
+											var keyboard = createChoice(result, 5, 'route_short_name', undefined, false);
 
-									var keyboardString = JSON.parse(keyboard.reply_markup).keyboard;
-									var stringKeyboard = [].concat.apply([], keyboardString);
+											var keyboardString = JSON.parse(keyboard.reply_markup).keyboard;
+											var stringKeyboard = [].concat.apply([], keyboardString);
 
-									var query = "UPDATE users SET NameT='" + nameT1 + "',keyboard='" + JSON.stringify(stringKeyboard) + "' WHERE ChatID='" + msg.message.chat.id + "'";
-									con.query(query, function (err, result) {
-										if (err) throw err;
+											var query = "UPDATE users SET NameT='" + nameT1 + "',keyboard='" + JSON.stringify(stringKeyboard) + "' WHERE ChatID='" + msg.message.chat.id + "'";
+											con.query(query, function (err, result) {
+												if (err) throw err;
 
-										checkID(msg.message.chat.id, 'Fermata_F2_Location_F2', con)
-											.then((result) => {
-				                				bot.sendMessage(msg.message.chat.id, text, keyboard);
-											})
-											.catch(err => {
-												console.error(err);
+												checkID(msg.message.chat.id, 'Fermata_F2_Location_F2', con)
+													.then((result) => {
+						                				bot.sendMessage(msg.message.chat.id, text, keyboard);
+													})
+													.catch(err => {
+														console.error(err);
+													});
 											});
+										});
 									});
 								});
 							});
-						});
 					} else {
 						if(prevChoice != parseInt(msg.data)) {
 							prevChoice = parseInt(msg.data);
@@ -356,7 +422,10 @@ function Fermata_F2_Location_F2 (bot, msg, connection) {
 				            con.query(query, function (err, result) {
 				                if (err) throw err;
 
-								bot.editMessageText(printText(res[prevChoice-1]), options);
+								printText(res[prevChoice-1], false, undefined)
+									.then((testo) => {
+										bot.editMessageText(testo, options);
+									});
 							});
 						}
 					}
@@ -412,7 +481,10 @@ function Fermata_F2_Location_F3 (bot, msg, nameT1, connection) {
 
 									checkID(msg.chat.id, 'Fermata_F2_Location_F3', con)
 										.then((result) => {
-				                    		bot.sendMessage(msg.chat.id, printText(res[0]), getPaginationFull(1, res.length));
+											printText(res[0], false, undefined)
+												.then((testo) => {
+				                    				bot.sendMessage(msg.chat.id, testo, getPaginationFull(1, res.length));
+												});
 										})
 										.catch(err => {
 											console.error(err);
@@ -421,7 +493,7 @@ function Fermata_F2_Location_F3 (bot, msg, nameT1, connection) {
 							} else {
 								checkID(msg.chat.id, '/start', con)
 									.then((result) => {
-										var text = "Mi dispiace ma la linea selezionata ha terminato le corse per oggi...";
+										var text = emoji.emojify("Mi dispiace ma la linea selezionata ha terminato le corse per oggi :disappointed:");
 
 										bot.sendMessage(msg.chat.id, text, db.createHome());
 									})
@@ -434,7 +506,7 @@ function Fermata_F2_Location_F3 (bot, msg, nameT1, connection) {
 				} else {
 					checkID(msg.chat.id, '/start', con)
 						.then((result) => {
-							var text = "La linea inserita non è stata riconosciuta!";
+							var text = emoji.emojify("La linea inserita non è stata riconosciuta :disappointed_relieved:");
 
 							bot.sendMessage(msg.chat.id, text, db.createHome());
 						})
@@ -457,7 +529,7 @@ function Fermata_F2_Name_F1 (bot, msg, connection) {
 	        con.query(query, function (err, result) {
 	            if (err) throw err;
 
-				var text = "Ho trovato queste fermate:";
+				var text = emoji.emojify("Ho trovato queste fermate :thinking_face:");
 				var keyboard = createChoice(result, 2, 'stop_name', msg.text, false);
 
 				var keyboardString = JSON.parse(keyboard.reply_markup).keyboard;
@@ -507,7 +579,7 @@ function Fermata_F2_Name_F2 (bot, msg, connection) {
 				            con.query(query, function (err, result, fields) {
 				                if (err) throw err;
 
-				                var text = "Seleziona la linea:";
+				                var text = "Seleziona una linea:";
 								var keyboard = createChoice(result, 5, 'route_short_name', undefined, false);
 
 								var keyboardString = JSON.parse(keyboard.reply_markup).keyboard;
@@ -532,7 +604,7 @@ function Fermata_F2_Name_F2 (bot, msg, connection) {
 				else {
 					checkID(msg.chat.id, '/start', con)
 						.then((result) => {
-							var text = "La linea fermata non è stata riconosciuta!";
+							var text = emoji.emojify("La linea fermata non è stata riconosciuta :disappointed_relieved:");
 
 							bot.sendMessage(msg.chat.id, text, db.createHome());
 						})
@@ -590,7 +662,10 @@ function Fermata_F2_Name_F3 (bot, msg, nameT1, connection) {
 
 									checkID(msg.chat.id, 'Fermata_F2_Name_F3', con)
 										.then((result) => {
-					                    	bot.sendMessage(msg.chat.id, printText(res[0]), getPaginationFull(1, res.length));
+											printText(res[0], false, undefined)
+												.then((testo) => {
+					                    			bot.sendMessage(msg.chat.id, testo, getPaginationFull(1, res.length));
+												});
 										})
 										.catch(err => {
 											console.error(err);
@@ -600,7 +675,7 @@ function Fermata_F2_Name_F3 (bot, msg, nameT1, connection) {
 							else {
 								checkID(msg.chat.id, '/start', con)
 									.then((result) => {
-										var text = "Mi dispiace ma la linea selezionata ha terminato le corse per oggi...";
+										var text = emoji.emojify("Mi dispiace ma la linea selezionata ha terminato le corse per oggi :disappointed:");
 
 										bot.sendMessage(msg.chat.id, text, db.createHome());
 									})
@@ -613,7 +688,7 @@ function Fermata_F2_Name_F3 (bot, msg, nameT1, connection) {
 				} else {
 					checkID(msg.chat.id, '/start', con)
 						.then((result) => {
-							var text = "La linea inserita non è stata riconosciuta!";
+							var text = emoji.emojify("La linea inserita non è stata riconosciuta :disappointed_relieved:");
 
 							bot.sendMessage(msg.chat.id, text, db.createHome());
 						})
@@ -636,7 +711,7 @@ function Linea_F1 (bot, msg, connection) {
 	        con.query(query, function (err, result) {
 	            if (err) throw err;
 
-	            var text = "Prima di tutto dimmi che linea ti interessa:";
+	            var text = "Seleziona una linea:";
 				var keyboard = createChoice(result, 5, 'route_short_name', undefined, false);
 
 				var keyboardString = JSON.parse(keyboard.reply_markup).keyboard;
@@ -686,7 +761,7 @@ function Linea_F2 (bot, msg, connection) {
 		                con.query(query, function (err, result, fields) {
 		                    if (err) throw err;
 
-		                    var text = "Seleziona la direzione:";
+		                    var text = "Seleziona la direzione della corsa:";
 							var keyboard = createChoice(result, 2, 'trip_headsign', undefined, false);
 
 							var keyboardString = JSON.parse(keyboard.reply_markup).keyboard;
@@ -709,7 +784,7 @@ function Linea_F2 (bot, msg, connection) {
 				} else {
 					checkID(msg.chat.id, '/start', con)
 						.then((result) => {
-							var text = "La linea inserita non è stata riconosciuta!";
+							var text = emoji.emojify("La linea inserita non è stata riconosciuta :disappointed_relieved:");
 
 							bot.sendMessage(msg.chat.id, text, db.createHome());
 						})
@@ -750,7 +825,7 @@ function Linea_F3 (bot, msg, nameT1, connection) {
 							con.query(query, function (err, result, fields) {
 								if (err) throw err;
 
-								var text = "Mandami la tua posizione o seleziona una fermata specifica e ti saprò dire dove e quando prendere l'autobus!";
+								var text = "Inviami la tua posizione o scrivi il nome di una fermata specifica:";
 								var keyboard = createChoice(result, 2, 'stop_name', undefined, true);
 
 								var keyboardString = JSON.parse(keyboard.reply_markup).keyboard;
@@ -774,7 +849,7 @@ function Linea_F3 (bot, msg, nameT1, connection) {
 				} else {
 					checkID(msg.chat.id, '/start', con)
 						.then((result) => {
-							var text = "La direzione inserita non è stata riconosciuta!";
+							var text = emoji.emojify("La direzione inserita non è stata riconosciuta :disappointed_relieved:");
 
 							bot.sendMessage(msg.chat.id, text, db.createHome());
 						})
@@ -809,7 +884,7 @@ function Linea_F4_Location_F1 (bot, msg, nameT2, connection) {
 				else {
 					checkID(msg.chat.id, '/start', con)
 						.then((result) => {
-							var text = "Mi dispiace ma la linea selezionata ha terminato le corse per oggi, oppure non lavora oggi...";
+							var text = emoji.emojify("Mi dispiace ma la linea selezionata ha terminato le corse per oggi :disappointed:");
 
 							bot.sendMessage(msg.chat.id, text, db.createHome());
 						})
@@ -853,7 +928,10 @@ function Linea_F4_Name_F1 (bot, msg, nameT2, connection) {
 
 								checkID(msg.chat.id, 'Linea_F4_Name_F1', con)
 									.then((result) => {
-										bot.sendMessage(msg.chat.id, printText(res[0]), getPaginationFull(1, res.length));
+										printText(res[0], false, undefined)
+											.then((testo) => {
+												bot.sendMessage(msg.chat.id, testo, getPaginationFull(1, res.length));
+											});
 									})
 									.catch(err => {
 										console.error(err);
@@ -862,7 +940,7 @@ function Linea_F4_Name_F1 (bot, msg, nameT2, connection) {
 						} else {
 							checkID(msg.chat.id, '/start', con)
 								.then((result) => {
-									var text = "Mi dispiace ma la linea selezionata ha terminato le corse per oggi...";
+									var text = emoji.emojify("Mi dispiace ma la linea selezionata ha terminato le corse per oggi :disappointed:");
 
 									bot.sendMessage(msg.chat.id, text, db.createHome());
 								})
@@ -874,7 +952,7 @@ function Linea_F4_Name_F1 (bot, msg, nameT2, connection) {
 				} else {
 					checkID(msg.chat.id, '/start', con)
 						.then((result) => {
-							var text = "La linea inserita non è stata riconosciuta!";
+							var text = emoji.emojify("La linea inserita non è stata riconosciuta :disappointed_relieved:");
 
 							bot.sendMessage(msg.chat.id, text, db.createHome());
 						})
@@ -893,7 +971,7 @@ function Next_F1 (bot, msg, connection) {
 	console.log("Next_F1");
 	db.initiateConnection(connection)
 		.then((con) => {
-	        var text = "Prima di tutto dimmi mandami la posizione o scrivimi il nome della fermata che ti interessa:";
+	        var text = "Inviami la tua posizione o scrivi il nome di una fermata specifica:";
 			checkID(msg.chat.id, 'Next_F1', con)
 				.then((result) => {
 			        bot.sendMessage(msg.chat.id, text, createChoice(undefined, undefined, undefined, undefined, true));
@@ -938,55 +1016,61 @@ function Next_F2_Location_F2 (bot, msg, connection) {
 					res = JSON.parse(res.lastResult);
 
 		            if(msg.data == 'loc') {
-						bot.editMessageText(printText(res[prevChoice-1]), {chat_id: msg.message.chat.id, message_id: msg.message.message_id, parse_mode: "Markdown"});
-						bot.sendLocation(msg.message.chat.id, res[prevChoice-1].stop_lat, res[prevChoice-1].stop_lon);
+						printText(res[prevChoice-1], false, undefined)
+							.then((testo) => {
+								bot.editMessageText(testo, {chat_id: msg.message.chat.id, message_id: msg.message.message_id, parse_mode: "Markdown"});
+								bot.sendLocation(msg.message.chat.id, res[prevChoice-1].stop_lat, res[prevChoice-1].stop_lon);
 
-		                var fermata = res[prevChoice-1].stop_name;
-		                var tmpF = fermata.replace(/[\W_]/g, '');
-		                var nameT1 = "fermata_" + tmpF;
+				                var fermata = res[prevChoice-1].stop_name;
+				                var tmpF = fermata.replace(/[\W_]/g, '');
+				                var nameT1 = "fermata_" + tmpF;
 
-		                query = "CREATE TABLE IF NOT EXISTS " + nameT1 + " AS SELECT * FROM time_table WHERE stop_name='" + fermata + "'";
-		                con.query(query, function (err, result) {
-		                    if (err) throw err;
+				                query = "CREATE TABLE IF NOT EXISTS " + nameT1 + " AS SELECT * FROM time_table WHERE stop_name='" + fermata + "'";
+				                con.query(query, function (err, result) {
+				                    if (err) throw err;
 
-							var date = new Date();
-							var clockNow = date.toTimeString();
-							clockNow = clockNow.split(' ')[0];
+									var date = new Date();
+									var clockNow = date.toTimeString();
+									clockNow = clockNow.split(' ')[0];
 
-							var weekday = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
-							var today = weekday[date.getDay()];
+									var weekday = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
+									var today = weekday[date.getDay()];
 
-		                    query = "SELECT MIN(arrival_time),stop_name,stop_lat,stop_lon,wheelchair_boarding,arrival_time,departure_time,trip_headsign,wheelchair_accessible,route_short_name,route_long_name,route_type FROM " + nameT1 + " where arrival_time>'" + clockNow + "' AND " + today + "='1' GROUP BY route_short_name ORDER BY arrival_time ASC";
-		                    con.query(query, function (err, result, fields) {
-		                        if (err) throw err;
-								var res = result;
+				                    query = "SELECT stop_name,stop_lat,stop_lon,wheelchair_boarding,MIN(arrival_time) AS arrival_time,MIN(departure_time) AS departure_time,trip_headsign,wheelchair_accessible,route_short_name,route_long_name,route_type FROM " + nameT1 + " where arrival_time>'" + clockNow + "' AND " + today + "='1' GROUP BY route_short_name,trip_headsign ORDER BY arrival_time ASC";
+				                    con.query(query, function (err, result, fields) {
+				                        if (err) throw err;
+										var res = result;
 
-		                        if(result.length > 0) {
-									var query = "UPDATE users SET prevChoice='1',lastResult='" + JSON.stringify(res) + "' WHERE ChatID='" + msg.message.chat.id + "'";
-									con.query(query, function (err, result) {
-										if (err) throw err;
+				                        if(result.length > 0) {
+											var query = "UPDATE users SET prevChoice='1',lastResult='" + JSON.stringify(res) + "' WHERE ChatID='" + msg.message.chat.id + "'";
+											con.query(query, function (err, result) {
+												if (err) throw err;
 
-										checkID(msg.message.chat.id, 'Next_F2_Location_F2', con)
-											.then((status) => {
-												bot.sendMessage(msg.message.chat.id, printText(res[0]), getPaginationFull(1, res.length));
-											})
-											.catch(err => {
-												console.error(err);
+												checkID(msg.message.chat.id, 'Next_F2_Location_F2', con)
+													.then((status) => {
+														printText(res[0], true, con)
+															.then((testo) => {
+																bot.sendMessage(msg.message.chat.id, testo, getPaginationFull(1, res.length));
+															});
+													})
+													.catch(err => {
+														console.error(err);
+													});
 											});
-									});
-								} else {
-									checkID(msg.message.chat.id, '/start', con)
-										.then((result) => {
-											var text = "Mi dispiace ma per oggi sono terminate le corse in questa fermata, oppure non lavora oggi...";
+										} else {
+											checkID(msg.message.chat.id, '/start', con)
+												.then((result) => {
+													var text = emoji.emojify("Mi dispiace ma per oggi sono terminate le corse in questa fermata, oppure non lavora oggi :disappointed:");
 
-											bot.sendMessage(msg.message.chat.id, text, db.createHome());
-										})
-										.catch(err => {
-											console.error(err);
-										});
-						        }
+													bot.sendMessage(msg.message.chat.id, text, db.createHome());
+												})
+												.catch(err => {
+													console.error(err);
+												});
+										}
+									});
+								});
 							});
-						});
 					} else {
 						if(prevChoice != parseInt(msg.data)) {
 							prevChoice = parseInt(msg.data);
@@ -999,7 +1083,10 @@ function Next_F2_Location_F2 (bot, msg, connection) {
 				            con.query(query, function (err, result) {
 				                if (err) throw err;
 
-			                	bot.editMessageText(printText(res[prevChoice-1]), options);
+								printText(res[prevChoice-1], false, undefined)
+									.then((testo) => {
+			                			bot.editMessageText(testo, options);
+									});
 							});
 						}
 					}
@@ -1022,7 +1109,7 @@ function Next_F2_Name_F1 (bot, msg, connection) {
 		    con.query(query, function (err, result) {
 		        if (err) throw err;
 
-		        var text = "Ho trovato queste fermate:";
+		        var text = emoji.emojify("Ho trovato queste fermate :thinking_face:");
 				var keyboard = createChoice(result, 2, 'stop_name', fermata, false);
 
 				var keyboardString = JSON.parse(keyboard.reply_markup).keyboard;
@@ -1069,7 +1156,7 @@ function Next_F2_Name_F2 (bot, msg, connection) {
 		                var weekday = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
 		                var today = weekday[date.getDay()];
 
-		                query = "SELECT stop_name,stop_lat,stop_lon,wheelchair_boarding,MIN(arrival_time) AS arrival_time,departure_time,trip_headsign,wheelchair_accessible,route_short_name,route_long_name,route_type FROM " + nameT1 + " where arrival_time>'" + clockNow + "' AND " + today + "='1' GROUP BY route_short_name,trip_headsign ORDER BY arrival_time ASC";
+		                query = "SELECT stop_name,stop_lat,stop_lon,wheelchair_boarding,MIN(arrival_time) AS arrival_time,MIN(departure_time) AS departure_time,trip_headsign,wheelchair_accessible,route_short_name,route_long_name,route_type FROM " + nameT1 + " where arrival_time>'" + clockNow + "' AND " + today + "='1' GROUP BY route_short_name,trip_headsign ORDER BY arrival_time ASC";
 		                con.query(query, function (err, result, fields) {
 		                    if (err) throw err;
 
@@ -1082,7 +1169,10 @@ function Next_F2_Name_F2 (bot, msg, connection) {
 
 									checkID(msg.chat.id, 'Next_F2_Name_F2', con)
 										.then((result) => {
-					                    	bot.sendMessage(msg.chat.id, printText(res[0]), getPaginationFull(1, res.length));
+											printText(res[0], true, con)
+												.then((testo) => {
+													bot.sendMessage(msg.chat.id, testo, getPaginationFull(1, res.length));
+												});
 										})
 										.catch(err => {
 											console.error(err);
@@ -1092,7 +1182,7 @@ function Next_F2_Name_F2 (bot, msg, connection) {
 							else {
 								checkID(msg.chat.id, '/start', con)
 									.then((result) => {
-										var text = "Mi dispiace ma tutte le linee hanno terminato le corse per oggi...";
+										var text = emoji.emojify("Mi dispiace ma tutte le linee hanno terminato le corse per oggi :disappointed:");
 
 										bot.sendMessage(msg.chat.id, text, db.createHome());
 									})
@@ -1105,7 +1195,7 @@ function Next_F2_Name_F2 (bot, msg, connection) {
 				} else {
 					checkID(msg.chat.id, '/start', con)
 						.then((result) => {
-							var text = "La fermata inserita non è stata riconosciuta!";
+							var text = emoji.emojify("La fermata inserita non è stata riconosciuta :disappointed_relieved:");
 
 							bot.sendMessage(msg.chat.id, text, db.createHome());
 						})
@@ -1134,14 +1224,14 @@ function All_FF (bot, msg, connection) {
 					res = JSON.parse(res.lastResult);
 
 	                if(msg.data == 'loc') {
-						console.log("Send");
 						checkID(msg.message.chat.id, '/start', con)
 							.then((result) => {
-								console.log("edit");
-								bot.editMessageText(printText(res[prevChoice-1]), {chat_id: msg.message.chat.id,message_id: msg.message.message_id,parse_mode: "Markdown"});
-								console.log("send2");
-								bot.sendMessage(msg.message.chat.id, "Ecco la posizione selezionata!", db.createHome());
-					            bot.sendLocation(msg.message.chat.id, res[prevChoice-1].stop_lat, res[prevChoice-1].stop_lon);
+								printText(res[prevChoice-1], false, undefined)
+									.then((testo) => {
+										bot.editMessageText(testo, {chat_id: msg.message.chat.id,message_id: msg.message.message_id,parse_mode: "Markdown"});
+										bot.sendMessage(msg.message.chat.id, emoji.emojify("Ecco la posizione selezionata :blush:"), db.createHome());
+							            bot.sendLocation(msg.message.chat.id, res[prevChoice-1].stop_lat, res[prevChoice-1].stop_lon);
+									});
 							})
 							.catch(err => {
 								console.error(err);
@@ -1158,7 +1248,64 @@ function All_FF (bot, msg, connection) {
 				            con.query(query, function (err, result) {
 				                if (err) throw err;
 
-			                	bot.editMessageText(printText(res[prevChoice-1]), options);
+								printText(res[prevChoice-1], false, undefined)
+									.then((testo) => {
+			                			bot.editMessageText(testo, options);
+									});
+							});
+						}
+	                }
+	            });
+			})
+			.catch(err => {
+				bot.sendMessage(msg.message.chat.id, err);
+			});
+	} else
+		bot.sendMessage(msg.chat.id, "Valore non consentito, prima di effettuare un'altra ricerca fatti inviare la posizione della ricerca precedente!");
+}
+
+function All_FF_B (bot, msg, connection) {
+	console.log("Stato Finale");
+	if(msg.message != undefined) {
+		db.initiateConnection(connection)
+			.then((con) => {
+				var query = "SELECT * FROM users WHERE ChatID='" + msg.message.chat.id + "'";
+				con.query(query, function (err, result) {
+					if (err) throw err;
+
+					var res = result[0];
+					var prevChoice = res.prevChoice;
+					res = JSON.parse(res.lastResult);
+
+	                if(msg.data == 'loc') {
+						checkID(msg.message.chat.id, '/start', con)
+							.then((result) => {
+								printText(res[prevChoice-1], true, con)
+									.then((testo) => {
+										bot.editMessageText(testo, {chat_id: msg.message.chat.id,message_id: msg.message.message_id,parse_mode: "Markdown"});
+										bot.sendMessage(msg.message.chat.id, emoji.emojify("Ecco la posizione selezionata :blush:"), db.createHome());
+							            bot.sendLocation(msg.message.chat.id, res[prevChoice-1].stop_lat, res[prevChoice-1].stop_lon);
+									});
+							})
+							.catch(err => {
+								console.error(err);
+							});
+	                } else {
+						if(prevChoice != parseInt(msg.data)) {
+							prevChoice = parseInt(msg.data);
+
+							var options = getPaginationFull(prevChoice, res.length);
+							options['chat_id'] = msg.message.chat.id;
+							options['message_id'] = msg.message.message_id;
+
+							var query = "UPDATE users SET prevChoice='" + prevChoice + "' WHERE ChatID='" + msg.message.chat.id + "'";
+				            con.query(query, function (err, result) {
+				                if (err) throw err;
+
+								printText(res[prevChoice-1], true, con)
+									.then((testo) => {
+			                			bot.editMessageText(testo, options);
+									});
 							});
 						}
 	                }
@@ -1175,7 +1322,7 @@ function CalcolaPercorso_F1 (bot, msg, connection) {
 	console.log("CalcolaPercorso_F1");
 	db.initiateConnection(connection)
 		.then((con) => {
-	        var text = "Prima di tutto dimmi il nome della fermata di partenza:";
+	        var text = "Scrivi il nome della fermata di partenza:";
 			checkID(msg.chat.id, 'CalcolaPercorso_F1', con)
 				.then((result) => {
 			        bot.sendMessage(msg.chat.id, text, createChoice(undefined, undefined, undefined, undefined, undefined));
@@ -1199,7 +1346,7 @@ function CalcolaPercorso_F2 (bot, msg, connection) {
 		    con.query(query, function (err, result) {
 		        if (err) throw err;
 
-		        var text = "Ho trovato queste fermate:";
+		        var text = emoji.emojify("Ho trovato queste fermate :thinking_face:");
 				var keyboard = createChoice(result, 2, 'stop_name', fermata, false);
 
 				var keyboardString = JSON.parse(keyboard.reply_markup).keyboard;
@@ -1255,7 +1402,7 @@ function CalcolaPercorso_F3 (bot, msg, connection) {
 				} else {
 					checkID(msg.chat.id, '/start', con)
 						.then((result) => {
-							var text = "La fermata inserita non è stata riconosciuta!";
+							var text = emoji.emojify("La fermata inserita non è stata riconosciuta :disappointed_relieved:");
 
 							bot.sendMessage(msg.chat.id, text, db.createHome());
 						})
@@ -1280,7 +1427,7 @@ function CalcolaPercorso_F4 (bot, msg, connection) {
 		    con.query(query, function (err, result) {
 		        if (err) throw err;
 
-		        var text = "Ho trovato queste fermate:";
+		        var text = emoji.emojify("Ho trovato queste fermate :thinking_face:");
 				var keyboard = createChoice(result, 2, 'stop_name', fermata, false);
 
 				var keyboardString = JSON.parse(keyboard.reply_markup).keyboard;
@@ -1324,7 +1471,7 @@ function CalcolaPercorso_F5 (bot, msg, connection) {
 						con.query(query, function (err, result) {
 							if (err) throw err;
 
-							var text = "Perfetto, sto elaborando...";
+							var text = emoji.emojify("Perfetto, ora calcolo il miglior tragitto :blush:");
 							checkID(msg.chat.id, 'CalcolaPercorso_F5', con)
 								.then((result) => {
 							        bot.sendMessage(msg.chat.id, text).then(() => {
@@ -1352,29 +1499,29 @@ function CalcolaPercorso_F5 (bot, msg, connection) {
 												.then((response) => {
 													response = response.json.routes[0].legs[0];
 
-													text = "*RIASSUNTO*";
-													text += "\nPartenza: " + response.start_address + "\nArrivo: " + response.end_address;
-													text += "\nOrario di partenza: " + response.departure_time.text + "\nOrario di arrivo: " + response.arrival_time.text;
-													text += "\nDurata: " + response.duration.text + "\nDistanza: " + response.distance.text;
-													text += "\n\n*DETTAGLI*\n\n";
+													var text = "*RIASSUNTO DEL VIAGGIO*";
+													text += emoji.emojify("\n:clock2: " + response.departure_time.text + " ~ " + response.arrival_time.text);
+													text += "\nDistanza: " + response.distance.text + "\nDurata: " + response.duration.text;
+													//text += "\nPartenza: " + response.start_address + "\nArrivo: " + response.end_address;
+													text += "\n\n";
 
 													response = response.steps;
 													for(let i = 0; i < response.length; i++) {
-														if(response[i].travel_mode == "TRANSIT") {
-															text += "\n*" + response[i].transit_details.line.vehicle.name + "*";
-															text += "\nLinea " + response[i].transit_details.line.short_name + " (" + response[i].transit_details.line.name + ")";
-															text += "\nDirezione: " + response[i].transit_details.headsign;
-															text += "\nPartenza: " + response[i].transit_details.departure_stop.name + "\nArrivo: " + response[i].transit_details.arrival_stop.name;
-															text += "\nOrario di partenza: " + response[i].transit_details.departure_time.text + "\nOrario di arrivo: " + response[i].transit_details.arrival_time.text;
-															text += "\nDurata: " + response[i].duration.text + "\nDistanza: " + response[i].distance.text;
-														} else {
-															if(i != 0 && i != response.length -1)
-																text += "\n*" + response[i].html_instructions + "*";
-														}
+														if(i == 0)
+															text += "\n*DETTAGLI DEL VIAGGIO*";
+														else {
+															if(response[i].travel_mode == "TRANSIT") {
+																text += emoji.emojify("\n:clock2: " + response[i].duration.text + " ~ " + response[i].distance.text);
+																text += emoji.emojify("\n:waving_white_flag: " + response[i].transit_details.departure_stop.name + "\n:checkered_flag: " + response[i].transit_details.arrival_stop.name);
 
-														text += "\n\n";
-														text += "\nPer le indicazioni clicca qui:";
-														text += "\nhttps://www.google.com/maps/dir/?api=1&origin=" + elem['start'].stop_lat + "," + elem['start'].stop_lon + "&destination=" + elem['end'].stop_lat + "," + elem['end'].stop_lon + "&travelmode=transit";
+																text += emoji.emojify("\n:bus: " + response[i].transit_details.line.short_name + " (" + response[i].transit_details.line.name + ")");
+																text += emoji.emojify("\n:arrow_right: " + response[i].transit_details.headsign);
+																text += "\n";
+															} else {
+																text += emoji.emojify("\n:footprints: " + response[i].html_instructions);
+																text += "\n";
+															}
+														}
 													}
 
 													bot.sendMessage(msg.chat.id, text, db.createHome());
@@ -1393,7 +1540,7 @@ function CalcolaPercorso_F5 (bot, msg, connection) {
 				} else {
 					checkID(msg.chat.id, '/start', con)
 						.then((result) => {
-							var text = "La fermata inserita non è stata riconosciuta!";
+							var text = emoji.emojify("La fermata inserita non è stata riconosciuta :disappointed_relieved:");
 
 							bot.sendMessage(msg.chat.id, text, db.createHome());
 						})
@@ -1421,14 +1568,14 @@ function Avvisi_Linee (bot, msg, connection) {
 	            if (err) throw err;
 
 	            if(result.length > 0) {
-	                var text = "Ecco le linee che subiranno variazioni nella giornata odierna:";
+	                var text = emoji.emojify("Ecco le linee che subiranno variazioni nella giornata odierna :disappointed_relieved:");
 	                for(let i = 0; i < result.length; i++)
 	                    text += "\n*Linea " + result[i].route_short_name + "* (" + result[i].route_long_name + ")";
 
 	                bot.sendMessage(msg.chat.id, text, {parse_mode: 'Markdown'});
 	            }
 	            else {
-	                bot.sendMessage(msg.chat.id, "Oggi non ci sono variazioni di orario in alcuna linea!");
+	                bot.sendMessage(msg.chat.id, emoji.emojify("Oggi non ci sono variazioni di orario in alcuna linea :blush:"));
 	            }
 	        });
 		})
@@ -1459,6 +1606,7 @@ exports.Next_F2_Location_F2 = Next_F2_Location_F2;
 exports.Next_F2_Name_F1 = Next_F2_Name_F1;
 exports.Next_F2_Name_F2 = Next_F2_Name_F2;
 exports.All_FF = All_FF;
+exports.All_FF_B = All_FF_B;
 
 exports.CalcolaPercorso_F1 = CalcolaPercorso_F1;
 exports.CalcolaPercorso_F2 = CalcolaPercorso_F2;
