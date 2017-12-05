@@ -32,7 +32,7 @@ console.log('BOT STARTED webHook: ' + `${url}/bot${TOKEN}`);
 var databaseConnection = undefined;
 
 const specialChoices = ['home','ilaria','giulia','virginia'];
-const developChoices = ['develop','elimina tabelle','inserisci tabelle','crea indici','crea join','reset users','info db'];
+const developChoices = ['develop','annuncio','elimina tabelle','inserisci tabelle','crea indici','crea join','reset users'];
 const mezziChoices = ['mezzi urbani tte','prossimo mezzo','calcola percorso','ricerca per linea','ricerca per fermata','avvisi linee', 'tariffe'];
 const scadenzeChoices = ['scadenze documenti','inserisci scadenza','modifica scadenza','elimina scadenza'];
 const mensaChoices = ['mensa vicina'];
@@ -231,6 +231,13 @@ function routeCommands (msg, id, connection) {
                             break;
                     }
                 }
+                else if ((result.last_command).includes("Annuncio")) {
+                    switch (result.last_command) {
+                        case 'Annuncio_F1':
+                            db.Annuncio_F2 (bot, msg, con);
+                            break;
+                    }
+                }
                 else
                     bot.sendMessage(id, "Comando non riconosciuto!");
 			});
@@ -311,9 +318,10 @@ function Develop (msg) {
                                     reply_markup: JSON.stringify({
                                         keyboard: [
                                             ['Home'],
+                                            ['Annuncio'],
                                             ['Elimina Tabelle','Inserisci Tabelle'],
                                             ['Crea Indici','Crea Join'],
-                                            ['Reset Users','Info DB']
+                                            ['Reset Users']
                                         ],
                                         resize_keyboard: true
                                     })
@@ -321,6 +329,31 @@ function Develop (msg) {
 
                                 bot.sendMessage(msg.chat.id, text, keyboard);
                             }
+                            else
+                                bot.sendMessage(msg.chat.id, "Non sei autorizzato ad accedere!\nSei stato segnalato agli amministratori!");
+                        })
+                        .catch(err => {
+                            bot.sendMessage(msg.chat.id, err);
+                        });
+                })
+                .catch(err => {
+                    bot.sendMessage(msg.chat.id, err);
+                });
+            break;
+        case 'annuncio':
+            db.initConnectionLess(databaseConnection)
+                .then((con) => {
+                    databaseConnection = con;
+                    db.isAdmin(bot, msg, databaseConnection)
+                        .then((result) => {
+                            if(result)
+                                db.Annuncio_F1(bot, msg, databaseConnection)
+                                    .then((res) => {
+                                        //bot.sendMessage(msg.chat.id, res);
+                                    })
+                                    .catch(err => {
+                                        bot.sendMessage(msg.chat.id, err);
+                                    });
                             else
                                 bot.sendMessage(msg.chat.id, "Non sei autorizzato ad accedere!\nSei stato segnalato agli amministratori!");
                         })
@@ -452,32 +485,13 @@ function Develop (msg) {
                     bot.sendMessage(msg.chat.id, err);
                 });
             break;
-        case 'info db':
-            db.initConnectionLess(databaseConnection)
-                .then((con) => {
-                    databaseConnection = con;
-                    db.isAdmin(bot, msg, databaseConnection)
-                        .then((result) => {
-                            if(result)
-                                db.dbInfo(bot, msg.chat.id, databaseConnection);
-                            else
-                                bot.sendMessage(msg.chat.id, "Non sei autorizzato ad accedere!\nSei stato segnalato agli amministratori!");
-                        })
-                        .catch(err => {
-                            bot.sendMessage(msg.chat.id, err);
-                        });
-                })
-                .catch(err => {
-                    bot.sendMessage(msg.chat.id, err);
-                });
-            break;
     }
 }
 
 function Mezzi (msg) {
     switch (msg.text.toLowerCase()) {
         case 'mezzi urbani tte':
-            var text = "In questa sezione puoi ottenere informazioni riguardanti i mezzi di trasporto!";
+            var text = "In questa sezione puoi ottenere informazioni sugli orari dei mezzi di trasporto urbani di Trento!";
             var keyboard = {
                 reply_markup: JSON.stringify({
                     keyboard: [
@@ -495,21 +509,27 @@ function Mezzi (msg) {
             bot.sendMessage(msg.chat.id, text, keyboard);
             break;
         case 'ricerca per linea':
+            bot.sendMessage(msg.chat.id, "Se vuoi sapere le informazioni di una linea specifica sei nel posto giusto!");
             urban.Linea_F1(bot, msg, databaseConnection);
             break;
         case 'ricerca per fermata':
+            bot.sendMessage(msg.chat.id, "Se vuoi sapere le informazioni di una fermata specifica sei nel posto giusto!");
             urban.Fermata_F1(bot, msg, databaseConnection);
             break;
         case 'prossimo mezzo':
+            bot.sendMessage(msg.chat.id, "Se vuoi sapere quando passerà il tuo prossimo autobus sei nel posto giusto!");
             urban.Next_F1(bot, msg, databaseConnection);
             break;
         case 'calcola percorso':
+            bot.sendMessage(msg.chat.id, "Se vuoi le indicazioni su come raggiungere una specifica fermata sei nel posto giusto!");
             urban.CalcolaPercorso_F1(bot, msg, databaseConnection);
             break;
         case 'avvisi linee':
+            bot.sendMessage(msg.chat.id, "Se vuoi sapere quali linee potrebbero subire variazioni oggi sei nel posto giusto!");
             urban.Avvisi_Linee(bot, msg, databaseConnection);
             break;
         case 'tariffe':
+            bot.sendMessage(msg.chat.id, "Se vuoi sapere le tariffe dei biglietti urbani di Trento sei nel posto giusto!");
             var text = "*TARIFFE URBANE DI TRENTO*\n\t*Cartaceo*\n\t\t`€1,20 ->` 70 minuti\n\t\t`€1,50 ->` 120 minuti\n\t\t`€3,00 ->` Giornaliero\n\t*OpenMove*\n\t\t`€1,10 ->` 70 minuti\n\t\t`€1,40 ->` 120 minuti\n\t\t`€2,80 ->` Giornaliero\n\t*A Bordo*\n\t\t`€2,00 ->` Corsa Singola";
 
             bot.sendMessage(msg.chat.id, text, db.createHome()).then(() => {
@@ -959,10 +979,26 @@ bot.on('text', function(msg) {
     if(msg.from.is_bot == false) {
         var testoUtente = msg.text.toLowerCase();
 
-        if(testoUtente != '/start') {
-            db.initConnectionLess(databaseConnection)
-                .then((con) => {
-                    databaseConnection = con;
+        //  BEGIN TODELETE SECTION
+        //if(testoUtente == '/start') {
+        if(databaseConnection == undefined || databaseConnection.state === 'disconnected') {
+            var text = "Sto preparando il bot per soddisfare le tue richieste!\nAttendi un attimo...";
+            bot.sendMessage(msg.chat.id, text);
+        }
+        //  END TODELETE SECTION
+
+        db.initConnectionLess(databaseConnection)
+            .then((con) => {
+                databaseConnection = con;
+
+                var query = "UPDATE users SET is_active=1 WHERE ChatID=" + msg.chat.id;
+                con.query(query, function (err, result) {
+                    if (err) throw err;
+
+                    //  OK
+                });
+
+                if(testoUtente != '/start') {
                     if(specialChoices.includes(testoUtente))
                         bot.emit('funzioniSpeciali', msg);
                     else if(developChoices.includes(testoUtente))
@@ -981,18 +1017,8 @@ bot.on('text', function(msg) {
                         bot.emit('funzioniHowTo', msg);
                     else
                         routeCommands(msg, msg.chat.id, con);
-                })
-                .catch((err) => {
-                    bot.sendMessage(msg.chat.id, err);
-                });
-        } else {
-            var text = "Sto preparando il bot per soddisfare le tue richieste!\nAttendi un attimo...";
-        	bot.sendMessage(msg.chat.id, text);
-
-            text = "Benvenuto " + msg.from.first_name + "!\nUniTN Help Center è un bot sviluppato per aiutare attuali e/o futuri studenti dell'Università degli Studi di Trento in vari ambiti della propria vita quotidiana!";
-            db.initConnectionLess(databaseConnection)
-                .then((con) => {
-                    databaseConnection = con;
+                } else {
+                    var text = emoji.emojify("Benvenuto " + msg.from.first_name + " :blush:\n*UniTN Help Center* è un bot sviluppato per aiutare attuali/futuri studenti e turisti di Trento in vari ambiti della loro vita quotidiana :pencil: :video_camera:");
                     BackHome(msg)
                         .then((result) => {
                             var query = "UPDATE users SET nome='" + msg.from.first_name + "',is_bot=" + msg.from.is_bot;
@@ -1005,7 +1031,7 @@ bot.on('text', function(msg) {
 
                             query +=" WHERE ChatID='" + msg.chat.id + "'";
 							con.query(query, function (err, result) {
-								if (err) return reject(err);
+								if (err) throw err;
 
 								bot.sendMessage(msg.chat.id, text, db.createHome());
 							});
@@ -1013,11 +1039,11 @@ bot.on('text', function(msg) {
                         .catch((err) => {
                             console.error(err);
                         });
-                })
-                .catch((err) => {
-                    bot.sendMessage(msg.chat.id, err);
-                });
-        }
+                }
+            })
+            .catch((err) => {
+                bot.sendMessage(msg.chat.id, err);
+            });
     }
 
 });

@@ -29,6 +29,39 @@ function homeKeyboard () {
     };
 }
 
+function checkID (bot, id, lastCommand, connection) {
+	return new Promise((resolve, reject) => {
+		connectToDatabaseInit(connection)
+			.then((con) => {
+		        var query = "SELECT ChatID FROM users WHERE ChatID='" + id + "'";
+		        con.query(query, function (err, result) {
+		            if (err) return reject(err);
+
+					if(result.length == 0) {
+						var query = "INSERT INTO users (ChatID) VALUES ('" + id + "')";
+				        con.query(query, function (err, result) {
+				            if (err) return reject(err);
+
+							return resolve("Success");
+						});
+					}
+					else {
+						var query = "UPDATE users SET last_command='" + lastCommand + "' WHERE ChatID='" + id + "'";
+				        con.query(query, function (err, result) {
+				            if (err) return reject(err);
+
+							return resolve("Success");
+						});
+					}
+				});
+			})
+			.catch(err => {
+				bot.sendMessage(id, err);
+			});
+	});
+}
+
+
 function connectToDatabaseInit (connection) {
 	//console.log("IN CONNESSIONE");
 	return new Promise((resolve, reject) => {
@@ -104,8 +137,7 @@ function checkAdmins (bot, msg, connection) {
 
 					var admins = [];
 					for(let i = 0; i < result.length; i++)
-						if(result[i].type == "admin")
-							admins.push(parseInt(result[i].ChatID));
+						admins.push(parseInt(result[i].ChatID));
 
 					if(admins.includes(msg.chat.id))
 						return resolve(true);
@@ -136,6 +168,74 @@ function checkAdmins (bot, msg, connection) {
 	});
 }
 
+function userAlerts (bot, msg, connection) {
+	console.log("userAlerts");
+	connectToDatabaseInit(connection)
+		.then((con) => {
+			var query = "SELECT * FROM users WHERE is_active=1";
+			con.query(query, function (err, result) {
+				if (err) throw err;
+
+				query = "UPDATE users SET is_active=0 WHERE ChatID IN (";
+				for(let i = 0; i < result.length; i++) {
+					bot.sendMessage(parseInt(result[i].ChatID), msg.text)
+						.catch((err) => {
+							query += parseInt(result[i].ChatID) + ',';
+						});
+				}
+
+				checkID(bot, msg.chat.id, "/start", con)
+                    .then((result) => {
+						var index = query.lastIndexOf(",");
+				        query = query.substr(0, index) + ')';
+						console.log(query);
+						con.query(query, function (err, result) {
+							if (err) throw err;
+
+							bot.sendMessage(msg.chat.id, "Annuncio Diffuso!");
+						});
+                    })
+                    .catch(err => {
+                        console.error(err);
+                    });
+			});
+		})
+		.catch(err => {
+			console.error(err);
+		});
+}
+
+function userAlertsWrapper (bot, msg, connection) {
+	return new Promise((resolve, reject) => {
+		console.log("userAlertsWrapper");
+		connectToDatabaseInit(connection)
+			.then((con) => {
+				var text = "Il messaggio che inserirai verrà diffuso a TUTTI gli utenti del bot!";
+				var keyboard = {
+			        reply_markup: JSON.stringify({
+						keyboard: [
+							['Home']
+						],
+			            one_time_keyboard: true,
+			            resize_keyboard: true
+			        })
+			    };
+
+				checkID(bot, msg.chat.id, "Annuncio_F1", con)
+                    .then((result) => {
+                        bot.sendMessage(msg.chat.id, text, keyboard);
+						return resolve(true);
+                    })
+                    .catch(err => {
+                        console.error(err);
+                    });
+			})
+			.catch(err => {
+				return reject(err);
+			});
+	});
+}
+
 function checkAdminsLess (msg, connection) {
 	return new Promise((resolve, reject) => {
 		console.log("checkAdminsLess");
@@ -147,8 +247,7 @@ function checkAdminsLess (msg, connection) {
 
 					var admins = [];
 					for(let i = 0; i < result.length; i++)
-						if(result[i].type == "admin")
-							admins.push(parseInt(result[i].ChatID));
+						admins.push(parseInt(result[i].ChatID));
 
 					if(admins.includes(msg.chat.id))
 						return resolve(true);
@@ -417,32 +516,13 @@ function createJoin (connection) {
 	});
 }
 
-function getInfoDB (bot, id, connection) {
-	console.log("getInfoDB");
-	connectToDatabaseInit(connection)
-		.then((con) => {
-			var query = "SELECT TABLE_NAME,TABLE_ROWS,CREATE_TIME FROM information_schema.tables WHERE table_schema='ttesercizio' ORDER BY CREATE_TIME ASC";
-			con.query(query, function (err, result) {
-				if (err) throw err;
-
-				var text = "Le tabelle presenti nel database ora sono:";
-
-				for(let i = 0; i < result.length; i++)
-					text += "\n\nTable: *" + result[i].TABLE_NAME + "*\nRows: *" + result[i].TABLE_ROWS + "*\nCreate Date: *" + result[i].CREATE_TIME + "*";
-
-				bot.sendMessage(id, text, {parse_mode: "Markdown"});
-			});
-		})
-		.catch(err => {
-			bot.sendMessage(id, err);
-		});
-}
-
 
 // ---------- EXPORTS ----------
 exports.createHome = homeKeyboard;
 exports.initiateConnection = connectToDatabase;
 exports.initConnectionLess = connectToDatabaseInit;
+exports.Annuncio_F1 = userAlertsWrapper;
+exports.Annuncio_F2 = userAlerts;
 exports.isAdmin = checkAdmins;
 exports.couldScadenze = checkAdminsLess;
 exports.eliminaDati = deleteTables;
@@ -450,4 +530,3 @@ exports.inserisciDati = createTables;
 exports.inizializzaUtenti = resetTableUsers;
 exports.verificaDati = alterTable;
 exports.prepareMain = createJoin;
-exports.dbInfo = getInfoDB;

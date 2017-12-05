@@ -1,6 +1,7 @@
 // ---------- REQUIRE ----------
-const fun = require ('./functions.js');
-const db = require('./sectionDevelop.js');
+const fun 	= 	require ('./functions.js');
+const db	= 	require ('./sectionDevelop.js');
+const emoji	= 	require ('node-emoji');
 
 // ---------- FUNCTIONS ----------
 function checkID (id, lastCommand, connection) {
@@ -126,11 +127,11 @@ function getFermate (res, con) {
 						if(result[i].stop_name == res.stop_name && result[i].arrival_time == res.arrival_time) {
 							find = true;
 							var text = "\n\n*FERMATE*";
-							text += "\n*SEI QUI* #" + result[i].stop_sequence + " -> " + result[i].stop_name;
+							text += emoji.emojify("\n:point_right: :clock2: " + result[i].arrival_time + " -> :busstop: " + result[i].stop_name);
 						}
 					} else {
 						if(result[i].stop_sequence != 1)
-							text += "\n#" + result[i].stop_sequence + " -> " + result[i].stop_name;
+							text += emoji.emojify("\n:clock2: " + result[i].arrival_time + " -> :busstop: " + result[i].stop_name);
 						else
 							out = true;
 					}
@@ -149,54 +150,53 @@ function printText (item, fermate, con) {
 			text += "*PRESTA ATTENZIONE ALLA DIREZIONE*";
 
 	    if(item.route_short_name != undefined)
-	        text += "\nLinea " + item.route_short_name + " (" + item.route_long_name + ")";
+	        text += emoji.emojify("\n:bus: " + item.route_short_name + " (" + item.route_long_name + ")");
 
 		if(item.trip_headsign != undefined)
-	        text += "\nDirezione: *" + item.trip_headsign + "*";
+	        text += emoji.emojify("\n:arrow_right: " + item.trip_headsign);
 
 	    if(item.stop_name != undefined)
-	        text += "\nFermata: *" + item.stop_name + "*";
+	        text += emoji.emojify("\n:busstop: " + item.stop_name);
 
 	    if(item.distance != undefined)
-	        text += "\nDistanza: *" + Math.round(item.distance) + "* metri";
+	        text += emoji.emojify("\n:footprints: " + Math.round(item.distance) + " metri");
 
 	    if(item.arrival_time != undefined) {
 	        if(item.arrival_time === item.departure_time)
-	            text += "\nOrario: *" + item.arrival_time + "*";
+	            text += emoji.emojify("\n:clock2: " + item.arrival_time);
 	        else {
 	            var t2 = fun.convertDate(item.arrival_time, "h:m:s");
 	            var t1 = fun.convertDate(item.departure_time, "h:m:s")
 
 	            let diff = parseInt((t1-t2)/(60*1000));
-	            text += "\nOrario: *" + item.arrival_time + "*, ma partirà " + diff + " minuti dopo!";
+	            text += emoji.emojify("\n:clock2: " + item.arrival_time + ", ma partirà " + diff + " minuti dopo!");
 	        }
 	    }
 
 		if(item.wheelchair_boarding != undefined) {
-	        text += "\n\nDisabilità";
 	        switch(parseInt(item.wheelchair_boarding)) {
-	            case 0:
+	            /*case 0:
 	                text += "\n- Fermata attrezzata: Info non presente";
-	                break;
+	                break;*/
 	            case 1:
-	                text += "\n- Fermata attrezzata: Si, ma non per tutti i mezzi";
+	                text += emoji.emojify("\n:wheelchair: Fermata attrezzata");
 	                break;
 	            case 2:
-	                text += "\n- Fermata attrezzata: No";
+	                text += emoji.emojify("\n:wheelchair: Fermata *non* attrezzata");
 	                break;
 	        }
 	    }
 
 	    if(item.wheelchair_accessible != undefined) {
 	        switch(parseInt(item.wheelchair_accessible)) {
-	            case 0:
+	            /*case 0:
 	                text += "\n- Veicolo attrezzato: Info non presente";
-	                break;
+	                break;*/
 	            case 1:
-	                text += "\n- Veicolo attrezzato: Si, al massimo 1 passeggero";
+	                text += emoji.emojify("\n:wheelchair: Veicolo attrezzato (Max 1)");
 	                break;
 	            case 2:
-	                text += "\n- Veicolo attrezzato: No";
+	                text += emoji.emojify("\n:wheelchair: Veicolo *non* attrezzato");
 	                break;
 	        }
 	    }
@@ -262,7 +262,7 @@ function Fermata_F1 (bot, msg, connection) {
 	console.log("Fermata_F1");
 	db.initiateConnection(connection)
 		.then((con) => {
-		    var text = "Prima di tutto mandami la posizione o scrivimi il nome della fermata che ti interessa:";
+		    var text = "Inviami la tua posizione o scrivi specifica il nome di una fermata:";
 		    var keyboard = createChoice(undefined, undefined, undefined, undefined, true);
 
 			checkID(msg.chat.id, 'Fermata_F1', con)
@@ -326,7 +326,7 @@ function Location_Init (bot, msg, con, stato, result) {
 	else {
 		checkID(msg.chat.id, '/start', con)
 			.then((result) => {
-				var text = "Sei troppo lontano, cerca di avvicinarti...";
+				var text = emoji.emojify("Sei troppo lontano, cerca di avvicinarti :disappointed_relieved:");
 
 				bot.sendMessage(msg.chat.id, text, db.createHome());
 			})
@@ -493,7 +493,7 @@ function Fermata_F2_Location_F3 (bot, msg, nameT1, connection) {
 							} else {
 								checkID(msg.chat.id, '/start', con)
 									.then((result) => {
-										var text = "Mi dispiace ma la linea selezionata ha terminato le corse per oggi...";
+										var text = emoji.emojify("Mi dispiace ma la linea selezionata ha terminato le corse per oggi :disappointed:");
 
 										bot.sendMessage(msg.chat.id, text, db.createHome());
 									})
@@ -506,7 +506,7 @@ function Fermata_F2_Location_F3 (bot, msg, nameT1, connection) {
 				} else {
 					checkID(msg.chat.id, '/start', con)
 						.then((result) => {
-							var text = "La linea inserita non è stata riconosciuta!";
+							var text = emoji.emojify("La linea inserita non è stata riconosciuta :disappointed_relieved:");
 
 							bot.sendMessage(msg.chat.id, text, db.createHome());
 						})
@@ -529,7 +529,7 @@ function Fermata_F2_Name_F1 (bot, msg, connection) {
 	        con.query(query, function (err, result) {
 	            if (err) throw err;
 
-				var text = "Ho trovato queste fermate:";
+				var text = emoji.emojify("Ho trovato queste fermate :thinking_face:");
 				var keyboard = createChoice(result, 2, 'stop_name', msg.text, false);
 
 				var keyboardString = JSON.parse(keyboard.reply_markup).keyboard;
@@ -579,7 +579,7 @@ function Fermata_F2_Name_F2 (bot, msg, connection) {
 				            con.query(query, function (err, result, fields) {
 				                if (err) throw err;
 
-				                var text = "Seleziona la linea:";
+				                var text = "Seleziona una linea:";
 								var keyboard = createChoice(result, 5, 'route_short_name', undefined, false);
 
 								var keyboardString = JSON.parse(keyboard.reply_markup).keyboard;
@@ -604,7 +604,7 @@ function Fermata_F2_Name_F2 (bot, msg, connection) {
 				else {
 					checkID(msg.chat.id, '/start', con)
 						.then((result) => {
-							var text = "La linea fermata non è stata riconosciuta!";
+							var text = emoji.emojify("La linea fermata non è stata riconosciuta :disappointed_relieved:");
 
 							bot.sendMessage(msg.chat.id, text, db.createHome());
 						})
@@ -675,7 +675,7 @@ function Fermata_F2_Name_F3 (bot, msg, nameT1, connection) {
 							else {
 								checkID(msg.chat.id, '/start', con)
 									.then((result) => {
-										var text = "Mi dispiace ma la linea selezionata ha terminato le corse per oggi...";
+										var text = emoji.emojify("Mi dispiace ma la linea selezionata ha terminato le corse per oggi :disappointed:");
 
 										bot.sendMessage(msg.chat.id, text, db.createHome());
 									})
@@ -688,7 +688,7 @@ function Fermata_F2_Name_F3 (bot, msg, nameT1, connection) {
 				} else {
 					checkID(msg.chat.id, '/start', con)
 						.then((result) => {
-							var text = "La linea inserita non è stata riconosciuta!";
+							var text = emoji.emojify("La linea inserita non è stata riconosciuta :disappointed_relieved:");
 
 							bot.sendMessage(msg.chat.id, text, db.createHome());
 						})
@@ -711,7 +711,7 @@ function Linea_F1 (bot, msg, connection) {
 	        con.query(query, function (err, result) {
 	            if (err) throw err;
 
-	            var text = "Prima di tutto dimmi che linea ti interessa:";
+	            var text = "Seleziona una linea:";
 				var keyboard = createChoice(result, 5, 'route_short_name', undefined, false);
 
 				var keyboardString = JSON.parse(keyboard.reply_markup).keyboard;
@@ -761,7 +761,7 @@ function Linea_F2 (bot, msg, connection) {
 		                con.query(query, function (err, result, fields) {
 		                    if (err) throw err;
 
-		                    var text = "Seleziona la direzione:";
+		                    var text = "Seleziona la direzione della corsa:";
 							var keyboard = createChoice(result, 2, 'trip_headsign', undefined, false);
 
 							var keyboardString = JSON.parse(keyboard.reply_markup).keyboard;
@@ -784,7 +784,7 @@ function Linea_F2 (bot, msg, connection) {
 				} else {
 					checkID(msg.chat.id, '/start', con)
 						.then((result) => {
-							var text = "La linea inserita non è stata riconosciuta!";
+							var text = emoji.emojify("La linea inserita non è stata riconosciuta :disappointed_relieved:");
 
 							bot.sendMessage(msg.chat.id, text, db.createHome());
 						})
@@ -825,7 +825,7 @@ function Linea_F3 (bot, msg, nameT1, connection) {
 							con.query(query, function (err, result, fields) {
 								if (err) throw err;
 
-								var text = "Mandami la tua posizione o seleziona una fermata specifica e ti saprò dire dove e quando prendere l'autobus!";
+								var text = "Inviami la tua posizione o scrivi il nome di una fermata specifica:";
 								var keyboard = createChoice(result, 2, 'stop_name', undefined, true);
 
 								var keyboardString = JSON.parse(keyboard.reply_markup).keyboard;
@@ -849,7 +849,7 @@ function Linea_F3 (bot, msg, nameT1, connection) {
 				} else {
 					checkID(msg.chat.id, '/start', con)
 						.then((result) => {
-							var text = "La direzione inserita non è stata riconosciuta!";
+							var text = emoji.emojify("La direzione inserita non è stata riconosciuta :disappointed_relieved:");
 
 							bot.sendMessage(msg.chat.id, text, db.createHome());
 						})
@@ -884,7 +884,7 @@ function Linea_F4_Location_F1 (bot, msg, nameT2, connection) {
 				else {
 					checkID(msg.chat.id, '/start', con)
 						.then((result) => {
-							var text = "Mi dispiace ma la linea selezionata ha terminato le corse per oggi, oppure non lavora oggi...";
+							var text = emoji.emojify("Mi dispiace ma la linea selezionata ha terminato le corse per oggi :disappointed:");
 
 							bot.sendMessage(msg.chat.id, text, db.createHome());
 						})
@@ -940,7 +940,7 @@ function Linea_F4_Name_F1 (bot, msg, nameT2, connection) {
 						} else {
 							checkID(msg.chat.id, '/start', con)
 								.then((result) => {
-									var text = "Mi dispiace ma la linea selezionata ha terminato le corse per oggi...";
+									var text = emoji.emojify("Mi dispiace ma la linea selezionata ha terminato le corse per oggi :disappointed:");
 
 									bot.sendMessage(msg.chat.id, text, db.createHome());
 								})
@@ -952,7 +952,7 @@ function Linea_F4_Name_F1 (bot, msg, nameT2, connection) {
 				} else {
 					checkID(msg.chat.id, '/start', con)
 						.then((result) => {
-							var text = "La linea inserita non è stata riconosciuta!";
+							var text = emoji.emojify("La linea inserita non è stata riconosciuta :disappointed_relieved:");
 
 							bot.sendMessage(msg.chat.id, text, db.createHome());
 						})
@@ -971,7 +971,7 @@ function Next_F1 (bot, msg, connection) {
 	console.log("Next_F1");
 	db.initiateConnection(connection)
 		.then((con) => {
-	        var text = "Prima di tutto dimmi mandami la posizione o scrivimi il nome della fermata che ti interessa:";
+	        var text = "Inviami la tua posizione o scrivi il nome di una fermata specifica:";
 			checkID(msg.chat.id, 'Next_F1', con)
 				.then((result) => {
 			        bot.sendMessage(msg.chat.id, text, createChoice(undefined, undefined, undefined, undefined, true));
@@ -1060,14 +1060,14 @@ function Next_F2_Location_F2 (bot, msg, connection) {
 										} else {
 											checkID(msg.message.chat.id, '/start', con)
 												.then((result) => {
-													var text = "Mi dispiace ma per oggi sono terminate le corse in questa fermata, oppure non lavora oggi...";
+													var text = emoji.emojify("Mi dispiace ma per oggi sono terminate le corse in questa fermata, oppure non lavora oggi :disappointed:");
 
 													bot.sendMessage(msg.message.chat.id, text, db.createHome());
 												})
 												.catch(err => {
 													console.error(err);
 												});
-								        }
+										}
 									});
 								});
 							});
@@ -1109,7 +1109,7 @@ function Next_F2_Name_F1 (bot, msg, connection) {
 		    con.query(query, function (err, result) {
 		        if (err) throw err;
 
-		        var text = "Ho trovato queste fermate:";
+		        var text = emoji.emojify("Ho trovato queste fermate :thinking_face:");
 				var keyboard = createChoice(result, 2, 'stop_name', fermata, false);
 
 				var keyboardString = JSON.parse(keyboard.reply_markup).keyboard;
@@ -1182,7 +1182,7 @@ function Next_F2_Name_F2 (bot, msg, connection) {
 							else {
 								checkID(msg.chat.id, '/start', con)
 									.then((result) => {
-										var text = "Mi dispiace ma tutte le linee hanno terminato le corse per oggi...";
+										var text = emoji.emojify("Mi dispiace ma tutte le linee hanno terminato le corse per oggi :disappointed:");
 
 										bot.sendMessage(msg.chat.id, text, db.createHome());
 									})
@@ -1195,7 +1195,7 @@ function Next_F2_Name_F2 (bot, msg, connection) {
 				} else {
 					checkID(msg.chat.id, '/start', con)
 						.then((result) => {
-							var text = "La fermata inserita non è stata riconosciuta!";
+							var text = emoji.emojify("La fermata inserita non è stata riconosciuta :disappointed_relieved:");
 
 							bot.sendMessage(msg.chat.id, text, db.createHome());
 						})
@@ -1229,7 +1229,7 @@ function All_FF (bot, msg, connection) {
 								printText(res[prevChoice-1], false, undefined)
 									.then((testo) => {
 										bot.editMessageText(testo, {chat_id: msg.message.chat.id,message_id: msg.message.message_id,parse_mode: "Markdown"});
-										bot.sendMessage(msg.message.chat.id, "Ecco la posizione selezionata!", db.createHome());
+										bot.sendMessage(msg.message.chat.id, emoji.emojify("Ecco la posizione selezionata :blush:"), db.createHome());
 							            bot.sendLocation(msg.message.chat.id, res[prevChoice-1].stop_lat, res[prevChoice-1].stop_lon);
 									});
 							})
@@ -1283,7 +1283,7 @@ function All_FF_B (bot, msg, connection) {
 								printText(res[prevChoice-1], true, con)
 									.then((testo) => {
 										bot.editMessageText(testo, {chat_id: msg.message.chat.id,message_id: msg.message.message_id,parse_mode: "Markdown"});
-										bot.sendMessage(msg.message.chat.id, "Ecco la posizione selezionata!", db.createHome());
+										bot.sendMessage(msg.message.chat.id, emoji.emojify("Ecco la posizione selezionata :blush:"), db.createHome());
 							            bot.sendLocation(msg.message.chat.id, res[prevChoice-1].stop_lat, res[prevChoice-1].stop_lon);
 									});
 							})
@@ -1322,7 +1322,7 @@ function CalcolaPercorso_F1 (bot, msg, connection) {
 	console.log("CalcolaPercorso_F1");
 	db.initiateConnection(connection)
 		.then((con) => {
-	        var text = "Prima di tutto dimmi il nome della fermata di partenza:";
+	        var text = "Scrivi il nome della fermata di partenza:";
 			checkID(msg.chat.id, 'CalcolaPercorso_F1', con)
 				.then((result) => {
 			        bot.sendMessage(msg.chat.id, text, createChoice(undefined, undefined, undefined, undefined, undefined));
@@ -1346,7 +1346,7 @@ function CalcolaPercorso_F2 (bot, msg, connection) {
 		    con.query(query, function (err, result) {
 		        if (err) throw err;
 
-		        var text = "Ho trovato queste fermate:";
+		        var text = emoji.emojify("Ho trovato queste fermate :thinking_face:");
 				var keyboard = createChoice(result, 2, 'stop_name', fermata, false);
 
 				var keyboardString = JSON.parse(keyboard.reply_markup).keyboard;
@@ -1402,7 +1402,7 @@ function CalcolaPercorso_F3 (bot, msg, connection) {
 				} else {
 					checkID(msg.chat.id, '/start', con)
 						.then((result) => {
-							var text = "La fermata inserita non è stata riconosciuta!";
+							var text = emoji.emojify("La fermata inserita non è stata riconosciuta :disappointed_relieved:");
 
 							bot.sendMessage(msg.chat.id, text, db.createHome());
 						})
@@ -1427,7 +1427,7 @@ function CalcolaPercorso_F4 (bot, msg, connection) {
 		    con.query(query, function (err, result) {
 		        if (err) throw err;
 
-		        var text = "Ho trovato queste fermate:";
+		        var text = emoji.emojify("Ho trovato queste fermate :thinking_face:");
 				var keyboard = createChoice(result, 2, 'stop_name', fermata, false);
 
 				var keyboardString = JSON.parse(keyboard.reply_markup).keyboard;
@@ -1471,7 +1471,7 @@ function CalcolaPercorso_F5 (bot, msg, connection) {
 						con.query(query, function (err, result) {
 							if (err) throw err;
 
-							var text = "Perfetto, sto elaborando...";
+							var text = emoji.emojify("Perfetto, ora calcolo il miglior tragitto :blush:");
 							checkID(msg.chat.id, 'CalcolaPercorso_F5', con)
 								.then((result) => {
 							        bot.sendMessage(msg.chat.id, text).then(() => {
@@ -1499,24 +1499,27 @@ function CalcolaPercorso_F5 (bot, msg, connection) {
 												.then((response) => {
 													response = response.json.routes[0].legs[0];
 
-													text = "Orario di partenza: " + response.departure_time.text + "\nOrario di arrivo: " + response.arrival_time.text;
-													text += "\nDurata: " + response.duration.text + "\nDistanza: " + response.distance.text;
-													text += "\nPartenza: " + response.start_address + "\nArrivo: " + response.end_address;
+													var text = "*RIASSUNTO DEL VIAGGIO*";
+													text += emoji.emojify("\n:clock2: " + response.departure_time.text + " ~ " + response.arrival_time.text);
+													text += "\nDistanza: " + response.distance.text + "\nDurata: " + response.duration.text;
+													//text += "\nPartenza: " + response.start_address + "\nArrivo: " + response.end_address;
 													text += "\n\n";
 
 													response = response.steps;
 													for(let i = 0; i < response.length; i++) {
-														if(i != 0 && i != response.length -1) {
+														if(i == 0)
+															text += "\n*DETTAGLI DEL VIAGGIO*";
+														else {
 															if(response[i].travel_mode == "TRANSIT") {
-																text += "\nDurata: " + response[i].duration.text + "\nDistanza: " + response[i].distance.text;
-																text += "\nPartenza: " + response[i].transit_details.departure_stop.name + "\nArrivo: " + response[i].transit_details.arrival_stop.name;
+																text += emoji.emojify("\n:clock2: " + response[i].duration.text + " ~ " + response[i].distance.text);
+																text += emoji.emojify("\n:waving_white_flag: " + response[i].transit_details.departure_stop.name + "\n:checkered_flag: " + response[i].transit_details.arrival_stop.name);
 
-																text += "\nLinea " + response[i].transit_details.line.short_name + " (" + response[i].transit_details.line.name + ")";
-																text += "\nDirezione: " + response[i].transit_details.headsign;
-																text += "\n\n";
+																text += emoji.emojify("\n:bus: " + response[i].transit_details.line.short_name + " (" + response[i].transit_details.line.name + ")");
+																text += emoji.emojify("\n:arrow_right: " + response[i].transit_details.headsign);
+																text += "\n";
 															} else {
-																text += "\n" + response[i].html_instructions;
-																text += "\n\n";
+																text += emoji.emojify("\n:footprints: " + response[i].html_instructions);
+																text += "\n";
 															}
 														}
 													}
@@ -1537,7 +1540,7 @@ function CalcolaPercorso_F5 (bot, msg, connection) {
 				} else {
 					checkID(msg.chat.id, '/start', con)
 						.then((result) => {
-							var text = "La fermata inserita non è stata riconosciuta!";
+							var text = emoji.emojify("La fermata inserita non è stata riconosciuta :disappointed_relieved:");
 
 							bot.sendMessage(msg.chat.id, text, db.createHome());
 						})
@@ -1565,14 +1568,14 @@ function Avvisi_Linee (bot, msg, connection) {
 	            if (err) throw err;
 
 	            if(result.length > 0) {
-	                var text = "Ecco le linee che subiranno variazioni nella giornata odierna:";
+	                var text = emoji.emojify("Ecco le linee che subiranno variazioni nella giornata odierna :disappointed_relieved:");
 	                for(let i = 0; i < result.length; i++)
 	                    text += "\n*Linea " + result[i].route_short_name + "* (" + result[i].route_long_name + ")";
 
 	                bot.sendMessage(msg.chat.id, text, {parse_mode: 'Markdown'});
 	            }
 	            else {
-	                bot.sendMessage(msg.chat.id, "Oggi non ci sono variazioni di orario in alcuna linea!");
+	                bot.sendMessage(msg.chat.id, emoji.emojify("Oggi non ci sono variazioni di orario in alcuna linea :blush:"));
 	            }
 	        });
 		})

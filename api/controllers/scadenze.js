@@ -7,7 +7,6 @@ var databaseConnection = undefined;
 function mostraScadenze (request, response) {
     return new Promise((resolve, reject) => {
         console.log("mostraScadenze");
-        response.writeHead(200, {"Content-Type": "application/json; charset=utf-8"});
 
     	db.initiateConnection(databaseConnection)
     		.then((con) => {
@@ -16,6 +15,7 @@ function mostraScadenze (request, response) {
                 var query = "SELECT * FROM deadline";
                 con.query(query, function (err, result, fields) {
                     if (err) {
+                        response.writeHead(404, {"Content-Type": "application/json; charset=utf-8"});
                         response.end(JSON.stringify({ Ask: err }));
                         return reject();
                     }
@@ -42,15 +42,19 @@ function mostraScadenze (request, response) {
     						Choices: elements
     					});
 
+                        response.writeHead(200, {"Content-Type": "application/json; charset=utf-8"});
     					response.end(json);
                         return resolve();
                     }
-    				else
+    				else {
+                        response.writeHead(404, {"Content-Type": "application/json; charset=utf-8"});
     					response.end(JSON.stringify({ Ask: "Attualmente non ci sono scadenze!"}));
                         return reject();
+                    }
                 });
     		})
     		.catch(err => {
+                response.writeHead(404, {"Content-Type": "application/json; charset=utf-8"});
     			response.end(JSON.stringify({ Ask: err }));
                 return reject();
     		});
