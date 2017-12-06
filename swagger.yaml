@@ -2,7 +2,7 @@ swagger: "2.0"
 info:
   version: 1.0.0
   title: "UniTNHelpBot"
-  description: API che consento l'utilizzo di UniTNHelpBot, queste api rappresentano le richieste che si possono effettuare alla nostra applicazione su heroku
+  description: API che consento l'utilizzo di UniTNHelpBot. Queste API rappresentano le richieste che si possono effettuare alla nostra applicazione su Heroku.
   contact:
     name: Mattia Milani
     email: mattia.milani@studenti.unitn.it
@@ -19,15 +19,11 @@ paths:
   /localizza:
     get:
       description: |
-        Attraveso questa API è possibile ottenere una lista di luoghi che vengono restituiti.
-
-        Alcuni luoghi sono considerati direttamente dall'api mentre ricerche più generiche possono essere effettuate ma potrebbero risultare più instabili.
-
-        Richieste per Trento,Mesiano,Povo vengono intercettate e l'api utilizza direttamente la posizione di queste città e si ha un raggio di riceca specifico in base al luogo.
-
-        Anche tra i tipi di luoghi cercati ve ne sono di specifici gestiti direttamente dall'api, biblioteche, mense, facoltà e copisterie vengono gestite direttamente con alcune personalizzazioni fatte direttamente a livello di api (ad esempio le facoltà di povo su google maps non appartengono al type university)
-
-        Altre ricerche che non utilizzano uno dei campi precendenti verranno gestite ma si avrà un raggio di ricerca prefissato e non verrà selezionato un type ed in più non vi sarà un filtraggio dei risultati
+        Questa API permette di ottenere una lista di posizioni rilevanti a Trento, Povo e Mesiano.
+        
+        Alcuni luoghi di elevata utilità, come biblioteche, mense, facoltà e copisterie, sono gestite internamente e la loro ricerca risulta molto precisa. La ricerca viene effettuata considerando la posizione delle città e un raggio di ricerca varia in base alla richiesta dell'utente. 
+        
+        Attraverso queste API è possibile ottenere anche le posizioni di alcuni luoghi richiesti dall'utente. In questo caso, la ricerca viene effettuata utilizzando la posizione della città selezionata è un raggio prestabilito. Le ricerche che non comprendono i luoghi gestiti internamente verranno soddisfatte ma potrebbero essere meno precise.
       operationId: LuoghiUtili
       parameters:
         - name: name
@@ -62,7 +58,7 @@ paths:
   /avvisi:
     get:
       description: |
-        Attraverso questa API sarà possibile ottenere la lista degli avvisi del giorno che sono stati inseriti fino ad ora all'interno di alcuni dipartimenti dell'ateneo trentino
+        Attraverso questa API sarà possibile ottenere la lista degli avvisi del giorno che sono stati inseriti fino al momento della richiesta all'interno di alcuni dipartimenti dell'ateneo trentino.
       operationId: avvisi
       parameters:
         - name: dipartimento
@@ -90,12 +86,12 @@ paths:
   /Fermata:
     get:
       description: |
-        Attraverso questa api è possibile ottenere gli autobus che passeranno per una determinata fermata
+        Attraverso questa API è possibile ottenere gli autobus che passeranno per una determinata fermata.
       operationId: fermata
       parameters:
         - name: fase
           in: query
-          description: fase di ricerca in cui si è attualmente, la fase 1 non prevede altri parametri, la fase 2 prevede che vi sia il parametro name, la fase 3 prevede che vi siano i parametri nameT e name
+          description: Fase di ricerca in cui si è attualmente, la fase 1 non prevede altri parametri, la fase 2 prevede che vi sia il parametro name, la fase 3 prevede che vi siano i parametri nameT e name
           required: true
           type: string
           uniqueItems: true
@@ -112,14 +108,14 @@ paths:
           allowEmptyValue: false
         - name: nameT
           in: query
-          description: Questo parametro può essere utilizzato solo nella fase 3, è un parametro che si ottiene dalla fase 2 e va restituito alle api per permettere di ottenre gli autobus di una determinata linea ad una detemrinata fermata
+          description: Questo parametro può essere utilizzato solo nella fase 3, è un parametro che si ottiene dalla fase 2 e va restituito alle API per permettere di ottenere gli autobus di una determinata linea ad una determinata fermata
           required: false
           type: string
           uniqueItems: true
           allowEmptyValue: false
       responses:
         200:
-          description: JSON con i valori di risposta, il json dipenderà dalla fase in cui ci si trova
+          description: JSON con i valori di risposta. Il json dipenderà dalla fase in cui ci si trova
           schema:
             type: object
             $ref: '#/definitions/fermata'
@@ -131,20 +127,20 @@ paths:
   /Linea:
     get:
       description: |
-        Questa api permette di ottenere le informazioni su di una specifica linea, anche questa api però si sviluppa in fasi, come l'api per le fermate.
+        Questa API permette di ottenere le informazioni su di una specifica linea, anch'essa si sviluppa in fasi, come quella per le fermate.
 
-        La fase uno restituisce la lista delle linee disponibili
+        La prima fase restituisce la lista di tutte le linee disponibili tra le quali scegliere quella desiderata
 
-        La fase due una volta scelta una linea permette di ottenere le direzioni che si possono raggiungere tramite quella linea
-
-        La fase tre una volta fornito il nameT, e la direzione scelta restituisce la lista di fermate effettuate da quella linea per quella direzione
-
-        La fase quattro una volta fornito il nameT, e la fermata che si desidera si ottengono le informazioni per gli autobus di quella linea che passeranno in quella fermata con la direzione prescelta
+        La seconda fase permette di ottenere le destinazioni che si possono raggiungere tramite la linea precedentemente selezionata. Questa fase è necessaria per ottenere la direzione dell'autobus e per poter selezionare correttamente gli orari.
+        
+        La terza fase, una volta ottenuta la linea e la direzione, permette di ottenere la lista delle fermate effettuate.
+        
+        La quarta e ultima fase permette di ottenere le informazioni sugli autobus della linea selezionata che passeranno per quella fermata, a partire dal momento della richiesta, e che proseguiranno verso la direzione scelta.
       operationId: linea
       parameters:
         - name: fase
           in: query
-          description: fase di ricerca in cui si è attualmente, la fase 1 non prevede altri parametri, la fase 2 prevede che vi sia il parametro name, la fase 3 prevede che vi siano i parametri nameT e name, la fase 4 prevede che vi siano i parametri nameT e name
+          description: Fase di ricerca in cui si è attualmente, la fase 1 non prevede altri parametri, la fase 2 prevede che vi sia il parametro name, la fase 3 prevede che vi siano i parametri nameT e name, la fase 4 prevede che vi siano i parametri nameT e name
           required: true
           type: string
           uniqueItems: true
@@ -161,14 +157,14 @@ paths:
           allowEmptyValue: false
         - name: nameT
           in: query
-          description: Questo parametro può essere utilizzato solo nella fase 3 e 4, è un parametro che si ottiene dalla fase 2 e 3 e va restituito alle api per permettere di ottenre le informazioni desiderate, serve per ricordare le scelte precedenti
+          description: Questo parametro può essere utilizzato solo nella fase 3 e 4, è un parametro che si ottiene dalla fase 2 e 3 e va restituito alle API per permettere di ottenre le informazioni desiderate, serve per ricordare le scelte precedenti
           required: false
           type: string
           uniqueItems: true
           allowEmptyValue: false
       responses:
         200:
-          description: JSON con i valori di risposta, il json dipenderà dalla fase in cui ci si trova
+          description: JSON con i valori di risposta. Il json dipenderà dalla fase in cui ci si trova
           schema:
             type: object
             $ref: '#/definitions/linea'
@@ -180,16 +176,16 @@ paths:
   /next:
     get:
       description: |
-        Questa api permette di ottenere il prossimo mezzo urbano che passa per una determinata fermata, senza considerare la direzione
+        Questa API permette di ottenere il prossimo mezzo urbano che passa per una determinata fermata, senza considerare la direzione.
 
-        Nella fase 1 si ottiene la lista delle fermate da cui scegliere
+        Nella fase 1 si ottiene la lista delle fermate da cui scegliere.
 
-        Nella fase 2 indicando la fermata si ottengono le informazioni riguardanti i prossimi autobus che passeranno per quella fermata (1 per direzione)
+        Nella fase 2, indicando la fermata, si ottengono le informazioni riguardanti i prossimi autobus che passeranno per quella fermata (1 per direzione).
       operationId: next
       parameters:
         - name: fase
           in: query
-          description: fase di ricerca in cui si è attualmente, la fase 1 non prevede altri parametri, la fase 2 prevede che vi sia il parametro name
+          description: Fase di ricerca in cui si è attualmente, la fase 1 non prevede altri parametri, la fase 2 prevede che vi sia il parametro name
           required: true
           type: string
           uniqueItems: true
@@ -206,7 +202,7 @@ paths:
           allowEmptyValue: false
       responses:
         200:
-          description: JSON con i valori di risposta, il json dipenderà dalla fase in cui ci si trova
+          description: JSON con i valori di risposta. Il json dipenderà dalla fase in cui ci si trova
           schema:
             type: object
             $ref: '#/definitions/next'
@@ -218,7 +214,7 @@ paths:
   /AvvisiLinee:
     get:
       description: |
-        Questa api permette di ottenere gli avvisi che sono stati pubblicati dalla TTE per le linee urbane
+        Questa API permette di ottenere gli avvisi che sono stati pubblicati da Trentino Trasporti per le linee urbane.
       operationId: AvvisiLinee
       responses:
         200:
@@ -234,11 +230,11 @@ paths:
   /howto:
     get:
       description: |
-        Attraverso questa api è possibile ottenere le informazioni che vengono fornite dall'università per quanto riguarda diversi settori.
+        Attraverso questa API è possibile ottenere le informazioni che vengono fornite dell'Università per quanto riguarda alcune pratiche fondamentali e alcune possibilità offerte.
 
-        Tra le sezioni vi è ad esempio quella per i futuri studenti, oppure quella per le tasse, ecc.
-
-        L'api funziona come un wrapper sulla pagina, restituisce i contenuti ed una descrizione che riesce ad ottenere dei vari contenuti, in più restituisce il link per accedere alla pagina indicata
+        Tra le sezioni vi sono, ad esempio, quella che permette di ottenere le informazioni sulle tasse, sui rinnovi delle iscrizioni, sulle ammissioni all'Università.
+        
+        L'API funziona come un wrapper della pagine, restituendo i contenuti presenti, correlati da una descrizione e da un link che permette di accedere direttamente alla pagina selezionata.
       operationId: howto
       parameters:
         - name: section
@@ -304,7 +300,7 @@ paths:
   /updatedb:
     put:
       description: |
-        Api utilizzata per aggiornare il database, forza l'eliminazione di tutte le tabelle dal db e le ricarica dai file csv di trentino trasporti scaricandoli direttamente dal sito
+        Attraverso questa API è possibile aggiornare il database, forzare l'eliminazione di tutte le tabelle e il nuovo caricamento dei file .csv di Trentino Trasporti, ottenuti direttamente dal sito.
       operationId: updateDb
       responses:
         200:
@@ -320,7 +316,7 @@ paths:
   /lesstabledb:
     delete:
       description: |
-        Api utilizzata per eliminare le tabelle temporanee che si creano man mano che gli utenti utilizzano il bot
+        Questa API permette di eliminare le tabelle temporanee che si creano automaticamente quando gli utenti utilizzano il bot.
       operationId: lesstabledb
       responses:
         200:
@@ -336,7 +332,7 @@ paths:
   /scadenze:
     get:
       description: |
-        Api che ottiene le attuali scadenze che sono presenti nel database
+        Questa API permette di ottenere le attuali scadenze presenti nel database. Le scadenze riguardano principalmente i bandi per le borse di studio, per gli erasms e per alcune altre pratiche universitarie. L'inserimento delle informazioni nel database non è automatico e potrebbe non essere aggiornato.
       operationId: scadenze
       responses:
         200:
@@ -351,7 +347,7 @@ paths:
             $ref: '#/definitions/lesstabledbError'
   /bot{token}:
     post:
-      description: Utilizzato da telegram per effettuare le richieste al nostro bot
+      description: Questa API è utilizzata da telegram per effettuare le richiesta al nostro bot.
       operationId: botTelegram
       parameters:
         - name: token
