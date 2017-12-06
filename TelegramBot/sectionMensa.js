@@ -94,13 +94,28 @@ function Mensa_F2 (bot, msg, connection) {
                 case 2: text = "La mensa attualmente più vicina è:\nMesiano1"; break;
                 case 3: text = "La mensa attualmente più vicina è:\nMesiano2"; break;
                 case 4: text = "La mensa attualmente più vicina è:\nTommaso_Gar"; break;
+				default: text = "Non riesco a determinare la mensa più vicina a te..."; break;
             }
 
             checkID(msg.chat.id, '/start', con)
                 .then((result) => {
+					var keyboard = {
+				        reply_markup: JSON.stringify({
+							keyboard: [
+								['Mezzi Urbani TTE'],
+								['Luoghi Utili'],
+								['How To'],
+								['Avvisi Dipartimenti'],
+								['Scadenze Documenti'],
+				                ['Mensa Vicina']
+							],
+				            one_time_keyboard: true,
+				            resize_keyboard: true
+				        })
+				    };
+
+					bot.sendMessage(msg.chat.id, text, keyboard);
                     bot.sendLocation(msg.chat.id, (mense[nM])[0], (mense[nM])[1]);
-					
-                    bot.sendMessage(msg.chat.id, text, db.createHome());
                 })
                 .catch((err) => {
                     console.error(err);
