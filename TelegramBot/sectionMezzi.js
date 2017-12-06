@@ -106,7 +106,8 @@ function getFermate (res, con) {
 
 		var tmpD = (res.trip_headsign).replace(/[\W_]/g, '');
 		var tmpL;
-		if((res.route_short_name).indexOf("/") == -1)
+		var index = (res.route_short_name).indexOf("/");
+		if(index == -1)
 			tmpL = res.route_short_name;
 		else
 			tmpL = (res.route_short_name).substr(0, index) + '$' + (res.route_short_name).substr(index + 1);

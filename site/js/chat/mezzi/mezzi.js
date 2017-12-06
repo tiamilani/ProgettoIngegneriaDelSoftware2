@@ -13,6 +13,10 @@ mezzi = function(rotta,fase,documento)
 	$.getJSON(url, function(data) {
 		var myJSON = JSON.stringify(data);
 		parent.twonav(documento,data);
+	})
+	.error(function(data) {
+		var myJSON = JSON.stringify(data);
+		parent.twonav(documento,data['responseJSON']);
 	});
 }
 
