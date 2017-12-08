@@ -381,9 +381,9 @@ function ammissioniSaving(section, subsection){
       case null:
       case undefined:
       case "":
-              reject();
+              reject("400 BAD REQUEST");
       break;
-      default: reject(); break;
+      default: reject("400 BAD REQUEST"); break;
     }
 
   });
@@ -443,9 +443,9 @@ function immatricolazioniSaving(section, subsection){
       case null:
       case undefined:
       case "":
-              reject();
+              reject("400 BAD REQUEST");
       break;
-      default: reject(); break;
+      default: reject("400 BAD REQUEST"); break;
 
     }
 
@@ -541,17 +541,17 @@ function tasseUniversitarieSaving(section, subsection, detail){
                       case null:
                       case undefined:
                       case "":
-                              reject();
+                              reject("400 BAD REQUEST");
                       break;
-                      default: reject(); break;
+                      default: reject("400 BAD REQUEST"); break;
                     }
       break;
       case null:
       case undefined:
       case "":
-              reject();
+              reject("400 BAD REQUEST");
       break;
-      default: reject(); break;
+      default: reject("400 BAD REQUEST"); break;
     }
   });
 }
@@ -630,9 +630,9 @@ function borseDiStudioSaving(section, subsection){
       case null:
       case undefined:
       case "":
-              reject();
+              reject("400 BAD REQUEST");
       break;
-      default: reject(); break;
+      default: reject("400 BAD REQUEST"); break;
     }
   });
 }
@@ -680,7 +680,6 @@ function trasferimentiSaving(section, subsection, detail){
       break;
 
       case('trasferimenti-da'):
-                        console.log("Entrato in trasferimenti da");
                         switch(detail){
                           case('centro'):
                                           var json = JSON.stringify({
@@ -690,8 +689,6 @@ function trasferimentiSaving(section, subsection, detail){
                                             subsection: subsection,
                                             detail: detail
                                           });
-
-                                          console.log("explain: " + link_trasferimenti.explain_da_centro + "link: " + link_trasferimenti.da_centro);
                                           resolve(json);
 
                           break;
@@ -768,9 +765,9 @@ function trasferimentiSaving(section, subsection, detail){
                           case null:
                           case undefined:
                           case "":
-                                  reject();
+                                  reject("400 BAD REQUEST");
                           break;
-                          default: reject(); break;
+                          default: reject("400 BAD REQUEST"); break;
                         }
       break;
 
@@ -786,9 +783,9 @@ function trasferimentiSaving(section, subsection, detail){
       case null:
       case undefined:
       case "":
-              reject();
+              reject("400 BAD REQUEST");
       break;
-      default: reject(); break;
+      default: reject("400 BAD REQUEST"); break;
     }
   });
 }
@@ -896,9 +893,9 @@ function rinnovoIscrizioniSaving(section, subsection){
       case null:
       case undefined:
       case "":
-              reject();
+              reject("400 BAD REQUEST");
       break;
-      default: reject(); break;
+      default: reject("400 BAD REQUEST"); break;
     }
   });
 }
@@ -953,7 +950,6 @@ function readStudentFile(dir, file){
 
 function controlAssign(title, link, node, $){
 
-  console.log(title.toLowerCase());
   switch(title.toLowerCase()){
     case 'didattica':
                       if(didattica.titolo == ""){
@@ -970,7 +966,6 @@ function controlAssign(title, link, node, $){
                         node.siblings().children("li").children("a").each(function(){
                           var ref = $(this).attr('href');
                           var desc = $(this).text().trim().toLowerCase();
-                          console.log(desc);
 
                           if(!ref.includes('http')){
                             ref = 'http://www.unitn.it' + ref;
@@ -1003,17 +998,13 @@ function controlAssign(title, link, node, $){
                         node.siblings().children("li").children("a").each(function(){
                           var ref = $(this).attr('href');
                           var desc = $(this).text().trim().toLowerCase();
-                          console.log(desc);
 
                           if(!ref.includes('http')){
                             ref = 'http://www.unitn.it' + ref;
                           }
 
                           if(desc.includes('ammissione')){
-                            console.log("Ho trovato ammissioni");
                             iscrizioni.link.ammissioni = ref;
-                            console.log(desc);
-                            console.log("Associazione creata -> " + iscrizioni.link.ammissioni);
                           }
                           else if(desc.includes('infostudenti'))
                             iscrizioni.link.info = ref;
@@ -1042,7 +1033,6 @@ function controlAssign(title, link, node, $){
                         node.siblings().children("li").children("a").each(function(){
                           var ref = $(this).attr('href');
                           var desc = $(this).text().trim().toLowerCase();
-                          console.log(desc);
 
                           if(!ref.includes('http')){
                             ref = 'http://www.unitn.it' + ref;
@@ -1075,7 +1065,6 @@ function controlAssign(title, link, node, $){
                         node.siblings().children("li").children("a").each(function(){
                           var ref = $(this).attr('href');
                           var desc = $(this).text().trim().toLowerCase();
-                          console.log(desc);
 
                           if(!ref.includes('http')){
                             ref = 'http://www.unitn.it' + ref;
@@ -1110,7 +1099,6 @@ function controlAssign(title, link, node, $){
                         node.siblings().children("li").children("a").each(function(){
                           var ref = $(this).attr('href');
                           var desc = $(this).text().trim().toLowerCase();
-                          console.log(desc);
 
                           if(!ref.includes('http')){
                             ref = 'http://www.unitn.it' + ref;
@@ -1131,7 +1119,6 @@ function controlAssign(title, link, node, $){
                           else if(desc.includes('matlab'))
                             servizi.link.matlab = ref;
                           else if(desc.includes('informatici')){
-                            console.log('Ho trovato informatici');
                             servizi.link.informatici = ref;
                           }
                           else if(desc.includes('civile'))
@@ -1161,7 +1148,6 @@ function controlAssign(title, link, node, $){
                         node.siblings().children("li").children("a").each(function(){
                           var ref = $(this).attr('href');
                           var desc = $(this).text().trim().toLowerCase();
-                          console.log(desc);
 
                           if(!ref.includes('http')){
                             ref = 'http://www.unitn.it' + ref;
@@ -1200,7 +1186,6 @@ function controlAssign(title, link, node, $){
                         node.siblings().children("li").children("a").each(function(){
                           var ref = $(this).attr('href');
                           var desc = $(this).text().trim().toLowerCase();
-                          console.log(desc);
 
                           if(!ref.includes('http')){
                             ref = 'http://www.unitn.it' + ref;
@@ -1231,7 +1216,6 @@ function controlAssign(title, link, node, $){
                         node.siblings().children("li").children("a").each(function(){
                           var ref = $(this).attr('href');
                           var desc = $(this).text().trim().toLowerCase();
-                          console.log(desc);
 
                           if(!ref.includes('http')){
                             ref = 'http://www.unitn.it' + ref;
@@ -1241,7 +1225,6 @@ function controlAssign(title, link, node, $){
                             nonSoloStudio.link.apple = ref;
                           else if(desc.includes('associazione studentesche')){
                             nonSoloStudio.link.studenti = ref;
-                            console.log('Ho trovato associazione studentesche');
                           }
                           else if(desc.includes('opera'))
                             nonSoloStudio.link.opera = ref;
@@ -1332,9 +1315,9 @@ var futuroStudenteSaving = function(section, subsection, detail){
                             case null:
                             case undefined:
                             case "":
-                                    reject();
+                                    reject("400 BAD REQUEST");
                             break;
-                            default: reject(); break;
+                            default: reject("400 BAD REQUEST"); break;
                           }
         break;
         case('iscrizioni'):
@@ -1382,9 +1365,9 @@ var futuroStudenteSaving = function(section, subsection, detail){
                               case null:
                               case undefined:
                               case "":
-                                      reject();
+                                      reject("400 BAD REQUEST");
                               break;
-                              default: reject(); break;
+                              default: reject("400 BAD REQUEST"); break;
                             }
         break;
         case('orientamento'):
@@ -1422,9 +1405,9 @@ var futuroStudenteSaving = function(section, subsection, detail){
                                 case null:
                                 case undefined:
                                 case "":
-                                        reject();
+                                        reject("400 BAD REQUEST");
                                 break;
-                                default: reject(); break;
+                                default: reject("400 BAD REQUEST");break;
                               }
         break;
         case('agevolazioni'):
@@ -1472,9 +1455,9 @@ var futuroStudenteSaving = function(section, subsection, detail){
                               case null:
                               case undefined:
                               case "":
-                                      reject();
+                                      reject("400 BAD REQUEST");
                               break;
-                              default: reject(); break;
+                              default: reject("400 BAD REQUEST"); break;
                             }
         break;
         case('servizi'):
@@ -1592,9 +1575,9 @@ var futuroStudenteSaving = function(section, subsection, detail){
                               case null:
                               case undefined:
                               case "":
-                                      reject();
+                                      reject("400 BAD REQUEST");
                               break;
-                              default: reject(); break;
+                              default: reject("400 BAD REQUEST"); break;
                             }
         break;
         case('ateneo'):
@@ -1662,9 +1645,9 @@ var futuroStudenteSaving = function(section, subsection, detail){
                               case null:
                               case undefined:
                               case "":
-                                      reject();
+                                      reject("400 BAD REQUEST");
                               break;
-                              default: reject(); break;
+                              default: reject("400 BAD REQUEST"); break;
                             }
         break;
         case('pis'):
@@ -1692,9 +1675,9 @@ var futuroStudenteSaving = function(section, subsection, detail){
                               case null:
                               case undefined:
                               case "":
-                                      reject();
+                                      reject("400 BAD REQUEST");
                               break;
-                              default: reject(); break;
+                              default: reject("400 BAD REQUEST"); break;
                             }
         break;
         case('non-solo-studio'):
@@ -1782,17 +1765,30 @@ var futuroStudenteSaving = function(section, subsection, detail){
                               case null:
                               case undefined:
                               case "":
-                                      reject();
+                                      reject("400 BAD REQUEST");
                               break;
-                              default: reject(); break;
+                              default: reject("400 BAD REQUEST"); break;
                             }
         break;
         case null:
         case undefined:
         case "":
-                reject();
+                reject("400 BAD REQUEST");
         break;
-        default: reject(); break;
+        default: reject("400 BAD REQUEST"); break;
       }
   });
 }
+
+
+exports.infoFolder = infoFolder;
+exports.studentFolder = studentFolder;
+exports.readInfoFiles = readInfoFiles;
+exports.readStudentFile = readStudentFile;
+exports.ammissioniSaving = ammissioniSaving;
+exports.tasseUniversitarieSaving = tasseUniversitarieSaving;
+exports.immatricolazioniSaving = immatricolazioniSaving;
+exports.rinnovoIscrizioniSaving = rinnovoIscrizioniSaving;
+exports.borseDiStudioSaving = borseDiStudioSaving;
+exports.trasferimentiSaving = trasferimentiSaving;
+exports.futuroStudenteSaving = futuroStudenteSaving;
