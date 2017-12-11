@@ -4,8 +4,8 @@
 
 	<head>
 		<title>HCUniTn</title>
-		<link rel="stylesheet" href="site/css/content.css">
 
+		<link rel="stylesheet" href="site/css/content.css">
 		<script type="text/javascript" src="site/js/jquery-1.12.3.min.js"></script>
 		<!-- Latest compiled and minified CSS -->
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
@@ -14,7 +14,11 @@
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
 
 		<!-- Latest compiled and minified JavaScript -->
-		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>	</head>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+		<link rel="stylesheet" href="site/css/resolution.css">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	</head>
 
 	<body style="background-color: aquamarine;">
 		<div class="container">
@@ -24,38 +28,68 @@
 						<img src="site/img/UniTNHelpCenter.png" alt="LOGO" height="50" width="50">
 						<a class="navbar-brand" href="">UniTn Help Center</a>
 					</div>
-					<div id="navbar">
-						<ul class="nav navbar-nav">
-							<li><a href="site/page/cosaSoFare.html">Cosa posso fare</a></li>
-							<li><a href="site/page/chiSiamo.html">Chi siamo?</a></li>
-						</ul>
-						<ul class="nav navbar-nav navbar-right">
-							<p class="navbar-btn">
-			                    <a href="https://t.me/UniTNHelp_bot" target="_blank" class="btn btn-primary">Telegram Bot</a>
-			                </p>
-						</ul>
+					<div class="content-desktop">
+						<div id="navbar">
+							<ul class="nav navbar-nav">
+								<li><a href="site/page/cosaSoFare.html">Cosa posso fare</a></li>
+								<li><a href="site/page/chiSiamo.html">Chi siamo?</a></li>
+							</ul>
+							<ul class="nav navbar-nav navbar-right">
+								<p class="navbar-btn">
+				                    <a href="https://t.me/UniTNHelp_bot" target="_blank" class="btn btn-primary">Telegram Bot</a>
+				                </p>
+							</ul>
+						</div>
 					</div>
 				</div>
 			</nav>
 		</div>
 
-		<div class="container-fluid" id="container-fluid">
-			<!--<p id="pTest">test</p>-->
-			<div class="row">
-				<div class="col-md-4" id="colChat">
-					<iframe id="iframeChat" name="iframeChat" src="site/page/chat.html" frameborder="0" height="100%" width="100%" style="border-radius: 10px;"></iframe>
-				</div>
-				<div class="col-md-8" id="colResponse">
-					<iframe id="iframeResponse" name="iframeResponse" src="" frameborder="0" height="100%" width="100%" style="border-radius: 10px;"></iframe>
+		<div class="content-mobile">
+			<div class="container-fluid" id="container-fluid2">
+				<!--<p id="pTest">test</p>-->
+				<div class="container-content">
+					<div class="row">
+						<h2>Usa il bot </h2>
+					</div>
+					<div class="row">
+						<p>Abbiamo creato un bot per telegram che fa al caso tuo, da mobile è la scelta migliore</p>
+					</div>
+					<div class="row">
+						<p>se non hai ancora telegram puoi installarlo, è gratuito, sia per ios che android</p>
+					</div>
+					<div class="row">
+						<img src="site/img/t_logo.png" alt="LOGO"  height="50" width="50">
+						<img src="site/img/UniTNHelpCenter.png" alt="LOGO" height="50" width="50">
+					</div>
+					<div class="row">
+						<a href="https://t.me/UniTNHelp_bot" target="_blank" class="btn btn-primary">UniTNHelpCenter bot</a>
+					</div>
 				</div>
 			</div>
 		</div>
 
-		<footer class="footer footer-fixed-bottom">
-			<div class="container">
-				<p class="text-muted center-block">Questo bot punta ad aiutare la vita di tutti gli studenti di Trento, &egrave; ancora in test, ma pu&ograve; gi&agrave; fornirti molte delle risposte che ti servono :)</p>
+		<div class="content-desktop">
+			<div class="container-fluid" id="container-fluid">
+				<!--<p id="pTest">test</p>-->
+				<div class="row">
+					<div class="col-md-4" id="colChat">
+						<iframe id="iframeChat" name="iframeChat" src="site/page/chat.html" frameborder="0" height="100%" width="100%" style="border-radius: 10px;"></iframe>
+					</div>
+					<div class="col-md-8" id="colResponse">
+						<iframe id="iframeResponse" name="iframeResponse" src="" frameborder="0" height="100%" width="100%" style="border-radius: 10px;"></iframe>
+					</div>
+				</div>
 			</div>
-	    </footer>
+		</div>
+
+		<div class="content-desktop">
+			<footer class="footer footer-fixed-bottom">
+				<div class="container">
+					<p class="text-muted center-block">Questo bot punta ad aiutare la vita di tutti gli studenti di Trento, &egrave; ancora in test, ma pu&ograve; gi&agrave; fornirti molte delle risposte che ti servono :)</p>
+				</div>
+		    </footer>
+		</div>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 		<script src="site/js/script.js"></script>
 	</body>

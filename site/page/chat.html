@@ -26,11 +26,7 @@
 								</select>
 								<div conv-fork="helpSelection">
 									<div conv-case="mezzi">
-										<input type="text" conv-question="La sezione mezzi ti permette di: " no-answer="true">
-										<input type="text" conv-question="Cercare una fermata e vedere gli orari di quella fermata" no-answer="true">
-										<input type="text" conv-question="Cercare le informazioni di una linea" no-answer="true">
-										<input type="text" conv-question="Vedere solo i prossimi orari di una fermata" no-answer="true">
-										<input type="text" conv-question="Vedere gli avvisi del giorno per le linee che subiranno variazioni" no-answer="true">
+										<input type="text" conv-question="La sezione mezzi ti permette di: <br> - Cercare una fermata e vedere gli orari di quella fermata <br> - Cercare le informazioni di una linea <br> - Vedere solo i prossimi orari di una fermata <br> - Vedere gli avvisi del giorno per le linee che subiranno variazioni" no-answer="true">
 										<select name="sezzioneMezzi" conv-question="Cosa ti interessa?">
 		                                    <option value="fermata" callback="sezzioneMezzifermata">Fermata</option>
 		                                    <option value="linea" callback="sezzioneMezzilinea">Linea</option>

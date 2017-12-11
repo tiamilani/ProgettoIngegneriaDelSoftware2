@@ -19,13 +19,15 @@ $(document).ready(function() {
 	one = document.getElementById('iframeChat');
   	two = document.getElementById('iframeResponse');
 
-	$("#container-fluid").css("padding-top", $(".navbar-fixed-top").height());
+	$("#container-fluid").css("margin-top", $(".navbar-fixed-top").height());
+    $("#container-fluid2").css("margin-top", $(".navbar-fixed-top").height());
 	document.getElementById("iframeChat").style.height = ($( window ).height()-$(".navbar-fixed-top").height()-$(".footer-fixed-bottom").height())+ "px";
 	document.getElementById("iframeResponse").style.height = ($( window ).height()-$(".navbar-fixed-top").height()-$(".footer-fixed-bottom").height() - 30) + "px";
 });
 
 $( window ).resize(function() {
-	$("#container-fluid").css("padding-top", $(".navbar-fixed-top").height());
+	$("#container-fluid").css("margin-top", $(".navbar-fixed-top").height());
+    $("#container-fluid2").css("margin-top", $(".navbar-fixed-top").height());
   document.getElementById("iframeChat").style.height = ($( window ).height()-$(".navbar-fixed-top").height()-$(".footer-fixed-bottom").height()) + "px";
   document.getElementById("iframeResponse").style.height = ($( window ).height()-$(".navbar-fixed-top").height()-$(".footer-fixed-bottom").height() - 30) + "px";
 });
