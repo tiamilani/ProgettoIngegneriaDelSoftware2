@@ -266,7 +266,7 @@ var downloadPageAmmissioni = function (link, dir, bot, msg, action){
   infoFolder(dir, options)
     .then(file => {
       readInfoFiles(dir, file, bot, msg, 'ammissioni', link_ammissioni)
-        .then(() => {
+        .then((struttura) => {
           if(action == 'ammissioni_triennali'){
             bot.sendMessage(msg.chat.id, link_ammissioni.explain_triennale + "\n\n" + link_ammissioni.triennale)
           }else if(action == 'ammissioni_magistrali'){
@@ -601,7 +601,6 @@ function controlAssign(title, link, bot, msg, node, $){
                         node.siblings().children("li").children("a").each(function(){
                           var ref = $(this).attr('href');
                           var desc = $(this).text().trim();
-                          console.log("Titolo sottosezione -> " + desc);
 
                           if(!ref.includes('http')){
                             ref = 'www.unitn.it' + ref;
@@ -630,7 +629,6 @@ function controlAssign(title, link, bot, msg, node, $){
                         node.siblings().children("li").children("a").each(function(){
                           var ref = $(this).attr('href');
                           var desc = $(this).text().trim();
-                          console.log("Titolo sottosezione -> " + desc);
 
                           if(!ref.includes('http')){
                             ref = 'www.unitn.it' + ref;
@@ -658,7 +656,6 @@ function controlAssign(title, link, bot, msg, node, $){
                         node.siblings().children("li").children("a").each(function(){
                           var ref = $(this).attr('href');
                           var desc = $(this).text().trim();
-                          console.log("Titolo sottosezione -> " + desc);
 
                           if(!ref.includes('http')){
                             ref = 'www.unitn.it' + ref;
@@ -686,7 +683,6 @@ function controlAssign(title, link, bot, msg, node, $){
                         node.siblings().children("li").children("a").each(function(){
                           var ref = $(this).attr('href');
                           var desc = $(this).text().trim();
-                          console.log("Titolo sottosezione -> " + desc);
 
                           if(!ref.includes('http')){
                             ref = 'www.unitn.it' + ref;
@@ -714,7 +710,6 @@ function controlAssign(title, link, bot, msg, node, $){
                         node.siblings().children("li").children("a").each(function(){
                           var ref = $(this).attr('href');
                           var desc = $(this).text().trim();
-                          console.log("Titolo sottosezione -> " + desc);
 
                           if(!ref.includes('http')){
                             ref = 'www.unitn.it' + ref;
@@ -742,7 +737,6 @@ function controlAssign(title, link, bot, msg, node, $){
                         node.siblings().children("li").children("a").each(function(){
                           var ref = $(this).attr('href');
                           var desc = $(this).text().trim();
-                          console.log("Titolo sottosezione -> " + desc);
 
                           if(!ref.includes('http')){
                             ref = 'www.unitn.it' + ref;
@@ -770,7 +764,6 @@ function controlAssign(title, link, bot, msg, node, $){
                         node.siblings().children("li").children("a").each(function(){
                           var ref = $(this).attr('href');
                           var desc = $(this).text().trim();
-                          console.log("Titolo sottosezione -> " + desc);
 
                           if(!ref.includes('http')){
                             ref = 'www.unitn.it' + ref;
@@ -798,7 +791,6 @@ function controlAssign(title, link, bot, msg, node, $){
                         node.siblings().children("li").children("a").each(function(){
                           var ref = $(this).attr('href');
                           var desc = $(this).text().trim();
-                          console.log("Titolo sottosezione -> " + desc);
 
                           if(!ref.includes('http')){
                             ref = 'www.unitn.it' + ref;
@@ -818,10 +810,41 @@ exports.getLinkTasse = function(){
 	return link_tasse;
 }
 
+exports.getLinkAmmissioni = function(){
+	return link_ammissioni;
+}
+
+exports.getLinkImmatricolazioni = function(){
+	return link_immatricolazioni;
+}
+
+exports.getLinkRinnovi = function(){
+	return link_rinnovi;
+}
+
+exports.getLinkBorse = function(){
+	return link_borse;
+}
+
+exports.getLinkTrasferimenti = function(){
+	return link_trasferimenti;
+}
+
+exports.getLinkSupporto = function(){
+	return link_supporto;
+}
+
+exports.getDidattica = function(){
+	return didattica;
+}
+
 //--------- FUNZIONI ESPORTATE DA UTILIZZARE NEI TEST ------------
 exports.openDayFolder = openDayFolder;
 exports.infoFolder = infoFolder;
 exports.studentFolder = studentFolder;
+exports.readOpenDayFile = readOpenDayFile;
+exports.readInfoFiles = readInfoFiles;
+exports.readStudentFile = readStudentFile;
 
 //--------- FUNZIONI DA ESPORTARE DA UTILIZZARE COME API ------------
 exports.homeTasse = downloadPageTasse;
