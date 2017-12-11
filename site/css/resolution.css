@@ -1,0 +1,46 @@
+/* iPads (portrait and landscape) ----------- */
+@media only screen
+and (max-width : 1024px) {
+    .content-desktop {
+        display: none;
+    }
+    .content-mobile {
+        display: inline;
+    }
+
+    .container-content{
+    	/*height:87vh;*/
+        margin: 1em;
+        background-color: white;
+        border-radius: 10px;
+        text-align: center;
+    }
+
+    h2 {
+        margin-top: 5%;
+        margin-bottom: 5%;
+    }
+
+    p {
+        margin: 5%;
+    }
+
+    .btn {
+        margin: 1em;
+    }
+
+    .navbar {
+    	 height: 7vh;
+    }
+}
+
+/* Desktops and laptops ----------- */
+@media only screen
+and (min-width : 1224px) {
+    .content-desktop {
+        display: inline;
+    }
+    .content-mobile {
+        display: none;
+    }
+}
