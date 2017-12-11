@@ -19,7 +19,8 @@ module.exports = function(app) {
 	app.route('/example')
 		.get(controller.function);
 
-	app.route("/localizza");
+	app.route("/localizza")
+		.get(place.luoghiUtili);
 
 	app.route('/howto')
 		.get(howto.base);
