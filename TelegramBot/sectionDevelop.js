@@ -187,13 +187,17 @@ function userAlerts (bot, msg, connection) {
 				checkID(bot, msg.chat.id, "/start", con)
                     .then((result) => {
 						var index = query.lastIndexOf(",");
-				        query = query.substr(0, index) + ')';
-						console.log(query);
-						con.query(query, function (err, result) {
-							if (err) throw err;
+						if(index != -1) {
+					        query += query.substr(0, index) + ')';
+							console.log(query);
+							con.query(query, function (err, result) {
+								if (err) throw err;
 
+								bot.sendMessage(msg.chat.id, "Annuncio Diffuso!");
+							});
+						} else {
 							bot.sendMessage(msg.chat.id, "Annuncio Diffuso!");
-						});
+						}
                     })
                     .catch(err => {
                         console.error(err);
